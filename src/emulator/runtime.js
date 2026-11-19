@@ -13,7 +13,6 @@ const STAFF_ROLES = new Set([
   "staff", "secondmaster", "discipline", "bursar", "accountant"
 ]);
 
-// Mapping of virtual sheets for account operations
 export const VIRTUAL_HEADERS = {
   __accounts: ["seq", "id", "username", "full_name", "password_hash", "password_salt", "role", "position", "status", "profile"]
 };
@@ -48,7 +47,7 @@ export function diffAccountSheet(sheetName, originalRows, currentRows, originalA
   const existingMap = new Map((originalAccounts || []).map((a) => [a.username.toLowerCase(), a]));
 
   for (const row of currentRows) {
-    if (!row || !row[2]) continue; // Username missing
+    if (!row || !row[2]) continue;
     const username = String(row[2]).trim();
     const role = String(row[6] || "teacher");
     let profileObj = {};
@@ -78,7 +77,6 @@ export function diffAccountSheet(sheetName, originalRows, currentRows, originalA
     }
   }
 
-  // Any remaining original account not in currentRows is deleted
   for (const [uname] of existingMap) {
     ops.push({ type: "delete", match: uname });
   }
@@ -86,10 +84,9 @@ export function diffAccountSheet(sheetName, originalRows, currentRows, originalA
   return ops;
 }
 
-// Global runtime cache isolated by engineType + schoolId
-const sheetCache = new Map(); // key: "ENGINE:school_id:sheet_name" -> { version, rows }
-const accountsCache = new Map(); // key: "ENGINE:school_id" -> { version, accounts }
-const prefetch = new Map(); // key: "ENGINE:function_name" -> Set(sheet names)
+const sheetCache = new Map();
+const accountsCache = new Map();
+const prefetch = new Map();
 
 export function resetRuntimeCaches() {
   sheetCache.clear();
@@ -148,7 +145,6 @@ async function loadNames(store, schoolId, engineType, known, names, state, every
   }
 }
 
-// Utilities.formatDate Implementation
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -201,8 +197,7 @@ export function formatDate(date, timeZone, pattern) {
   });
 }
 
-function buildSandbox({ wb, school, session, readPage, appUrl, timezone, logs, engineType }) {
-  // Isolated cache per request/sandbox so Primary and Secondary never leak state
+function buildSandbox({ wb, school, session, readPage, appUrl, timezone, logs, engineType, d1Finance, d1Ops }) {
   const cacheStore = () => {
     const map = new Map();
     return {
@@ -290,10 +285,13 @@ function buildSandbox({ wb, school, session, readPage, appUrl, timezone, logs, e
     console: { log() {}, error() {}, warn() {} },
     __SCHOOL__: Object.freeze(schoolContext),
     __HOST__: {
-      session: session ? { username: session.username, role: session.role } : null,
+      session: session ? { username: session.username, role: session.role, fullName: session.fullName || "" } : null,
       education_level: schoolContext.education_level,
       engine_type: engineType,
       appUrl,
+      d1Payments: d1Finance ? d1Finance.payments : [],
+      d1FeeStructures: d1Finance ? d1Finance.feeStructures : [],
+      d1Ops,
     },
     Logger: { log: (...a) => { logs.push(a.join(" ")); } },
     Session: {
@@ -344,6 +342,10 @@ function executeInWorkerSandbox(codeString, sandbox, fnName, args) {
   return runGas(sandbox, fnName, args);
 }
 
+const FINANCE_PRELOAD_FNS = new Set([
+  "parentPortalData", "getParentFeeStatus", "apiRequest", "getAccountantData", "getFinancialSummary"
+]);
+
 export async function runLegacy({
   store, schoolId, school = null, fn, args = [], session = null, readPage, combinedScriptCode, appUrl = "", timezone,
 }) {
@@ -353,6 +355,11 @@ export async function runLegacy({
   const engineType = resolveEngineType(resolvedSchool);
   const prefetchKey = `${engineType}:${fn}`;
   const accCacheKey = `${engineType}:${schoolId}`;
+
+  let d1Finance = null;
+  if (FINANCE_PRELOAD_FNS.has(fn) && typeof store.loadFinanceData === "function") {
+    d1Finance = await store.loadFinanceData(schoolId);
+  }
 
   const tz = timezone || DEFAULT_TIMEZONE;
   const state = { loaded: new Map(), accounts: null };
@@ -366,7 +373,6 @@ export async function runLegacy({
       known.set(name, known.get("__accounts") || 0);
     }
 
-    // Drop anything that somebody else has changed since it was loaded
     for (const [name, data] of [...state.loaded]) {
       if (known.get(name) !== data.version) state.loaded.delete(name);
     }
@@ -375,6 +381,7 @@ export async function runLegacy({
     await loadNames(store, schoolId, engineType, known, wantedNames, state, everything);
 
     const logs = [];
+    const d1Ops = [];
     const wb = new Workbook({
       known: [...known].filter(([n]) => n !== "__accounts"),
       loaded: state.loaded,
@@ -391,6 +398,8 @@ export async function runLegacy({
       timezone: tz,
       logs,
       engineType,
+      d1Finance,
+      d1Ops,
     });
 
     let outcome;
@@ -416,6 +425,8 @@ export async function runLegacy({
     prefetch.set(prefetchKey, new Set([...wantedNames, ...wb.states.keys()]));
 
     const payload = { sheets: encodeChanges(wb.collectChanges()) };
+    if (d1Ops.length > 0) payload.d1Ops = d1Ops;
+
     if (state.accounts) {
       const ops = [];
       for (const name of virtualNames()) {
@@ -426,7 +437,7 @@ export async function runLegacy({
       if (ops.length > 0) payload.accounts = { expected: state.accounts.version, ops };
     }
 
-    if (payload.sheets.length > 0 || payload.accounts) {
+    if (payload.sheets.length > 0 || payload.accounts || (payload.d1Ops && payload.d1Ops.length > 0)) {
       try {
         await store.commit(schoolId, payload);
       } catch (error) {
