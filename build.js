@@ -21,7 +21,7 @@ const allFns = [...new Set([...coreFns, ...getFns(extraCode)])];
 
 const out = `export function runGas(sandbox, fnName, args) {
   const { Date, console, __HOST__, Logger, Session, SpreadsheetApp, HtmlService, PropertiesService, CacheService, LockService, ScriptApp, Utilities } = sandbox;
-  const { Date, console, __HOST__, Logger, Session, SpreadsheetApp, HtmlService, PropertiesService, CacheService, LockService, ScriptApp, Utilities } = sandbox;
+  const __APP_ENV__ = "cloudflare";
   const __APP_ENV__ = "cloudflare";
   const __PrimaryEngine = (function() { ${priCode}\n return { ${priFns.map(f => `${f}: typeof ${f}!=="undefined"?${f}:undefined`).join(",")} }; })();
   const __SecondaryEngine = (function() { ${secCode}\n return { ${secFns.map(f => `${f}: typeof ${f}!=="undefined"?${f}:undefined`).join(",")} }; })();
