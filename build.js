@@ -22,6 +22,7 @@ const allFns = [...new Set([...coreFns, ...getFns(extraCode)])];
 const out = `export function runGas(sandbox, fnName, args) {
   const { Date, console, __HOST__, Logger, Session, SpreadsheetApp, HtmlService, PropertiesService, CacheService, LockService, ScriptApp, Utilities } = sandbox;
     globalThis.__APP_ENV__ = "cloudflare";
+    var calc, res, data, rows, sheet, ss, i, j, k, row, item, obj, list, map, out, tmp, val, key, id, name, code, err, msg, ok, status, total, count, sum, avg, min, max;
   const __PrimaryEngine = (function() { ${priCode}\n return { ${priFns.map(f => `${f}: typeof ${f}!=="undefined"?${f}:undefined`).join(",")} }; })();
   const __SecondaryEngine = (function() { ${secCode}\n return { ${secFns.map(f => `${f}: typeof ${f}!=="undefined"?${f}:undefined`).join(",")} }; })();
   function __resolveCoreEngine__() {
