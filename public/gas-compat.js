@@ -5,9 +5,6 @@
 (function () {
   "use strict";
 
-  // --------------------------------------------------------------------------
-  // 1. Tambua Muktadha wa Shule (School Context)
-  // --------------------------------------------------------------------------
   var queryString = new URLSearchParams(window.location.search);
   var schoolParam = (queryString.get("school") || queryString.get("tenant") || "").trim().toLowerCase();
   var injectedSchool = window.__SCHOOL__ || null;
@@ -18,7 +15,7 @@
     var host = window.location.hostname.toLowerCase();
     if (host.endsWith(".workers.dev") || host.endsWith(".pages.dev") || host === "localhost") return "";
     var parts = host.split(".");
-    if (parts.length >= 3 && parts !== "www") return parts;
+    if (parts.length >= 3 && parts[0] !== "www") return parts[0];
     return "";
   }
 
@@ -32,16 +29,13 @@
     return withSchoolQuery("/api/gas");
   }
 
-  // --------------------------------------------------------------------------
-  // 2. Usimamizi wa Session Token
-  // --------------------------------------------------------------------------
   var TOKEN_KEY = "sms_token";
 
   function getToken() {
     try { return localStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; }
   }
   function setToken(token) {
-    try { localStorage.setItem(TOKEN_KEY, String(token)); } catch (e) { /* ignore */ }
+    try { localStorage.setItem(TOKEN_KEY, String(token)); } catch (e) {}
   }
   function clearToken() {
     try {
@@ -50,12 +44,9 @@
         var k = localStorage.key(i);
         if (k && k.indexOf("sms_pane_") === 0) localStorage.removeItem(k);
       }
-    } catch (e) { /* ignore */ }
+    } catch (e) {}
   }
 
-  // --------------------------------------------------------------------------
-  // 3. Msimbo wa Kuwasiliana na Server (fetch wrapper yenye Promise)
-  // --------------------------------------------------------------------------
   var REQUEST_TIMEOUT_MS = 60000;
 
   function serverCall(method, args) {
@@ -71,7 +62,7 @@
         credentials: "same-origin",
         body: JSON.stringify({
           method: String(method),
-          args: Array.isArray(args) ? args :,
+          args: Array.isArray(args) ? args : [],
           token: getToken(),
         }),
         signal: controller ? controller.signal : undefined,
@@ -90,7 +81,7 @@
             clearToken();
             try {
               window.dispatchEvent(new CustomEvent("sms:session-expired"));
-            } catch (e) { /* ignore */ }
+            } catch (e) {}
             reject(new Error(data.error || "Muda wa session umeisha. Tafadhali ingia tena."));
             return;
           }
@@ -134,9 +125,6 @@
       });
   }
 
-  // --------------------------------------------------------------------------
-  // 4. google.script.run Emulation (Isolated runner per call chain)
-  // --------------------------------------------------------------------------
   function createRunner(successFn, failureFn) {
     return new Proxy({}, {
       get: function (_, prop) {
@@ -173,12 +161,8 @@
     });
   }
 
-  // --------------------------------------------------------------------------
-  // 5. Usakinishaji wa window.google.script (run, url, host)
-  // --------------------------------------------------------------------------
   window.google = window.google || {};
   window.google.script = window.google.script || {};
-
   window.google.script.run = createRunner(null, null);
 
   window.google.script.url = {
@@ -190,7 +174,7 @@
       };
       queryString.forEach(function (value, key) {
         location.parameter[key] = value;
-        if (!location.parameters[key]) location.parameters[key] =;
+        if (!location.parameters[key]) location.parameters[key] = [];
         location.parameters[key].push(value);
       });
       if (typeof callback === "function") callback(location);
@@ -205,9 +189,6 @@
     editor: { focus: function () {} },
   };
 
-  // --------------------------------------------------------------------------
-  // 6. API ya Kujifungia kwa Matumizi ya Kurasa (Promise-based helpers)
-  // --------------------------------------------------------------------------
   window.SchoolSaaS = {
     call: serverCall,
     getToken: getToken,
@@ -220,7 +201,7 @@
     getSubdomain: function () { return SCHOOL_SUBDOMAIN; },
     getPlan: function () { return injectedSchool && injectedSchool.plan ? injectedSchool.plan : ""; },
     logout: function () {
-      return serverCall("smsEndSession",)
+      return serverCall("smsEndSession", [])
         .catch(function () {})
         .then(function () {
           clearToken();
