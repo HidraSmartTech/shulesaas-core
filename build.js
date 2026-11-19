@@ -20,22 +20,53 @@ const extraCode = files.map(read).join("\n;\n");
 const allFns = [...new Set([...coreFns, ...getFns(extraCode)])];
 
 const out = `export function runGas(sandbox, fnName, args) {
-  const { Date, console, __HOST__, Logger, Session, SpreadsheetApp, HtmlService, PropertiesService, CacheService, LockService, ScriptApp, Utilities } = sandbox;
-    globalThis.__APP_ENV__ = "cloudflare";
-    var calc, res, data, rows, sheet, ss, i, j, k, row, item, obj, list, map, out, tmp, val, key, id, name, code, err, msg, ok, status, total, count, sum, avg, min, max;
-  const __PrimaryEngine = (function() { ${priCode}\n return { ${priFns.map(f => `${f}: typeof ${f}!=="undefined"?${f}:undefined`).join(",")} }; })();
-  const __SecondaryEngine = (function() { ${secCode}\n return { ${secFns.map(f => `${f}: typeof ${f}!=="undefined"?${f}:undefined`).join(",")} }; })();
+  const {
+    Date, console, __HOST__, __SCHOOL__, Logger, Session,
+    SpreadsheetApp, HtmlService, PropertiesService, CacheService,
+    LockService, ScriptApp, Utilities
+  } = sandbox;
+
+  globalThis.__APP_ENV__ = "cloudflare";
+  var calc, res, data, rows, sheet, ss, i, j, k, row, item, obj, list, map, out, tmp, val, key, id, name, code, err, msg, ok, status, total, count, sum, avg, min, max;
+
+  const __PrimaryEngine = (function() {
+    ${priCode}
+    return { ${priFns.map(f => `${f}: typeof ${f} !== "undefined" ? ${f} : undefined`).join(", ")} };
+  })();
+
+  const __SecondaryEngine = (function() {
+    ${secCode}
+    return { ${secFns.map(f => `${f}: typeof ${f} !== "undefined" ? ${f} : undefined`).join(", ")} };
+  })();
+
   function __resolveCoreEngine__() {
-    var l = String((typeof school!=="undefined"&&school?.education_level)||(typeof __SCHOOL__!=="undefined"&&__SCHOOL__?.education_level)||"").toUpperCase();
-    return (l.includes("PRIMARY")||l.includes("PRE")||l==="NURSERY") ? __PrimaryEngine : __SecondaryEngine;
+    const lvl = String(
+      (__SCHOOL__ && __SCHOOL__.education_level) ||
+      (__HOST__ && __HOST__.education_level) ||
+      ""
+    ).toUpperCase();
+    const isPrimary = lvl.includes("PRIMARY") || lvl.includes("PRE") || lvl === "NURSERY";
+    return isPrimary ? __PrimaryEngine : __SecondaryEngine;
   }
-  ${coreFns.map(f => `function ${f}(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.${f}||fb?.${f}; if(!fn) throw new Error("Missing ${f}"); return fn.apply(p, arguments); }`).join("\n")}
+
+  ${coreFns.map(f => `function ${f}() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.${f}) || (fb && fb.${f});
+    if (!fn) throw new Error("Missing function: ${f}");
+    return fn.apply(p, arguments);
+  }`).join("\n  ")}
+
   ${extraCode}
-  const map = { ${allFns.join(",")} };
-  if (typeof map[fnName] !== "function") throw new Error("Function not found: " + fnName);
-  const res = map[fnName].apply(null, args || []);
-  return res === undefined ? null : res;
-}`;
+
+  const __fnMap = { ${allFns.join(", ")} };
+  if (typeof __fnMap[fnName] !== "function") {
+    throw new Error("Function not found: " + fnName);
+  }
+  const __fnRes = __fnMap[fnName].apply(null, args || []);
+  return __fnRes === undefined ? null : __fnRes;
+}
+`;
 
 fs.writeFileSync("./src/legacy_gs/compiled.js", out, "utf8");
 console.log("TAYARI!");
