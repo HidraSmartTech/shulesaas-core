@@ -1,5 +1,5 @@
 // Cloudflare D1 (SQLite) Multi-Tenant Storage Layer for GAS Emulator
-// All database operations are strictly isolated by school_id.
+// All database operations are strictly isolated by school_id with atomic version checks.
 
 export class ConflictError extends Error {
   constructor(sheet) {
@@ -53,6 +53,14 @@ function toRowArray(records, DateCtor) {
 
 export function createD1Store(db) {
   return {
+    // 0. Soma taarifa za shule husika (kwa ajili ya kubaini Primary vs Secondary)
+    async getSchool(schoolId) {
+      const stmt = db.prepare(
+        "SELECT id, name, subdomain, education_level, plan, status FROM schools WHERE id = ?"
+      );
+      return await stmt.bind(schoolId).first();
+    },
+
     // 1. Orodhesha masheet yote ya shule husika pamoja na matoleo (versions) yake
     async listSheets(schoolId) {
       const stmt = db.prepare(
@@ -72,7 +80,7 @@ export function createD1Store(db) {
       if (!names || names.length === 0) return out;
 
       const placeholders = names.map(() => "?").join(",");
-      
+
       // Get metadata versions
       const metaStmt = db.prepare(
         `SELECT name, version FROM sheet_meta WHERE school_id = ? AND name IN (${placeholders})`
@@ -108,7 +116,6 @@ export function createD1Store(db) {
       );
       const { results: accounts } = await stmt.bind(schoolId).all();
 
-      // Convert profile JSON string to object
       const formattedAccounts = (accounts || []).map((acc) => {
         let profileObj = {};
         try {
@@ -130,46 +137,55 @@ export function createD1Store(db) {
       };
     },
 
-    // 4. Hifadhi mabadiliko yote kwa mkupuo mmoja (Atomic Transaction via D1 batch)
+    // 4. Hifadhi mabadiliko yote kwa mkupuo mmoja (Atomic Optimistic Concurrency via D1 batch)
     async commit(schoolId, payload) {
       const statements = [];
-
-      // Check current sheet versions in D1 to prevent overwriting modified data
-      const currentSheets = await this.listSheets(schoolId);
+      // Track guarded version-check statements to verify rows updated atomically
+      const guards = [];
 
       // Handle sheet changes
       for (const s of payload.sheets || []) {
         const nm = s.sheet;
-        const currentVer = currentSheets.get(nm);
 
         if (s.op === "create") {
-          if (currentVer !== undefined) {
-            throw new ConflictError(nm);
-          }
+          const idx = statements.length;
           statements.push(
             db.prepare(
-              "INSERT INTO sheet_meta (school_id, name, version) VALUES (?, ?, 1)"
+              "INSERT OR IGNORE INTO sheet_meta (school_id, name, version) VALUES (?, ?, 1)"
             ).bind(schoolId, nm)
           );
+          guards.push({ index: idx, sheet: nm });
         } else {
-          if (currentVer === undefined || currentVer !== Number(s.expected)) {
+          const expectedVer = Number(s.expected);
+          if (!Number.isFinite(expectedVer) || expectedVer < 1) {
             throw new ConflictError(nm);
           }
+
           if (s.op === "drop") {
+            const idx = statements.length;
             statements.push(
-              db.prepare("DELETE FROM sheet_meta WHERE school_id = ? AND name = ?").bind(schoolId, nm)
+              db.prepare(
+                "DELETE FROM sheet_meta WHERE school_id = ? AND name = ? AND version = ?"
+              ).bind(schoolId, nm, expectedVer)
             );
+            guards.push({ index: idx, sheet: nm });
+
             statements.push(
-              db.prepare("DELETE FROM sheet_rows WHERE school_id = ? AND sheet = ?").bind(schoolId, nm)
+              db.prepare(
+                "DELETE FROM sheet_rows WHERE school_id = ? AND sheet = ?"
+              ).bind(schoolId, nm)
             );
             continue;
           }
 
+          // Atomic version increment: fails (changes = 0) if another writer updated version
+          const idx = statements.length;
           statements.push(
             db.prepare(
-              "UPDATE sheet_meta SET version = version + 1, updated_at = CURRENT_TIMESTAMP WHERE school_id = ? AND name = ?"
-            ).bind(schoolId, nm)
+              "UPDATE sheet_meta SET version = version + 1, updated_at = CURRENT_TIMESTAMP WHERE school_id = ? AND name = ? AND version = ?"
+            ).bind(schoolId, nm, expectedVer)
           );
+          guards.push({ index: idx, sheet: nm });
 
           // Truncate extra rows if length shortened
           if (s.length !== undefined) {
@@ -195,39 +211,43 @@ export function createD1Store(db) {
         }
       }
 
-      // Handle Accounts changes
+      // Handle Accounts changes with atomic version check
       if (payload.accounts && payload.accounts.ops && payload.accounts.ops.length > 0) {
-        const currentAccVer = currentSheets.get("__accounts") || 0;
-        if (currentAccVer !== Number(payload.accounts.expected)) {
-          throw new ConflictError("__accounts");
-        }
+        const expectedAccVer = Number(payload.accounts.expected || 0);
+        const idx = statements.length;
 
-        // Ensure __accounts entry exists in sheet_meta
-        statements.push(
-          db.prepare(
-            `INSERT INTO sheet_meta (school_id, name, version) VALUES (?, '__accounts', 1)
-             ON CONFLICT(school_id, name) DO UPDATE SET version = version + 1, updated_at = CURRENT_TIMESTAMP`
-          ).bind(schoolId)
-        );
+        if (expectedAccVer === 0) {
+          statements.push(
+            db.prepare(
+              "INSERT OR IGNORE INTO sheet_meta (school_id, name, version) VALUES (?, '__accounts', 1)"
+            ).bind(schoolId)
+          );
+        } else {
+          statements.push(
+            db.prepare(
+              "UPDATE sheet_meta SET version = version + 1, updated_at = CURRENT_TIMESTAMP WHERE school_id = ? AND name = '__accounts' AND version = ?"
+            ).bind(schoolId, expectedAccVer)
+          );
+        }
+        guards.push({ index: idx, sheet: "__accounts" });
 
         for (const o of payload.accounts.ops) {
           const a = o.account || {};
           if (o.type === "insert") {
-            // Get max sequence
-            const maxSeqStmt = await db.prepare(
-              "SELECT COALESCE(MAX(seq), 0) + 1 AS next_seq FROM accounts WHERE school_id = ?"
-            ).bind(schoolId).first();
-            const nextSeq = maxSeqStmt ? maxSeqStmt.next_seq : 1;
             const accId = a.id || `acc_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
 
             statements.push(
               db.prepare(
                 `INSERT INTO accounts (id, school_id, seq, username, full_name, password_hash, password_salt, role, position, status, profile)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+                 VALUES (
+                   ?, ?,
+                   (SELECT COALESCE(MAX(seq), 0) + 1 FROM accounts WHERE school_id = ?),
+                   ?, ?, ?, ?, ?, ?, ?, ?
+                 )`
               ).bind(
                 accId,
                 schoolId,
-                nextSeq,
+                schoolId,
                 a.username,
                 a.full_name || "",
                 a.password_hash || "",
@@ -291,9 +311,17 @@ export function createD1Store(db) {
         }
       }
 
-      // Execute all query statements atomically in Cloudflare D1
-      if (statements.length > 0) {
-        await db.batch(statements);
+      if (statements.length === 0) return;
+
+      // D1 batch executes inside an implicit SQLite transaction.
+      // If any version guard affected 0 rows, abort immediately so D1 rolls back the entire batch.
+      const results = await db.batch(statements);
+      for (const g of guards) {
+        const res = results[g.index];
+        const changes = res && res.meta ? Number(res.meta.changes || 0) : 0;
+        if (changes === 0) {
+          throw new ConflictError(g.sheet);
+        }
       }
     },
   };
