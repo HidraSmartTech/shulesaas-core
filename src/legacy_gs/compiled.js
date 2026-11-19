@@ -18203,9 +18203,7 @@ function api_todReport_(s, teacher, dateStr, format) {
 ;
 /**
  * ParentPortal.gs — real data for the Parent portal (no sample data)
- * The Parent page sends its session token; the server returns ONLY that parent's child:
- * the same Individual Report Card data the Academic account uses, real attendance, and the
- * Academic Settings (logos / names / signatures) so the card looks exactly like Academic's.
+ * Supports both Cloudflare D1 host sessions (__HOST__.session) and legacy script property tokens.
  */
 var rbacStudentCache_ = null;
 
@@ -18234,18 +18232,76 @@ function rbacLiveStudent_(admNo, storedName, storedClass) {
 }
 
 function parentFromToken_(token) {
-  token = String(token || '');
-  if (!/^[a-f0-9]{64}$/.test(token)) throw new Error('Session expired. Please log in again.');
-  var raw = PropertiesService.getScriptProperties().getProperty(SMS_SESSION_PREFIX + token);
-  if (!raw) throw new Error('Session expired. Please log in again.');
-  var s = JSON.parse(raw);
-  if (!s.exp || s.exp < Date.now() || s.role !== 'parent') throw new Error('Session expired. Please log in again.');
-  var pd = smsParentData_(s.username);
-  if (!pd) throw new Error('Session expired. Please log in again.');
-  if (rbacIsInactiveParent_(s.username)) throw new Error('This account has been deactivated. Contact the school office.');
-  var pa = canAccessDashboard('parents', s.username);
+  var username = '';
+
+  // 1. Cloudflare D1 authenticated host session
+  if (typeof __HOST__ !== 'undefined' && __HOST__ && __HOST__.session && __HOST__.session.username) {
+    if (__HOST__.session.role !== 'parent' && __HOST__.session.role !== 'student') {
+      throw new Error('Access denied. Parent account required.');
+    }
+    username = String(__HOST__.session.username || '').trim();
+  } else {
+    // 2. Legacy GAS token fallback
+    token = String(token || '');
+    if (!/^[a-f0-9]{64}$/.test(token)) throw new Error('Session expired. Please log in again.');
+    var raw = PropertiesService.getScriptProperties().getProperty(SMS_SESSION_PREFIX + token);
+    if (!raw) throw new Error('Session expired. Please log in again.');
+    var s = JSON.parse(raw);
+    if (!s.exp || s.exp < Date.now() || s.role !== 'parent') throw new Error('Session expired. Please log in again.');
+    username = s.username;
+  }
+
+  var pd = smsParentData_(username);
+  if (!pd) throw new Error('Parent profile not found for this student. Contact the school office.');
+  if (rbacIsInactiveParent_(username)) throw new Error('This account has been deactivated. Contact the school office.');
+  var pa = canAccessDashboard('parents', username);
   if (pa && pa.allowed === false) throw new Error(pa.reason || 'This portal is currently disabled by the administrator.');
-  return { username: s.username, data: pd };
+  return { username: username, data: pd };
+}
+
+function parentBuildFeeSummary_(admNo, className) {
+  var key = rbacNormAdm_(admNo);
+  var d1Pays = (typeof __HOST__ !== 'undefined' && __HOST__ && Array.isArray(__HOST__.d1Payments)) ? __HOST__.d1Payments : [];
+  var d1Fees = (typeof __HOST__ !== 'undefined' && __HOST__ && Array.isArray(__HOST__.d1FeeStructures)) ? __HOST__.d1FeeStructures : [];
+  var currentYear = String(new Date().getFullYear());
+
+  var matchingPays = d1Pays.filter(function (p) {
+    return rbacNormAdm_(p.student_id) === key && String(p.status || 'completed').toLowerCase() === 'completed';
+  });
+
+  var totalPaid = 0;
+  var history = matchingPays.map(function (p) {
+    var amt = Number(p.amount_paid || 0);
+    totalPaid += amt;
+    return {
+      receiptNo: p.receipt_no || '',
+      date: String(p.payment_date || '').slice(0, 10),
+      amount: amt,
+      currency: p.currency || 'TZS',
+      method: p.payment_method || 'cash',
+      category: p.fee_category || 'Tuition',
+      reference: p.reference_no || '',
+      academicYear: p.academic_year || currentYear
+    };
+  });
+
+  var normClass = String(className || '').replace(/\s+/g, '').toLowerCase();
+  var expectedFee = 0;
+  d1Fees.forEach(function (f) {
+    var fClass = String(f.class_level || '').replace(/\s+/g, '').toLowerCase();
+    var fYear = String(f.academic_year || currentYear);
+    if (fYear === currentYear && (fClass === 'all' || (normClass && fClass === normClass))) {
+      expectedFee += Number(f.amount || 0);
+    }
+  });
+
+  return {
+    academicYear: currentYear,
+    totalFee: Math.round(expectedFee * 100) / 100,
+    totalPaid: Math.round(totalPaid * 100) / 100,
+    balance: Math.max(0, Math.round((expectedFee - totalPaid) * 100) / 100),
+    payments: history
+  };
 }
 
 function parentPortalData(token) {
@@ -18264,7 +18320,7 @@ function parentPortalData(token) {
       if (!list.length) return;
       var me = list.filter(function (r) { return myKey && rbacNormAdm_(r.admNo) === myKey; })[0]
             || list.filter(function (r) { return behNorm_(r.name) === myName; })[0];
-      if (!me) return;                                     // this child has no results in this exam
+      if (!me) return;
       var beh = { map: {}, classTeacher: '' };
       try { beh = fetchReportBehaviors(className, exam) || beh; } catch (e) {}
       me.outOf = list.length;
@@ -18283,32 +18339,53 @@ function parentPortalData(token) {
     } catch (e) { attendance = []; }
   }
 
+  var fees = parentBuildFeeSummary_(pd.admNo, className);
   var a = acsReadAll_();
   return {
     student: { name: live.name, admNo: pd.admNo, className: className, sex: live.sex },
     reports: reports,
     attendance: attendance,
+    fees: fees,
     settings: { logoLeft: a.logoLeft || '', logoRight: a.logoRight || '', headName: a.headName || '', headSign: a.headSign || '',
                 academicName: a.academicName || '', academicSign: a.academicSign || '', schoolName: a.schoolName || '', schoolLogo: a.schoolLogo || '', schoolInfo: a.schoolInfo || {} },
     features: { report: feat['Report Card'] !== false, performance: feat['Performance'] !== false, attendance: wantAtt }
   };
 }
+
 ;
 // ============================================================
-// ACCOUNTANT BRIDGE — connects Accountant_v2.html to PrimaryApi.gs
-//
-// Accountant_v2.html calls  google.script.run.apiRequest({ action, token, ... })
-// This file receives those calls, checks the login token (same as psCall),
-// and translates them to the existing fin_* functions and sheets.
-//
-// Install: add this file to the Apps Script project next to PrimaryApi.gs,
-// save, then Deploy → Manage deployments → Edit → New version.
+// ACCOUNTANT BRIDGE — connects Accountant_v2.html to PrimaryApi.gs & Cloudflare D1
 // ============================================================
 
-// SPEED: read-only pages are kept in the server cache for AB_CACHE_TTL_ seconds.
-// Every write made here (or through psCall) bumps the cache version, so the next open is always fresh.
 var AB_CACHE_TTL_ = 60;
 var AB_MEMO_ = {};
+
+function ab_resolveSession_(token) {
+  if (typeof __HOST__ !== 'undefined' && __HOST__ && __HOST__.session && __HOST__.session.username) {
+    return {
+      username: __HOST__.session.username,
+      name: __HOST__.session.fullName || __HOST__.session.username,
+      role: String(__HOST__.session.role || '').toLowerCase()
+    };
+  }
+  return psSessionFromToken_(token);
+}
+
+function ab_queueD1Op_(op) {
+  if (typeof __HOST__ !== 'undefined' && __HOST__ && Array.isArray(__HOST__.d1Ops)) {
+    __HOST__.d1Ops.push(op);
+  }
+}
+
+function ab_d1Method_(m) {
+  m = String(m || '').toLowerCase();
+  if (m.indexOf('mpesa') >= 0 || m.indexOf('m-pesa') >= 0 || m.indexOf('mobile') >= 0) return 'mobile_money';
+  if (m.indexOf('control') >= 0 || m.indexOf('gepg') >= 0) return 'control_number';
+  if (m.indexOf('bank') >= 0) return 'bank';
+  if (m.indexOf('cheque') >= 0) return 'cheque';
+  if (m.indexOf('cash') >= 0) return 'cash';
+  return 'other';
+}
 
 function apiRequest(payload) {
   payload = payload || {};
@@ -18317,9 +18394,11 @@ function apiRequest(payload) {
   var action = String(payload.action || '');
   if (action === 'logout') return { ok: true, data: null };
 
-  var s = psSessionFromToken_(payload.token);
+  var s = ab_resolveSession_(payload.token);
   if (!s) return { ok: false, code: 'SESSION', error: 'Your session has expired. Please log in again.' };
-  if (s.role !== 'accountant') return { ok: false, error: 'You are not allowed to do this.' };
+  if (s.role !== 'accountant' && s.role !== 'bursar' && s.role !== 'schoolmanager' && s.role !== 'headofschool' && s.role !== 'headteacher') {
+    return { ok: false, error: 'You are not allowed to do this.' };
+  }
 
   var h = ab_handlers_()[action];
   if (!h) return { ok: false, error: 'Unknown action: ' + action };
@@ -18413,7 +18492,6 @@ function ab_payments_() {
   return psTable_('Payments').rows().filter(function (r) { return r.Status !== 'Voided'; });
 }
 
-// Per-student statements: fee = fee structure for the class (active year), paid = valid payments that year
 function ab_statements_() {
   var year = psActiveYear_(), fees = ab_feeStructures_().filter(function (f) { return f.academicYear === year; });
   var pays = ab_payments_().filter(function (p) { return String(p.AcademicYear) === year; });
@@ -18485,7 +18563,7 @@ function ab_clean_(o) { var c = {}; Object.keys(o).forEach(function (k) { if (k.
 function ab_page_(s, p) {
   var page = String(p.page || 'dashboard');
   var year = psActiveYear_();
-  var o, t;
+  var o;
   switch (page) {
     case 'dashboard': {
       o = ab_overview_();
@@ -18635,7 +18713,7 @@ function ab_report_(s, period) {
   };
 }
 
-// ───────────── writes ─────────────
+// ───────────── writes (Synced to Virtual Sheets + Cloudflare D1 SQL Tables) ─────────────
 function ab_recordPayment_(s, p) {
   var adm = String(p.studentId || '').trim(), amount = psRound_(psNum_(p.amount)), date = p.date || psToday_();
   if (!adm) psErr_('Please select a student.');
@@ -18650,7 +18728,6 @@ function ab_recordPayment_(s, p) {
     if (dup) psErr_('DUPLICATE: a payment of ' + amount + ' for this student on ' + ab_d_(date) + ' already exists.');
   }
 
-  // make sure the student is billed for this term (from the fee structure)
   var invT = psTable_('FeeInvoices');
   var findInv = function () {
     return invT.rows().filter(function (r) { return r.AdmNo === adm && String(r.AcademicYear) === year && r.Term === term && r.Status !== 'Cancelled'; });
@@ -18664,6 +18741,24 @@ function ab_recordPayment_(s, p) {
 
   var res = fin_pay_(s, { admNo: adm, amount: amount, method: ab_method_(p.paymentMethod), date: date,
                           reference: p.reference || '', invoiceNo: lines[0].InvoiceNo, notes: p.paymentType || '' });
+
+  // Queue atomic insert into D1 `payments` table
+  ab_queueD1Op_({
+    type: 'insert_payment',
+    receipt_no: res.receiptNo,
+    student_id: adm,
+    student_name: st.Name,
+    class_level: st.Class,
+    academic_year: year,
+    fee_category: p.paymentType || 'Tuition',
+    amount_paid: amount,
+    payment_method: ab_d1Method_(p.paymentMethod),
+    reference_no: res.reference || '',
+    payment_date: res.date || date,
+    recorded_by: s.username || s.name || '',
+    notes: term
+  });
+
   var sch = ab_school_();
   return { receiptNo: res.receiptNo, studentId: adm, studentName: st.Name, admissionNo: adm, className: st.Class,
            amount: amount, paymentMethod: res.method, date: res.date, reference: res.reference, paymentType: p.paymentType || '',
@@ -18679,7 +18774,19 @@ function ab_saveFee_(s, p) {
     return psNormClass_(r.Class) === psNormClass_(cls) && r.Term === term && String(r.AcademicYear) === year && r.Status !== 'Inactive'; })[0];
   var rec = { Class: cls, Term: term, AcademicYear: year, FeeName: exists ? exists.FeeName : 'School Fees', Amount: psNum_(p.amount), Notes: p.description || '' };
   if (exists) rec.FeeID = exists.FeeID;
-  return fin_feesSave_(s, rec);
+  var saved = fin_feesSave_(s, rec);
+
+  ab_queueD1Op_({
+    type: 'upsert_fee_structure',
+    id: (saved && saved.FeeID) || rec.FeeID || ('fee_' + cls + '_' + term + '_' + year).replace(/\s+/g, '_'),
+    academic_year: year,
+    class_level: cls,
+    fee_name: rec.FeeName,
+    amount: rec.Amount,
+    term: term
+  });
+
+  return saved;
 }
 
 function ab_updateRecord_(s, p) {
@@ -18688,8 +18795,21 @@ function ab_updateRecord_(s, p) {
   if (p.entity === 'feeStructures') {
     var cur = psTable_('FeeStructure').rows().filter(function (r) { return r.FeeID === p.id; })[0];
     if (!cur) psErr_('Fee not found.');
-    return fin_feesSave_(s, { FeeID: cur.FeeID, Class: cur.Class, AcademicYear: String(cur.AcademicYear), FeeName: cur.FeeName,
-      Term: f.term || cur.Term, Amount: f.amount !== undefined ? f.amount : cur.Amount, Notes: f.description !== undefined ? f.description : cur.Notes });
+    var newTerm = f.term || cur.Term;
+    var newAmt = f.amount !== undefined ? f.amount : cur.Amount;
+    var saved = fin_feesSave_(s, { FeeID: cur.FeeID, Class: cur.Class, AcademicYear: String(cur.AcademicYear), FeeName: cur.FeeName,
+      Term: newTerm, Amount: newAmt, Notes: f.description !== undefined ? f.description : cur.Notes });
+
+    ab_queueD1Op_({
+      type: 'upsert_fee_structure',
+      id: cur.FeeID,
+      academic_year: String(cur.AcademicYear),
+      class_level: cur.Class,
+      fee_name: cur.FeeName,
+      amount: psNum_(newAmt),
+      term: newTerm
+    });
+    return saved;
   }
   if (p.entity === 'payments') {
     psErr_('A recorded payment cannot be edited. Delete (void) it and record it again with the correct details.');
@@ -18701,10 +18821,16 @@ function ab_deleteRecord_(s, p) {
   var id = String(p.id || '');
   ab_checkLock_(p.date);
   switch (p.entity) {
-    case 'payments':      return fin_voidPayment_(s, id, 'Deleted by accountant');
-    case 'feeStructures': return fin_feesDelete_(s, id);
-    case 'income':        return fin_incomeVoid_(s, id, 'Deleted by accountant');
-    case 'suppliers':     return fin_supDelete_(s, id);
+    case 'payments':
+      ab_queueD1Op_({ type: 'void_payment', receipt_no: id });
+      return fin_voidPayment_(s, id, 'Deleted by accountant');
+    case 'feeStructures':
+      ab_queueD1Op_({ type: 'delete_fee_structure', id: id });
+      return fin_feesDelete_(s, id);
+    case 'income':
+      return fin_incomeVoid_(s, id, 'Deleted by accountant');
+    case 'suppliers':
+      return fin_supDelete_(s, id);
     case 'purchases':
     case 'expenses': {
       if (/^ACC-/.test(id)) {
@@ -18792,6 +18918,7 @@ function ab_setLock_(s, p) {
   psAuditS_(s, 'Control', l.locked ? 'Period locked' : 'Period unlocked', l.upTo, '', '', '');
   return l;
 }
+
 ;
 // ============================================================
 // PARENT ACCESS (v3) — managed by the CLASS TEACHER (ClassTeacher.html)
@@ -19228,7 +19355,7 @@ function nativeRestorePayload_(username, role) {
 }
 
 
-  const __fnMap = { doGet, attRosterRows_, attMonthRows_, attBuildClass_, addStudent, getMonthlyAttendance, getMonthlyAttendanceBatch, getDaysSavedBatch, getYearlyAttendanceSummary, legacyCheckLogin_v1_DISABLED, getParentPortalData, logout, setTeacherSession, getTeacherSession, getTodayPresentCount, clearTeacherSession, ensureUsersSheet, homeroomMap_, getTeacherList, getTeachers, addTeacher, updateTeacher, deleteTeacher, logActivity, getActivityLog, getCurrentStatus, getDeadlineData, setDeadlineRange, setStatus, getDeadline, setDeadline, resolveClassLevel, extractFormNumber, primaryClassSheetName_, primaryStudentSheetNames_, studentSheetForClass_, classMatchesExam, dateToInt, todayInt, sheetDateToLocal, getExamCategoriesForClass, getExamsForClass, getSubjectsForClassAndTeacher, getScoresSheet, ensureScoresSheetLegacy, ensureScoresSheet, getStudentCountForClass, getStudentsForClass, getStudentsForScoring, mergeScores, submitScoresByName, getExistingScores, submitOrUpdateScores, getScoreReport, getClassExamReport, getScoreTrackingDataLegacy_, openClassSheet, openAttendanceSheet, ensureAttendanceSheet, attAssertClass_, getAttendanceStudents, classLevelMatch, submitAttendance, logAttendanceSummary, getTODStudents, submitTOD, getTeacherProfile, fetchProfile, fetchReport, fetchExamTypes, getTrackingExamTypes, getTrackingReport, clean, lower, sameClass, addSubject, readSubjectsFromAssignment, getSubjectsByClass, getClassSheetId, getClasses, getClassExamTypes, getExamSubTypes, examScoreToGrade_, examGradeToPoint_, examPointToDivision_, examBest7PointSum_, examNormalizeDivisionKey_, examBest7SummaryFromSubjects_, getExamResults, fetchTopPanelData, getStudentListRaw, getStudentList, generateUniqueAdmNo, findDuplicateAdmNos, admDefaultPrefix_, admSeriesConfig_, admSeriesFormat_, admSeriesNextFor_, getAdmissionSeries, saveAdmissionSeries, previewNextAdmNo, admEnsureStudentCols_, admPremTakenBy_, saveStudent, deleteStudent, getAcademicClassesRaw, getAcademicClasses, saveAcademicClass, deleteAcademicClass, getAcademicSubjectsRaw, getAcademicSubjects, saveAcademicSubject, deleteAcademicSubject, getAcademicExamsRaw, isoLocal, getAcademicExams, getActiveExamsForTeacher, saveAcademicExam, checkAndDeactivatePastExams, deleteAcademicExam, publishExamResults, getTimetable, saveTimetable, getMessages, sendMessage, changeTeacherPassword, saveStaffRecord, getStaffRecords, deleteStaffRecord, getFinancialSummary, getAcademicStats, updateStudentStatus, updateClassStatus, updateSubjectStatus, getMonitorData, saveSystemConfig, saveSchoolConfig, saveAdminProfile, changeAdminPassword, checkParentLogin, getClassesAndExamTypes, getStudentsForParent, getStudentReport, readByAliases, getAllParentAssignments, addParentAssignment, deleteParentAssignment, getTeacherClasses, isSubjectValidForClass, getExamNamesForTracking, getScoreTrackingData, norm, formNo, classSame, subjectSame, detectCategory, resolveExamType, getTeacherFullName, migrateScoresToFormSheets, authorizeDriveAccess, saveTODReport, getMyTODDates, getMyTODReports, deleteTODReport, getTODReportByDate, getTODWeeklyReport, mapSheetName, getOrCreateMapSheet, saveStudentSubjectMapping, getStudentsAndMappingForSubject, getSubjectMappedCount, getSubjectMappingSummary, ensureAcademicYearsSheet, ensureAlumniSheet, progGetAcademicYears, progSetActiveYear, progCreateAcademicYear, progPromoteStudents, progGetAlumni, getClassTeachersWithAttendanceStatus, colIdx, addParent, ensureParentsSheet, getParentList, updateParent, deleteParent, getLoginPage, getIndexPage, getParentPortalHtml, legacyCheckLogin_v2_DISABLED, getSchoolAnnouncements, getAttendanceRecords, col, getAllExamResults, clearAllActivityLogs, legacyCheckLogin_v3_DISABLED, smsCheckLoginCore_, getDashboardKeyFromPosition, ensureDashboardAccessSheet_, getDashboardAccessPolicies, saveDashboardAccessPolicies, saveDashboardAccessState, logDashboardAccessEvent_, getDashboardAccessEvents, forceLogoutDashboard, canAccessDashboard, evalRichDashboardPolicy_, checkCurrentDashboardAccess, getAccessDeniedPage, logDashboardBlockedAttempt, behLevel_, ensureBehaviorSheet_, behNorm_, behClassKey_, behTeacherClasses_, add, behCanAccess_, getMyHomeroomClasses, behReadMap_, getBehaviorSheet, saveBehaviors, fetchReportBehaviors, smsNewToken_, smsEndSession, smsStoreScript_, smsClearScript_, smsAppendScript_, smsInjectRestore_, drop, run, smsDashboardFor_, smsRestoreSession, smsParentData_, smsParentHtml_, tryBoot, checkLogin, acsSheet_, getAcademicSettings, saveAcademicSettings, behIsClassTeacher_, behFindTeacher_, behResolveClassTeacher_, testSecondMaster, _now_, _dashNorm_, _userNorm_, _bool_, _isBlockingValue_, normalizeDashboardKey_, _dashboardAliasKeys_, _defaultDashboardPolicy_, _mergePolicy_, _logDashboardAccessEvent_, _readDashboardPolicyStores_, _normalisePolicyStore_, getDashboardPolicy, saveDashboardUserAccess, clearDashboardUserAccess, _denyDashboardAccess_, _dashboardFeaturesPermit_, checkDashboardWriteAccess, sendDashboardNotice, _escapeHtml_, ctpNorm_, ctpMakeUsername_, ctpMyClasses_, ctpClassAllowed_, ctpGetParentsPanel, ctpSuggestUsername, ctpUsernameTaken_, ctpSaveParent, ctpDeleteParent, ctpLoginLink_, ctpGetLoginLink, parentIdentity_, parentGetReportCard, parentAttendanceMark_, parentGetAttendance, rbacDefaultOff_, rbacKeyForPosition_, rbacFeatures_, rbacMyFeatures, rbacInject_, calc, apply, poll, rbacIsInactiveStaff_, rbacIsInactiveParent_, rbacAcademicConflict_, acadCheck_, acadStaffRole_, acadIsManagedStaff_, acadGetStaff, acadAddStaff, acadUpdateStaff, acadDeleteStaff, acadGetParents, acadAddParent, acadUpdateParent, acadDeleteParent, acadSetActiveRaw_, acadSetActive, setupAllSheets, mk, rbacAutoSetup_, acadProfileSession_, acadGetMyProfile, acadSaveMyPicture, acadSaveMyProfile, psClassSheetName_, psSchema_, psEnsureSheet_, psRunSetup_, psSetupAll, psAutoSetup_, psSchemaReport, onOpen, psShowReport, psNextNumber_, psAudit_, psNum_, psRound_, psFmtDate_, psPlain_, psToday_, psNow_, psId_, psNormClass_, psNormName_, psErr_, psMemoReset_, psTable_, forget, psNextNumbers_, psHash_, psSalt_, psRoleKey_, psFileForRole_, psAdminByUsername_, psUsernameTaken_, psBootCached_, psBootInject_, psTryAdminLogin_, psInactiveStaffBlock_, psResetSchoolManager, psSessionFromToken_, psCacheVer_, psCacheBump_, psCacheGet_, psCachePut_, psCacheKey_, psCall, psApi_, psAuditS_, psAllStudents_, psSettings_, psActiveYear_, psActiveTerm_, psBalances_, psTxn_, psPickAccount_, psInRange_, api_meta_, api_metaFresh_, api_changeMyPassword_, api_managerUpdateAccount_, api_managerSetAcademicYear_, psBackupFolder_, psCreateSystemBackup_, api_managerBackupsList_, api_managerBackupCreate_, api_managerBackupRestore_, api_classes_, api_students_, api_subjects_, api_exams_, psGradeFor_, api_results_, api_exam_types_, api_acad_settings_, api_exam_deadline_, api_full_results_, api_attendance_, api_overview_, api_adminsList_, api_adminsSave_, api_adminsDelete_, api_adminsReset_, api_staffList_, psRelinkClassTeacher_, api_staffSave_, api_staffDelete_, api_staffReset_, psLineStatus_, fin_totals_, fin_feesList_, fin_feesSave_, fin_feesDelete_, fin_invList_, fin_invGenerate_, fin_invAddLine_, fin_invDiscount_, fin_invCancel_, fin_studentSearch_, fin_studentAccount_, fin_pay_, fin_receipt_, fin_voidPayment_, fin_payments_, fin_debtors_, fin_fuList_, fin_fuSave_, fin_fuDelete_, fin_incomeList_, fin_incomeSave_, fin_incomeVoid_, fin_expenses_, fin_expenseSave_, fin_expensePay_, fin_expenseReverse_, fin_expenseDelete_, fin_catList_, fin_catSave_, fin_catDelete_, fin_settingsList_, fin_settingsSave_, fin_accountsList_, fin_accountsSave_, fin_txns_, fin_transfer_, fin_reconList_, fin_reconSave_, fin_dashboard_, fin_report_, fin_supList_, fin_supSave_, fin_supDelete_, fin_reqList_, fin_reqSave_, fin_reqStatus_, fin_reqReceive_, fin_stockItems_, fin_stockSaveItem_, fin_stockMove_, fin_stockMovements_, fin_auditList_, fin_auditChecks_, psSettingSet_, psBranding_, psBrand_, api_schoolSave_, api_termsList_, api_termsSave_, acsReadAll_, acadImportStudents, rbacSchool_, rbacTodSchool_, rbacBrand_, esc, acsAdmFormat_, acsAdmBuild_, lpInjectPanel_, lpSession_, lpSheet_, lpTz_, lpDateStr_, lpFormNumber_, lpClassKey_, lpSex_, lpStr_, lpNum_, lpClean_, cnt, lpFindRow_, lpBootstrap, lpGetSyllabus, lpStudentCounts, pick, lpSave, lpList, lpGet, lpDelete, lpPdf, featSchoolProfile_, getSchoolProfile, getPublicBranding, featNormClass_, featNormSex_, featNormDob_, importStudents, nextAdm, featMyUserRow_, getMyProfile, saveMyProfile, _hosAssert_, _hosYmd_, _hosRosterSheet_, getTODTeachersHOS, getTODRosterHOS, saveTODRosterHOS, deleteTODRosterHOS, getAllTODReportsHOS, getTODReportDetailHOS, _ttDefaults_, _ttSheet_, _ttSlotSheet_, _ttSetSheet_, _ttGetSet_, _ttPutSet_, _ttReadSlots_, _ttAssertAcademic_, _ttBlocked_, _ttTeachers_, getTTAdminData, saveTTSettings, saveTTSlot, _ttTouch_, clearTTClass, applyTimetable, getPublishedTimetable, _ttNorm_, _ttSubjectsForClass_, _ttTeachersFor_, getTTLoad, saveTTLoad, _ttContig_, parse, generateTimetable, gk, bk, reg, blockStart, freeTeacher, put, adj, _todYmd_, _todSheet_, _todRosterSheet_, _todSchoolInfo_, _todClassNames_, _todClassSheet_, _todRoster_, _todRowToObj_, _todAll_, _todMe_, _todMyList_, _todCleanRows_, getTODFormData, getTODSchoolInfo, saveTODDutyReport, listMyTODDutyReports, deleteTODDutyReport, api_todTeachers_, api_todRosterList_, api_todRosterSave_, api_todRosterDelete_, api_todReports_, api_todReport_, rbacNormAdm_, rbacCleanName_, rbacLiveStudent_, parentFromToken_, parentPortalData, apiRequest, ab_handlers_, ab_d_, ab_method_, ab_lock_, ab_checkLock_, ab_obj_, ab_school_, ab_students_, ab_feeStructures_, ab_payments_, ab_statements_, ab_overview_, ab_clean_, ab_page_, ab_report_, ab_recordPayment_, ab_saveFee_, ab_updateRecord_, ab_deleteRecord_, ab_saveIncome_, ab_saveExpense_, ab_expenseStatus_, ab_saveBank_, ab_cashbook_, ab_dailyClosing_, ab_savePurchase_, ab_saveSupplier_, ab_adjustStock_, ab_setLock_, nativeBlockedPayload_, nativeFindStaff_, nativeLoginPayload_, nativeRestorePayload_ };
+  const __fnMap = { doGet, attRosterRows_, attMonthRows_, attBuildClass_, addStudent, getMonthlyAttendance, getMonthlyAttendanceBatch, getDaysSavedBatch, getYearlyAttendanceSummary, legacyCheckLogin_v1_DISABLED, getParentPortalData, logout, setTeacherSession, getTeacherSession, getTodayPresentCount, clearTeacherSession, ensureUsersSheet, homeroomMap_, getTeacherList, getTeachers, addTeacher, updateTeacher, deleteTeacher, logActivity, getActivityLog, getCurrentStatus, getDeadlineData, setDeadlineRange, setStatus, getDeadline, setDeadline, resolveClassLevel, extractFormNumber, primaryClassSheetName_, primaryStudentSheetNames_, studentSheetForClass_, classMatchesExam, dateToInt, todayInt, sheetDateToLocal, getExamCategoriesForClass, getExamsForClass, getSubjectsForClassAndTeacher, getScoresSheet, ensureScoresSheetLegacy, ensureScoresSheet, getStudentCountForClass, getStudentsForClass, getStudentsForScoring, mergeScores, submitScoresByName, getExistingScores, submitOrUpdateScores, getScoreReport, getClassExamReport, getScoreTrackingDataLegacy_, openClassSheet, openAttendanceSheet, ensureAttendanceSheet, attAssertClass_, getAttendanceStudents, classLevelMatch, submitAttendance, logAttendanceSummary, getTODStudents, submitTOD, getTeacherProfile, fetchProfile, fetchReport, fetchExamTypes, getTrackingExamTypes, getTrackingReport, clean, lower, sameClass, addSubject, readSubjectsFromAssignment, getSubjectsByClass, getClassSheetId, getClasses, getClassExamTypes, getExamSubTypes, examScoreToGrade_, examGradeToPoint_, examPointToDivision_, examBest7PointSum_, examNormalizeDivisionKey_, examBest7SummaryFromSubjects_, getExamResults, fetchTopPanelData, getStudentListRaw, getStudentList, generateUniqueAdmNo, findDuplicateAdmNos, admDefaultPrefix_, admSeriesConfig_, admSeriesFormat_, admSeriesNextFor_, getAdmissionSeries, saveAdmissionSeries, previewNextAdmNo, admEnsureStudentCols_, admPremTakenBy_, saveStudent, deleteStudent, getAcademicClassesRaw, getAcademicClasses, saveAcademicClass, deleteAcademicClass, getAcademicSubjectsRaw, getAcademicSubjects, saveAcademicSubject, deleteAcademicSubject, getAcademicExamsRaw, isoLocal, getAcademicExams, getActiveExamsForTeacher, saveAcademicExam, checkAndDeactivatePastExams, deleteAcademicExam, publishExamResults, getTimetable, saveTimetable, getMessages, sendMessage, changeTeacherPassword, saveStaffRecord, getStaffRecords, deleteStaffRecord, getFinancialSummary, getAcademicStats, updateStudentStatus, updateClassStatus, updateSubjectStatus, getMonitorData, saveSystemConfig, saveSchoolConfig, saveAdminProfile, changeAdminPassword, checkParentLogin, getClassesAndExamTypes, getStudentsForParent, getStudentReport, readByAliases, getAllParentAssignments, addParentAssignment, deleteParentAssignment, getTeacherClasses, isSubjectValidForClass, getExamNamesForTracking, getScoreTrackingData, norm, formNo, classSame, subjectSame, detectCategory, resolveExamType, getTeacherFullName, migrateScoresToFormSheets, authorizeDriveAccess, saveTODReport, getMyTODDates, getMyTODReports, deleteTODReport, getTODReportByDate, getTODWeeklyReport, mapSheetName, getOrCreateMapSheet, saveStudentSubjectMapping, getStudentsAndMappingForSubject, getSubjectMappedCount, getSubjectMappingSummary, ensureAcademicYearsSheet, ensureAlumniSheet, progGetAcademicYears, progSetActiveYear, progCreateAcademicYear, progPromoteStudents, progGetAlumni, getClassTeachersWithAttendanceStatus, colIdx, addParent, ensureParentsSheet, getParentList, updateParent, deleteParent, getLoginPage, getIndexPage, getParentPortalHtml, legacyCheckLogin_v2_DISABLED, getSchoolAnnouncements, getAttendanceRecords, col, getAllExamResults, clearAllActivityLogs, legacyCheckLogin_v3_DISABLED, smsCheckLoginCore_, getDashboardKeyFromPosition, ensureDashboardAccessSheet_, getDashboardAccessPolicies, saveDashboardAccessPolicies, saveDashboardAccessState, logDashboardAccessEvent_, getDashboardAccessEvents, forceLogoutDashboard, canAccessDashboard, evalRichDashboardPolicy_, checkCurrentDashboardAccess, getAccessDeniedPage, logDashboardBlockedAttempt, behLevel_, ensureBehaviorSheet_, behNorm_, behClassKey_, behTeacherClasses_, add, behCanAccess_, getMyHomeroomClasses, behReadMap_, getBehaviorSheet, saveBehaviors, fetchReportBehaviors, smsNewToken_, smsEndSession, smsStoreScript_, smsClearScript_, smsAppendScript_, smsInjectRestore_, drop, run, smsDashboardFor_, smsRestoreSession, smsParentData_, smsParentHtml_, tryBoot, checkLogin, acsSheet_, getAcademicSettings, saveAcademicSettings, behIsClassTeacher_, behFindTeacher_, behResolveClassTeacher_, testSecondMaster, _now_, _dashNorm_, _userNorm_, _bool_, _isBlockingValue_, normalizeDashboardKey_, _dashboardAliasKeys_, _defaultDashboardPolicy_, _mergePolicy_, _logDashboardAccessEvent_, _readDashboardPolicyStores_, _normalisePolicyStore_, getDashboardPolicy, saveDashboardUserAccess, clearDashboardUserAccess, _denyDashboardAccess_, _dashboardFeaturesPermit_, checkDashboardWriteAccess, sendDashboardNotice, _escapeHtml_, ctpNorm_, ctpMakeUsername_, ctpMyClasses_, ctpClassAllowed_, ctpGetParentsPanel, ctpSuggestUsername, ctpUsernameTaken_, ctpSaveParent, ctpDeleteParent, ctpLoginLink_, ctpGetLoginLink, parentIdentity_, parentGetReportCard, parentAttendanceMark_, parentGetAttendance, rbacDefaultOff_, rbacKeyForPosition_, rbacFeatures_, rbacMyFeatures, rbacInject_, calc, apply, poll, rbacIsInactiveStaff_, rbacIsInactiveParent_, rbacAcademicConflict_, acadCheck_, acadStaffRole_, acadIsManagedStaff_, acadGetStaff, acadAddStaff, acadUpdateStaff, acadDeleteStaff, acadGetParents, acadAddParent, acadUpdateParent, acadDeleteParent, acadSetActiveRaw_, acadSetActive, setupAllSheets, mk, rbacAutoSetup_, acadProfileSession_, acadGetMyProfile, acadSaveMyPicture, acadSaveMyProfile, psClassSheetName_, psSchema_, psEnsureSheet_, psRunSetup_, psSetupAll, psAutoSetup_, psSchemaReport, onOpen, psShowReport, psNextNumber_, psAudit_, psNum_, psRound_, psFmtDate_, psPlain_, psToday_, psNow_, psId_, psNormClass_, psNormName_, psErr_, psMemoReset_, psTable_, forget, psNextNumbers_, psHash_, psSalt_, psRoleKey_, psFileForRole_, psAdminByUsername_, psUsernameTaken_, psBootCached_, psBootInject_, psTryAdminLogin_, psInactiveStaffBlock_, psResetSchoolManager, psSessionFromToken_, psCacheVer_, psCacheBump_, psCacheGet_, psCachePut_, psCacheKey_, psCall, psApi_, psAuditS_, psAllStudents_, psSettings_, psActiveYear_, psActiveTerm_, psBalances_, psTxn_, psPickAccount_, psInRange_, api_meta_, api_metaFresh_, api_changeMyPassword_, api_managerUpdateAccount_, api_managerSetAcademicYear_, psBackupFolder_, psCreateSystemBackup_, api_managerBackupsList_, api_managerBackupCreate_, api_managerBackupRestore_, api_classes_, api_students_, api_subjects_, api_exams_, psGradeFor_, api_results_, api_exam_types_, api_acad_settings_, api_exam_deadline_, api_full_results_, api_attendance_, api_overview_, api_adminsList_, api_adminsSave_, api_adminsDelete_, api_adminsReset_, api_staffList_, psRelinkClassTeacher_, api_staffSave_, api_staffDelete_, api_staffReset_, psLineStatus_, fin_totals_, fin_feesList_, fin_feesSave_, fin_feesDelete_, fin_invList_, fin_invGenerate_, fin_invAddLine_, fin_invDiscount_, fin_invCancel_, fin_studentSearch_, fin_studentAccount_, fin_pay_, fin_receipt_, fin_voidPayment_, fin_payments_, fin_debtors_, fin_fuList_, fin_fuSave_, fin_fuDelete_, fin_incomeList_, fin_incomeSave_, fin_incomeVoid_, fin_expenses_, fin_expenseSave_, fin_expensePay_, fin_expenseReverse_, fin_expenseDelete_, fin_catList_, fin_catSave_, fin_catDelete_, fin_settingsList_, fin_settingsSave_, fin_accountsList_, fin_accountsSave_, fin_txns_, fin_transfer_, fin_reconList_, fin_reconSave_, fin_dashboard_, fin_report_, fin_supList_, fin_supSave_, fin_supDelete_, fin_reqList_, fin_reqSave_, fin_reqStatus_, fin_reqReceive_, fin_stockItems_, fin_stockSaveItem_, fin_stockMove_, fin_stockMovements_, fin_auditList_, fin_auditChecks_, psSettingSet_, psBranding_, psBrand_, api_schoolSave_, api_termsList_, api_termsSave_, acsReadAll_, acadImportStudents, rbacSchool_, rbacTodSchool_, rbacBrand_, esc, acsAdmFormat_, acsAdmBuild_, lpInjectPanel_, lpSession_, lpSheet_, lpTz_, lpDateStr_, lpFormNumber_, lpClassKey_, lpSex_, lpStr_, lpNum_, lpClean_, cnt, lpFindRow_, lpBootstrap, lpGetSyllabus, lpStudentCounts, pick, lpSave, lpList, lpGet, lpDelete, lpPdf, featSchoolProfile_, getSchoolProfile, getPublicBranding, featNormClass_, featNormSex_, featNormDob_, importStudents, nextAdm, featMyUserRow_, getMyProfile, saveMyProfile, _hosAssert_, _hosYmd_, _hosRosterSheet_, getTODTeachersHOS, getTODRosterHOS, saveTODRosterHOS, deleteTODRosterHOS, getAllTODReportsHOS, getTODReportDetailHOS, _ttDefaults_, _ttSheet_, _ttSlotSheet_, _ttSetSheet_, _ttGetSet_, _ttPutSet_, _ttReadSlots_, _ttAssertAcademic_, _ttBlocked_, _ttTeachers_, getTTAdminData, saveTTSettings, saveTTSlot, _ttTouch_, clearTTClass, applyTimetable, getPublishedTimetable, _ttNorm_, _ttSubjectsForClass_, _ttTeachersFor_, getTTLoad, saveTTLoad, _ttContig_, parse, generateTimetable, gk, bk, reg, blockStart, freeTeacher, put, adj, _todYmd_, _todSheet_, _todRosterSheet_, _todSchoolInfo_, _todClassNames_, _todClassSheet_, _todRoster_, _todRowToObj_, _todAll_, _todMe_, _todMyList_, _todCleanRows_, getTODFormData, getTODSchoolInfo, saveTODDutyReport, listMyTODDutyReports, deleteTODDutyReport, api_todTeachers_, api_todRosterList_, api_todRosterSave_, api_todRosterDelete_, api_todReports_, api_todReport_, rbacNormAdm_, rbacCleanName_, rbacLiveStudent_, parentFromToken_, parentBuildFeeSummary_, parentPortalData, ab_resolveSession_, ab_queueD1Op_, ab_d1Method_, apiRequest, ab_handlers_, ab_d_, ab_method_, ab_lock_, ab_checkLock_, ab_obj_, ab_school_, ab_students_, ab_feeStructures_, ab_payments_, ab_statements_, ab_overview_, ab_clean_, ab_page_, ab_report_, ab_recordPayment_, ab_saveFee_, ab_updateRecord_, ab_deleteRecord_, ab_saveIncome_, ab_saveExpense_, ab_expenseStatus_, ab_saveBank_, ab_cashbook_, ab_dailyClosing_, ab_savePurchase_, ab_saveSupplier_, ab_adjustStock_, ab_setLock_, nativeBlockedPayload_, nativeFindStaff_, nativeLoginPayload_, nativeRestorePayload_ };
   if (typeof __fnMap[fnName] !== "function") {
     throw new Error("Function not found: " + fnName);
   }
