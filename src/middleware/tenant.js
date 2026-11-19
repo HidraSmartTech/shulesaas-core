@@ -1,48 +1,52 @@
 // Middleware ya Kutambua Shule (Tenant Isolation Middleware)
 // Inachambua Subdomain au Query Parameter (?school=slug) na kutafuta shule kwenye Cloudflare D1
 
+const PLATFORM_RESERVED = new Set([
+  "www", "api", "app", "admin", "superadmin", "mail", "support",
+  "help", "blog", "status", "cdn", "dashboard", "login", "register"
+]);
+
 export async function resolveTenant(request, env) {
   const url = new URL(request.url);
   const hostname = url.hostname.toLowerCase();
-  
+
   let subdomain = null;
 
-  // 1. Angalia kama kuna Query Parameter (?school=feza au ?tenant=feza) kwa ajili ya majaribio
+  // 1. Angalia Query Parameter (?school=feza au ?tenant=feza)
   const schoolParam = url.searchParams.get("school") || url.searchParams.get("tenant");
   if (schoolParam) {
     subdomain = schoolParam.trim().toLowerCase();
   } else {
     // 2. Angalia Subdomain kutoka kwenye URL
     const mainDomain = (env.MAIN_DOMAIN || "").toLowerCase().trim();
-    
+
     if (mainDomain && hostname.endsWith("." + mainDomain)) {
-      const prefix = hostname.replace("." + mainDomain, "");
-      if (prefix && prefix !== "www" && !prefix.includes(".")) {
+      const prefix = hostname.slice(0, -(mainDomain.length + 1));
+      if (prefix && !PLATFORM_RESERVED.has(prefix) && !prefix.includes(".")) {
         subdomain = prefix;
       }
-    } else {
-      // Direct IP / workers.dev / localhost handling
+    } else if (!hostname.endsWith(".workers.dev") && !hostname.endsWith(".pages.dev") && hostname !== "localhost") {
+      // Custom domain fallback (e.g., shule.domainyako.co.tz)
       const parts = hostname.split(".");
-      if (parts.length >= 3 && parts[0] !== "www") {
-        subdomain = parts[0];
+      if (parts.length >= 3 && !PLATFORM_RESERVED.has(parts)) {
+        subdomain = parts;
       }
     }
   }
 
-  // Ikiwa hakuna subdomain au parameter iliyopatikana
   if (!subdomain) {
     return {
       ok: false,
       status: 400,
-      error: "Tafadhali tumia Subdomain ya shule yako (mfano: https://shule.domainyako.com) au weka parameter ya '?school=slug' kwenye URL.",
+      error: "Tafadhali tumia Subdomain ya shule yako (mfano: https://shulesaas.co.tz) au weka parameter ya '?school=slug' kwenye URL.",
     };
   }
 
   // 3. Tafuta Shule kwenye Database ya Cloudflare D1
   try {
     const stmt = env.DB.prepare(
-      `SELECT id, name, subdomain, education_level, plan, status, max_students, 
-              logo_url, contact_email, contact_phone, subscription_expires_at 
+      `SELECT id, name, subdomain, education_level, plan, status, max_students,
+              logo_url, contact_email, contact_phone, subscription_expires_at
        FROM schools WHERE lower(trim(subdomain)) = ? LIMIT 1`
     );
     const school = await stmt.bind(subdomain.toLowerCase()).first();
@@ -51,12 +55,13 @@ export async function resolveTenant(request, env) {
       return {
         ok: false,
         status: 404,
-        error: `Shule yenye anwani ya '${subdomain}' haijajajajiliwa au haipatikani kwenye mfumo.`,
+        error: `Shule yenye anwani ya '${subdomain}' haijasajiliwa au haipatikani kwenye mfumo.`,
       };
     }
 
     // 4. Angalia Hali ya Akaunti ya Shule (Status Check)
-    if (school.status === "suspended") {
+    const statusLower = String(school.status || "active").toLowerCase();
+    if (statusLower === "suspended") {
       return {
         ok: false,
         status: 403,
@@ -68,8 +73,8 @@ export async function resolveTenant(request, env) {
     if (school.subscription_expires_at) {
       const expiryDate = new Date(school.subscription_expires_at).getTime();
       const currentDate = Date.now();
-      
-      if (!isNaN(expiryDate) && expiryDate < currentDate) {
+
+      if (!Number.isNaN(expiryDate) && expiryDate < currentDate) {
         return {
           ok: false,
           status: 402,
@@ -78,16 +83,22 @@ export async function resolveTenant(request, env) {
       }
     }
 
-    // Tenant imethibitishwa kikamilifu
+    const eduLevel = school.education_level || "O-Level";
+    const lvlUpper = eduLevel.toUpperCase();
+    const isPrimary = lvlUpper.includes("PRIMARY") || lvlUpper.includes("PRE") || lvlUpper === "NURSERY";
+
     return {
       ok: true,
       tenant: {
         id: school.id,
         name: school.name,
         subdomain: school.subdomain,
-        educationLevel: school.education_level || "O-Level",
+        educationLevel: eduLevel,
+        education_level: eduLevel,
+        isPrimary,
+        isSecondary: !isPrimary,
         plan: (school.plan || "basic").toLowerCase(),
-        status: school.status || "active",
+        status: statusLower,
         maxStudents: school.max_students || 500,
         logoUrl: school.logo_url || "",
         contactEmail: school.contact_email || "",
