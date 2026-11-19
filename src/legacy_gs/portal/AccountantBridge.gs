@@ -1,18 +1,36 @@
 // ============================================================
-// ACCOUNTANT BRIDGE — connects Accountant_v2.html to PrimaryApi.gs
-//
-// Accountant_v2.html calls  google.script.run.apiRequest({ action, token, ... })
-// This file receives those calls, checks the login token (same as psCall),
-// and translates them to the existing fin_* functions and sheets.
-//
-// Install: add this file to the Apps Script project next to PrimaryApi.gs,
-// save, then Deploy → Manage deployments → Edit → New version.
+// ACCOUNTANT BRIDGE — connects Accountant_v2.html to PrimaryApi.gs & Cloudflare D1
 // ============================================================
 
-// SPEED: read-only pages are kept in the server cache for AB_CACHE_TTL_ seconds.
-// Every write made here (or through psCall) bumps the cache version, so the next open is always fresh.
 var AB_CACHE_TTL_ = 60;
 var AB_MEMO_ = {};
+
+function ab_resolveSession_(token) {
+  if (typeof __HOST__ !== 'undefined' && __HOST__ && __HOST__.session && __HOST__.session.username) {
+    return {
+      username: __HOST__.session.username,
+      name: __HOST__.session.fullName || __HOST__.session.username,
+      role: String(__HOST__.session.role || '').toLowerCase()
+    };
+  }
+  return psSessionFromToken_(token);
+}
+
+function ab_queueD1Op_(op) {
+  if (typeof __HOST__ !== 'undefined' && __HOST__ && Array.isArray(__HOST__.d1Ops)) {
+    __HOST__.d1Ops.push(op);
+  }
+}
+
+function ab_d1Method_(m) {
+  m = String(m || '').toLowerCase();
+  if (m.indexOf('mpesa') >= 0 || m.indexOf('m-pesa') >= 0 || m.indexOf('mobile') >= 0) return 'mobile_money';
+  if (m.indexOf('control') >= 0 || m.indexOf('gepg') >= 0) return 'control_number';
+  if (m.indexOf('bank') >= 0) return 'bank';
+  if (m.indexOf('cheque') >= 0) return 'cheque';
+  if (m.indexOf('cash') >= 0) return 'cash';
+  return 'other';
+}
 
 function apiRequest(payload) {
   payload = payload || {};
@@ -21,9 +39,11 @@ function apiRequest(payload) {
   var action = String(payload.action || '');
   if (action === 'logout') return { ok: true, data: null };
 
-  var s = psSessionFromToken_(payload.token);
+  var s = ab_resolveSession_(payload.token);
   if (!s) return { ok: false, code: 'SESSION', error: 'Your session has expired. Please log in again.' };
-  if (s.role !== 'accountant') return { ok: false, error: 'You are not allowed to do this.' };
+  if (s.role !== 'accountant' && s.role !== 'bursar' && s.role !== 'schoolmanager' && s.role !== 'headofschool' && s.role !== 'headteacher') {
+    return { ok: false, error: 'You are not allowed to do this.' };
+  }
 
   var h = ab_handlers_()[action];
   if (!h) return { ok: false, error: 'Unknown action: ' + action };
@@ -117,7 +137,6 @@ function ab_payments_() {
   return psTable_('Payments').rows().filter(function (r) { return r.Status !== 'Voided'; });
 }
 
-// Per-student statements: fee = fee structure for the class (active year), paid = valid payments that year
 function ab_statements_() {
   var year = psActiveYear_(), fees = ab_feeStructures_().filter(function (f) { return f.academicYear === year; });
   var pays = ab_payments_().filter(function (p) { return String(p.AcademicYear) === year; });
@@ -189,7 +208,7 @@ function ab_clean_(o) { var c = {}; Object.keys(o).forEach(function (k) { if (k.
 function ab_page_(s, p) {
   var page = String(p.page || 'dashboard');
   var year = psActiveYear_();
-  var o, t;
+  var o;
   switch (page) {
     case 'dashboard': {
       o = ab_overview_();
@@ -339,7 +358,7 @@ function ab_report_(s, period) {
   };
 }
 
-// ───────────── writes ─────────────
+// ───────────── writes (Synced to Virtual Sheets + Cloudflare D1 SQL Tables) ─────────────
 function ab_recordPayment_(s, p) {
   var adm = String(p.studentId || '').trim(), amount = psRound_(psNum_(p.amount)), date = p.date || psToday_();
   if (!adm) psErr_('Please select a student.');
@@ -354,7 +373,6 @@ function ab_recordPayment_(s, p) {
     if (dup) psErr_('DUPLICATE: a payment of ' + amount + ' for this student on ' + ab_d_(date) + ' already exists.');
   }
 
-  // make sure the student is billed for this term (from the fee structure)
   var invT = psTable_('FeeInvoices');
   var findInv = function () {
     return invT.rows().filter(function (r) { return r.AdmNo === adm && String(r.AcademicYear) === year && r.Term === term && r.Status !== 'Cancelled'; });
@@ -368,6 +386,24 @@ function ab_recordPayment_(s, p) {
 
   var res = fin_pay_(s, { admNo: adm, amount: amount, method: ab_method_(p.paymentMethod), date: date,
                           reference: p.reference || '', invoiceNo: lines[0].InvoiceNo, notes: p.paymentType || '' });
+
+  // Queue atomic insert into D1 `payments` table
+  ab_queueD1Op_({
+    type: 'insert_payment',
+    receipt_no: res.receiptNo,
+    student_id: adm,
+    student_name: st.Name,
+    class_level: st.Class,
+    academic_year: year,
+    fee_category: p.paymentType || 'Tuition',
+    amount_paid: amount,
+    payment_method: ab_d1Method_(p.paymentMethod),
+    reference_no: res.reference || '',
+    payment_date: res.date || date,
+    recorded_by: s.username || s.name || '',
+    notes: term
+  });
+
   var sch = ab_school_();
   return { receiptNo: res.receiptNo, studentId: adm, studentName: st.Name, admissionNo: adm, className: st.Class,
            amount: amount, paymentMethod: res.method, date: res.date, reference: res.reference, paymentType: p.paymentType || '',
@@ -383,7 +419,19 @@ function ab_saveFee_(s, p) {
     return psNormClass_(r.Class) === psNormClass_(cls) && r.Term === term && String(r.AcademicYear) === year && r.Status !== 'Inactive'; })[0];
   var rec = { Class: cls, Term: term, AcademicYear: year, FeeName: exists ? exists.FeeName : 'School Fees', Amount: psNum_(p.amount), Notes: p.description || '' };
   if (exists) rec.FeeID = exists.FeeID;
-  return fin_feesSave_(s, rec);
+  var saved = fin_feesSave_(s, rec);
+
+  ab_queueD1Op_({
+    type: 'upsert_fee_structure',
+    id: (saved && saved.FeeID) || rec.FeeID || ('fee_' + cls + '_' + term + '_' + year).replace(/\s+/g, '_'),
+    academic_year: year,
+    class_level: cls,
+    fee_name: rec.FeeName,
+    amount: rec.Amount,
+    term: term
+  });
+
+  return saved;
 }
 
 function ab_updateRecord_(s, p) {
@@ -392,8 +440,21 @@ function ab_updateRecord_(s, p) {
   if (p.entity === 'feeStructures') {
     var cur = psTable_('FeeStructure').rows().filter(function (r) { return r.FeeID === p.id; })[0];
     if (!cur) psErr_('Fee not found.');
-    return fin_feesSave_(s, { FeeID: cur.FeeID, Class: cur.Class, AcademicYear: String(cur.AcademicYear), FeeName: cur.FeeName,
-      Term: f.term || cur.Term, Amount: f.amount !== undefined ? f.amount : cur.Amount, Notes: f.description !== undefined ? f.description : cur.Notes });
+    var newTerm = f.term || cur.Term;
+    var newAmt = f.amount !== undefined ? f.amount : cur.Amount;
+    var saved = fin_feesSave_(s, { FeeID: cur.FeeID, Class: cur.Class, AcademicYear: String(cur.AcademicYear), FeeName: cur.FeeName,
+      Term: newTerm, Amount: newAmt, Notes: f.description !== undefined ? f.description : cur.Notes });
+
+    ab_queueD1Op_({
+      type: 'upsert_fee_structure',
+      id: cur.FeeID,
+      academic_year: String(cur.AcademicYear),
+      class_level: cur.Class,
+      fee_name: cur.FeeName,
+      amount: psNum_(newAmt),
+      term: newTerm
+    });
+    return saved;
   }
   if (p.entity === 'payments') {
     psErr_('A recorded payment cannot be edited. Delete (void) it and record it again with the correct details.');
@@ -405,10 +466,16 @@ function ab_deleteRecord_(s, p) {
   var id = String(p.id || '');
   ab_checkLock_(p.date);
   switch (p.entity) {
-    case 'payments':      return fin_voidPayment_(s, id, 'Deleted by accountant');
-    case 'feeStructures': return fin_feesDelete_(s, id);
-    case 'income':        return fin_incomeVoid_(s, id, 'Deleted by accountant');
-    case 'suppliers':     return fin_supDelete_(s, id);
+    case 'payments':
+      ab_queueD1Op_({ type: 'void_payment', receipt_no: id });
+      return fin_voidPayment_(s, id, 'Deleted by accountant');
+    case 'feeStructures':
+      ab_queueD1Op_({ type: 'delete_fee_structure', id: id });
+      return fin_feesDelete_(s, id);
+    case 'income':
+      return fin_incomeVoid_(s, id, 'Deleted by accountant');
+    case 'suppliers':
+      return fin_supDelete_(s, id);
     case 'purchases':
     case 'expenses': {
       if (/^ACC-/.test(id)) {
