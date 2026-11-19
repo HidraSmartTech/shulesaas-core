@@ -1,5 +1,5 @@
 // API Router & Plan Feature Guard
-// Inashughulikia maombi ya POST /api/gas, inakagua Vifurushi (Basic, Pro, Advanced), Roles, na Session Tokens.
+// Inashughulikia maombi ya POST /api/gas, inakagua Vifurushi (Basic, Pro, Advanced), Roles, Session Tokens, na Login Throttling.
 
 import { createD1Store } from "../emulator/store.js";
 import { runLegacy } from "../emulator/runtime.js";
@@ -138,6 +138,44 @@ function injectDashboardBootScript(html, tenant, rawToken) {
     : bootScript + html;
 }
 
+const MAX_LOGIN_FAILS = 5;
+const LOCKOUT_WINDOW_MS = 15 * 60 * 1000;
+
+async function checkLoginThrottle(db, schoolId, throttleKey) {
+  const row = await db.prepare(
+    "SELECT fails, first_at FROM login_failures WHERE school_id = ? AND key = ?"
+  ).bind(schoolId, throttleKey).first();
+
+  if (!row) return { blocked: false };
+
+  const firstAt = new Date(row.first_at).getTime();
+  if (Number.isFinite(firstAt) && Date.now() - firstAt > LOCKOUT_WINDOW_MS) {
+    await db.prepare("DELETE FROM login_failures WHERE school_id = ? AND key = ?").bind(schoolId, throttleKey).run();
+    return { blocked: false };
+  }
+
+  if (Number(row.fails) >= MAX_LOGIN_FAILS) {
+    const minsLeft = Math.max(1, Math.ceil((LOCKOUT_WINDOW_MS - (Date.now() - firstAt)) / 60000));
+    return {
+      blocked: true,
+      message: `Majaribio mengi ya kuingia yameshindikana. Tafadhali subiri dakika ${minsLeft} kabla ya kujaribu tena.`
+    };
+  }
+  return { blocked: false };
+}
+
+async function recordLoginFailure(db, schoolId, throttleKey) {
+  await db.prepare(
+    `INSERT INTO login_failures (school_id, key, fails, first_at)
+     VALUES (?, ?, 1, ?)
+     ON CONFLICT(school_id, key) DO UPDATE SET fails = fails + 1`
+  ).bind(schoolId, throttleKey, new Date().toISOString()).run();
+}
+
+async function clearLoginFailure(db, schoolId, throttleKey) {
+  await db.prepare("DELETE FROM login_failures WHERE school_id = ? AND key = ?").bind(schoolId, throttleKey).run();
+}
+
 export async function handleGasApiRequest({ request, env, tenant, readPage, combinedScriptCode }) {
   let body = {};
   try {
@@ -150,7 +188,7 @@ export async function handleGasApiRequest({ request, env, tenant, readPage, comb
   }
 
   const method = typeof body.method === "string" ? body.method.trim() : "";
-  const args = Array.isArray(body.args) ? body.args : [];
+  const args = Array.isArray(body.args) ? body.args :;
   const token = typeof body.token === "string" ? body.token.trim() : "";
 
   if (!method || !/^[A-Za-z_$][\w$]{0,99}$/.test(method) || method.endsWith("_")) {
@@ -216,7 +254,7 @@ export async function handleGasApiRequest({ request, env, tenant, readPage, comb
         schoolId: tenant.id,
         school: schoolContext,
         fn: method,
-        args: [],
+        args:,
         session: null,
         readPage,
         combinedScriptCode,
@@ -267,7 +305,7 @@ export async function handleGasApiRequest({ request, env, tenant, readPage, comb
     );
   }
 
-  const session = { username: account.username, role: account.role };
+  const session = { username: account.username, fullName: account.full_name, role: account.role };
 
   try {
     const result = await runLegacy({
@@ -307,6 +345,15 @@ async function handleLogin(env, store, tenant, args, readPage, combinedScriptCod
       });
     }
 
+    const throttleKey = `login:${loginId.toLowerCase()}`;
+    const throttle = await checkLoginThrottle(env.DB, tenant.id, throttleKey);
+    if (throttle.blocked) {
+      return new Response(JSON.stringify({ result: { status: "fail", message: throttle.message } }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const accStmt = env.DB.prepare(
       `SELECT a.username, a.full_name, a.password_hash, a.password_salt, a.role, a.position, a.status 
        FROM accounts a
@@ -321,6 +368,7 @@ async function handleLogin(env, store, tenant, args, readPage, combinedScriptCod
     const account = await accStmt.bind(tenant.id, loginId, loginId).first();
 
     if (!account) {
+      await recordLoginFailure(env.DB, tenant.id, throttleKey);
       return new Response(JSON.stringify({ result: { status: "fail", message: "Jina la mtumiaji/Email au neno la siri si sahihi." } }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -341,11 +389,14 @@ async function handleLogin(env, store, tenant, args, readPage, combinedScriptCod
     const calculatedHash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
     if (calculatedHash !== account.password_hash) {
+      await recordLoginFailure(env.DB, tenant.id, throttleKey);
       return new Response(JSON.stringify({ result: { status: "fail", message: "Jina la mtumiaji/Email au neno la siri si sahihi." } }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    await clearLoginFailure(env.DB, tenant.id, throttleKey);
 
     const rawToken = crypto.randomUUID() + crypto.randomUUID().replace(/-/g, "");
     const tokenHash = await hashSessionToken(rawToken);
