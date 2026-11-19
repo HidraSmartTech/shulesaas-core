@@ -1,19 +1,30 @@
 // Cloudflare Workers V8 GAS Engine Emulator (Multi-Tenant)
 // Runs Google Apps Script (.gs) functions inside Cloudflare Worker Sandbox
 
-import { Workbook, NeedSheet } from "./sheets.js";
+import { Workbook } from "./sheets.js";
 import { encodeChanges, ConflictError } from "./store.js";
 import { runGas } from "../legacy_gs/compiled.js";
 
 export const DEFAULT_TIMEZONE = "Africa/Dar_es_Salaam";
 const PROPERTIES_SHEET = "__properties";
 const MAX_ATTEMPTS = 30;
-const STAFF_ROLES = new Set(["academic", "classteacher", "teacher", "staff"]);
+const STAFF_ROLES = new Set([
+  "academic", "academicmaster", "classteacher", "teacher",
+  "staff", "secondmaster", "discipline", "bursar", "accountant"
+]);
 
 // Mapping of virtual sheets for account operations
 export const VIRTUAL_HEADERS = {
   __accounts: ["seq", "id", "username", "full_name", "password_hash", "password_salt", "role", "position", "status", "profile"]
 };
+
+export function resolveEngineType(school) {
+  const lvl = String(school?.education_level || "").toUpperCase();
+  if (lvl.includes("PRIMARY") || lvl.includes("PRE") || lvl === "NURSERY") {
+    return "PRIMARY";
+  }
+  return "SECONDARY";
+}
 
 export function accountsToRows(sheetName, accounts) {
   if (sheetName !== "__accounts") return [];
@@ -75,10 +86,10 @@ export function diffAccountSheet(sheetName, originalRows, currentRows, originalA
   return ops;
 }
 
-// Global runtime cache (per Cloudflare Worker instance)
-const sheetCache = new Map(); // key: "school_id:sheet_name" -> { version, rows }
-let accountsCache = new Map(); // key: school_id -> { version, accounts }
-const prefetch = new Map(); // function_name -> Set(sheet names)
+// Global runtime cache isolated by engineType + schoolId
+const sheetCache = new Map(); // key: "ENGINE:school_id:sheet_name" -> { version, rows }
+const accountsCache = new Map(); // key: "ENGINE:school_id" -> { version, accounts }
+const prefetch = new Map(); // key: "ENGINE:function_name" -> Set(sheet names)
 
 export function resetRuntimeCaches() {
   sheetCache.clear();
@@ -90,7 +101,7 @@ function virtualNames() {
   return Object.keys(VIRTUAL_HEADERS);
 }
 
-async function loadNames(store, schoolId, known, names, state, everything) {
+async function loadNames(store, schoolId, engineType, known, names, state, everything) {
   const wanted = new Set(names);
   if (everything) for (const n of known.keys()) wanted.add(n);
 
@@ -101,7 +112,7 @@ async function loadNames(store, schoolId, known, names, state, everything) {
     if (VIRTUAL_HEADERS[name]) { needAccounts = true; continue; }
     if (!known.has(name)) continue;
 
-    const cacheKey = `${schoolId}:${name}`;
+    const cacheKey = `${engineType}:${schoolId}:${name}`;
     const cached = sheetCache.get(cacheKey);
     if (cached && cached.version === known.get(name)) {
       state.loaded.set(name, cached);
@@ -113,19 +124,20 @@ async function loadNames(store, schoolId, known, names, state, everything) {
   if (fetch.length > 0) {
     const got = await store.loadSheets(schoolId, fetch);
     for (const [name, data] of got) {
-      sheetCache.set(`${schoolId}:${name}`, data);
+      sheetCache.set(`${engineType}:${schoolId}:${name}`, data);
       state.loaded.set(name, data);
     }
   }
 
   if (needAccounts || everything) {
     const version = known.get("__accounts") || 0;
-    const accCached = accountsCache.get(schoolId);
+    const accKey = `${engineType}:${schoolId}`;
+    const accCached = accountsCache.get(accKey);
     if (!accCached || accCached.version !== version) {
       const fresh = await store.loadAccounts(schoolId);
-      accountsCache.set(schoolId, { version: fresh.version, accounts: fresh.accounts });
+      accountsCache.set(accKey, { version: fresh.version, accounts: fresh.accounts });
     }
-    const currentAcc = accountsCache.get(schoolId);
+    const currentAcc = accountsCache.get(accKey);
     state.accounts = currentAcc;
     for (const name of virtualNames()) {
       state.loaded.set(name, {
@@ -189,7 +201,8 @@ export function formatDate(date, timeZone, pattern) {
   });
 }
 
-function buildSandbox({ wb, session, readPage, appUrl, timezone, logs }) {
+function buildSandbox({ wb, school, session, readPage, appUrl, timezone, logs, engineType }) {
+  // Isolated cache per request/sandbox so Primary and Secondary never leak state
   const cacheStore = () => {
     const map = new Map();
     return {
@@ -204,7 +217,9 @@ function buildSandbox({ wb, session, readPage, appUrl, timezone, logs }) {
 
   const scriptCache = cacheStore();
   const userCache = cacheStore();
-  if (session && STAFF_ROLES.has(session.role)) userCache.put("currentTeacher", session.username);
+  if (session && STAFF_ROLES.has(session.role)) {
+    userCache.put("currentTeacher", session.username);
+  }
 
   const props = {
     _sheet(create) {
@@ -266,10 +281,20 @@ function buildSandbox({ wb, session, readPage, appUrl, timezone, logs }) {
     };
   };
 
+  const schoolContext = school
+    ? { ...school, engine_type: engineType }
+    : { education_level: engineType === "PRIMARY" ? "Primary" : "O-Level", engine_type: engineType };
+
   return {
     Date,
     console: { log() {}, error() {}, warn() {} },
-    __HOST__: { session: session ? { username: session.username, role: session.role } : null, appUrl },
+    __SCHOOL__: Object.freeze(schoolContext),
+    __HOST__: {
+      session: session ? { username: session.username, role: session.role } : null,
+      education_level: schoolContext.education_level,
+      engine_type: engineType,
+      appUrl,
+    },
     Logger: { log: (...a) => { logs.push(a.join(" ")); } },
     Session: {
       getScriptTimeZone: () => timezone,
@@ -315,22 +340,23 @@ export class LegacyError extends Error {
   }
 }
 
-const INTERNAL_ERRORS = new Set(["TypeError", "ReferenceError", "SyntaxError", "RangeError", "EvalError"]);
-
-// Executes GAS combined script code safely in Cloudflare Worker environment using `new Function` sandbox
 function executeInWorkerSandbox(codeString, sandbox, fnName, args) {
   return runGas(sandbox, fnName, args);
 }
 
-
 export async function runLegacy({
-  store, schoolId, fn, args = [], session = null, readPage, combinedScriptCode, appUrl = "", timezone,
+  store, schoolId, school = null, fn, args = [], session = null, readPage, combinedScriptCode, appUrl = "", timezone,
 }) {
   if (!/^[A-Za-z_$][\w$]{0,99}$/.test(fn)) throw new Error("Invalid function name.");
-  
+
+  const resolvedSchool = school || (typeof store.getSchool === "function" ? await store.getSchool(schoolId) : null);
+  const engineType = resolveEngineType(resolvedSchool);
+  const prefetchKey = `${engineType}:${fn}`;
+  const accCacheKey = `${engineType}:${schoolId}`;
+
   const tz = timezone || DEFAULT_TIMEZONE;
   const state = { loaded: new Map(), accounts: null };
-  const wantedNames = new Set(prefetch.get(fn) || []);
+  const wantedNames = new Set(prefetch.get(prefetchKey) || []);
   let conflicts = 0;
   let everything = false;
 
@@ -346,7 +372,7 @@ export async function runLegacy({
     }
     if (state.accounts && state.accounts.version !== known.get("__accounts")) state.accounts = null;
 
-    await loadNames(store, schoolId, known, wantedNames, state, everything);
+    await loadNames(store, schoolId, engineType, known, wantedNames, state, everything);
 
     const logs = [];
     const wb = new Workbook({
@@ -356,7 +382,16 @@ export async function runLegacy({
       virtualSheets: new Map(virtualNames().map((n) => [n, true])),
     });
 
-    const sandbox = buildSandbox({ wb, session, readPage, appUrl, timezone: tz, logs });
+    const sandbox = buildSandbox({
+      wb,
+      school: resolvedSchool,
+      session,
+      readPage,
+      appUrl,
+      timezone: tz,
+      logs,
+      engineType,
+    });
 
     let outcome;
     try {
@@ -378,8 +413,7 @@ export async function runLegacy({
       throw new LegacyError(detail, { internal: false, cause: e });
     }
 
-
-    prefetch.set(fn, new Set([...wantedNames, ...wb.states.keys()]));
+    prefetch.set(prefetchKey, new Set([...wantedNames, ...wb.states.keys()]));
 
     const payload = { sheets: encodeChanges(wb.collectChanges()) };
     if (state.accounts) {
@@ -397,8 +431,8 @@ export async function runLegacy({
         await store.commit(schoolId, payload);
       } catch (error) {
         if (error instanceof ConflictError && ++conflicts <= 4) {
-          sheetCache.clear();
-          accountsCache.delete(schoolId);
+          for (const c of payload.sheets) sheetCache.delete(`${engineType}:${schoolId}:${c.sheet}`);
+          accountsCache.delete(accCacheKey);
           state.loaded = new Map();
           state.accounts = null;
           continue;
@@ -406,8 +440,8 @@ export async function runLegacy({
         throw error;
       }
 
-      for (const c of payload.sheets) sheetCache.delete(`${schoolId}:${c.sheet}`);
-      if (payload.accounts) accountsCache.delete(schoolId);
+      for (const c of payload.sheets) sheetCache.delete(`${engineType}:${schoolId}:${c.sheet}`);
+      if (payload.accounts) accountsCache.delete(accCacheKey);
     }
 
     return outcome.value;
