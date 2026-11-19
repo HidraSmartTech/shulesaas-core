@@ -1,0 +1,20 @@
+{
+  "name": "new_cloudflare_saas",
+  "version": "2.0.0",
+  "description": "Multi-tenant School Management System SaaS on Cloudflare Pages, Workers & D1",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "d1:migrate:local": "wrangler d1 execute DB --local --file=./migrations/0001_initial_schema.sql",
+    "d1:migrate:prod": "wrangler d1 execute DB --remote --file=./migrations/0001_initial_schema.sql"
+  },
+  "dependencies": {
+    "cookie": "^0.6.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240320.0",
+    "wrangler": "^3.35.0"
+  }
+}

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Admin - ShuleSaaS</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-[#f1f5f9] font-[Inter] text-slate-800">
+<!-- Login Gate -->
+<div id="gate" class="min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border">
+    <div class="text-center mb-6"><div class="w-14 h-14 bg-slate-900 text-white rounded-xl flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-shield-halved"></i></div><h1 class="text-2xl font-extrabold mt-3">Super Admin</h1><p class="text-sm text-slate-500">Ingiza Super Admin Key kuendelea</p></div>
+    <input id="gateKey" type="password" placeholder="Super Admin Secret Key" class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900">
+    <button onclick="enterDashboard()" class="w-full mt-4 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-black">Ingia <i class="fa-solid fa-arrow-right ml-2"></i></button>
+    <p id="gateErr" class="text-sm text-red-600 font-semibold mt-3 hidden"></p>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard" class="hidden">
+<header class="bg-white border-b sticky top-0 z-20">
+  <div class="max-w-[1400px] mx-auto px-4 py-3 flex flex-wrap gap-3 justify-between items-center">
+    <div class="flex items-center gap-3"><div class="w-9 h-9 bg-slate-900 text-white rounded-lg flex items-center justify-center"><i class="fa-solid fa-crown"></i></div><div><h1 class="font-extrabold leading-none">Super Admin</h1><p class="text-xs text-slate-500">Mfumo Mkuu - Shule 500</p></div></div>
+    <div class="flex items-center gap-2"><button onclick="loadSchools()" class="px-4 py-2 bg-white border rounded-xl text-sm font-semibold hover:bg-slate-50"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button><button onclick="logoutSuper()" class="px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-bold">Toka</button></div>
+  </div>
+</header>
+
+<main class="max-w-[1400px] mx-auto px-4 py-6">
+  <!-- Stats -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white p-4 rounded-2xl border"><p class="text-xs font-bold text-slate-400 uppercase">Jumla ya Shule</p><p id="statTotal" class="text-2xl font-black">0</p></div>
+    <div class="bg-white p-4 rounded-2xl border"><p class="text-xs font-bold text-slate-400 uppercase">Active</p><p id="statActive" class="text-2xl font-black text-emerald-600">0</p></div>
+    <div class="bg-white p-4 rounded-2xl border"><p class="text-xs font-bold text-slate-400 uppercase">Suspended</p><p id="statSuspended" class="text-2xl font-black text-red-600">0</p></div>
+    <div class="bg-white p-4 rounded-2xl border"><p class="text-xs font-bold text-slate-400 uppercase">Zinaisha Wiki 7</p><p id="statExpiring" class="text-2xl font-black text-amber-600">0</p></div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white p-4 rounded-2xl border mt-6 flex flex-col lg:flex-row gap-3">
+    <div class="flex-1 relative"><i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400 text-sm"></i><input id="search" oninput="renderTable()" placeholder="Tafuta jina, subdomain, email..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900"></div>
+    <select id="filterPlan" onchange="renderTable()" class="px-3 py-2.5 rounded-xl border bg-white"><option value="">Kifurushi - Vyote</option><option value="basic">Basic - 10k</option><option value="pro">Pro - 20k</option><option value="advanced">Advanced - 30k</option></select>
+    <select id="filterStatus" onchange="renderTable()" class="px-3 py-2.5 rounded-xl border bg-white"><option value="">Status - Zote</option><option value="active">Active</option><option value="suspended">Suspended</option></select>
+    <select id="filterLevel" onchange="renderTable()" class="px-3 py-2.5 rounded-xl border bg-white"><option value="">Ngazi - Zote</option><option value="Pre-Primary">Pre-Primary</option><option value="Primary">Primary</option><option value="O-Level">O-Level</option><option value="A-Level">A-Level</option><option value="Combined">Combined</option></select>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-2xl border mt-4 overflow-hidden">
+    <div class="overflow-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 border-b">
+          <tr><th class="text-left p-3 whitespace-nowrap">#</th><th class="text-left p-3">Shule / Subdomain</th><th class="text-left p-3">Ngazi</th><th class="text-left p-3">Kifurushi</th><th class="text-left p-3">Status</th><th class="text-left p-3">Expires At</th><th class="text-right p-3">Vitendo</th></tr>
+        </thead>
+        <tbody id="tbody"><tr><td colspan="7" class="p-10 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin"></i> Inapakia...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="p-3 border-t bg-slate-50 flex justify-between text-xs text-slate-500"><span id="countInfo">0 shule</span><span>Hadi 500</span></div>
+  </div>
+</main>
+</div>
+
+<!-- Edit Modal -->
+<div id="modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden">
+    <div class="p-5 border-b flex justify-between items-center"><h3 class="font-extrabold" id="modalTitle">Hariri Shule</h3><button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="p-5 space-y-4">
+      <div><label class="text-xs font-bold uppercase text-slate-500">Kifurushi</label><select id="mPlan" class="w-full mt-1 px-3 py-2.5 rounded-xl border"><option value="basic">Basic - TZS 10,000/mwezi</option><option value="pro">Pro - TZS 20,000/mwezi</option><option value="advanced">Advanced - TZS 30,000/mwezi</option></select></div>
+      <div><label class="text-xs font-bold uppercase text-slate-500">Subscription Expires At</label><input id="mExpires" type="date" class="w-full mt-1 px-3 py-2.5 rounded-xl border"><p class="text-xs text-slate-400 mt-1">Mfumo hutumia UTC. Chagua tarehe ya mwisho wa malipo.</p></div>
+      <div class="flex gap-2"><button onclick="quickAdd(30)" class="flex-1 py-2 bg-slate-100 rounded-xl text-sm font-bold">+ Mwezi 1</button><button onclick="quickAdd(90)" class="flex-1 py-2 bg-slate-100 rounded-xl text-sm font-bold">+ Miezi 3</button><button onclick="quickAdd(365)" class="flex-1 py-2 bg-slate-900 text-white rounded-xl text-sm font-bold">+ Mwaka 1</button></div>
+    </div>
+    <div class="p-5 border-t bg-slate-50 flex gap-3"><button onclick="closeModal()" class="flex-1 py-3 bg-white border rounded-xl font-bold">Ghairi</button><button id="saveBtn" onclick="saveChanges()" class="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-bold"><i class="fa-solid fa-floppy-disk mr-1"></i> Hifadhi</button></div>
+  </div>
+</div>
+
+<div id="toast" class="fixed bottom-4 right-4 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl text-sm font-semibold hidden"></div>
+
+<script>
+let SCHOOLS = [];
+let CURRENT = null;
+let SUPER_KEY = localStorage.getItem('super_admin_key') || '';
+
+if(SUPER_KEY){ document.getElementById('gateKey').value = SUPER_KEY; enterDashboard(true); }
+
+async function enterDashboard(silent=false){
+  const key = document.getElementById('gateKey').value.trim();
+  if(!key){ if(!silent) showGateErr('Weka key'); return; }
+  SUPER_KEY = key;
+  // test key
+  try{
+    const r = await fetch('/api/superadmin/schools?limit=1', { headers: { 'x-super-admin-key': SUPER_KEY, 'Authorization': 'Bearer '+SUPER_KEY } });
+    if(!r.ok) throw new Error('Key si sahihi');
+    localStorage.setItem('super_admin_key', SUPER_KEY);
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    loadSchools();
+  }catch(e){ if(!silent) showGateErr(e.message); else { localStorage.removeItem('super_admin_key'); } }
+}
+function showGateErr(m){ const el=document.getElementById('gateErr'); el.textContent=m; el.classList.remove('hidden'); }
+function logoutSuper(){ localStorage.removeItem('super_admin_key'); location.reload(); }
+
+async function loadSchools(){
+  const tbody=document.getElementById('tbody');
+  tbody.innerHTML='<tr><td colspan="7" class="p-10 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin"></i> Inapakia shule 500...</td></tr>';
+  try{
+    const res = await fetch('/api/superadmin/schools?limit=500', { headers:{ 'x-super-admin-key': SUPER_KEY, 'Authorization':'Bearer '+SUPER_KEY }});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error||'Imeshindikana');
+    SCHOOLS = Array.isArray(data) ? data : (data.schools || data.data || []);
+    updateStats(); renderTable();
+  }catch(e){ tbody.innerHTML=`<tr><td colspan="7" class="p-6 text-center text-red-600 font-bold">${e.message}</td></tr>`; }
+}
+
+function updateStats(){
+  document.getElementById('statTotal').textContent = SCHOOLS.length;
+  document.getElementById('statActive').textContent = SCHOOLS.filter(s=> (s.status||s.active) === 'active' || s.active===1 || s.status==='active').length;
+  document.getElementById('statSuspended').textContent = SCHOOLS.filter(s=> s.status==='suspended' || s.active===0).length;
+  const now = Date.now();
+  const sevenDays = now + 7*24*60*60*1000;
+  document.getElementById('statExpiring').textContent = SCHOOLS.filter(s=>{
+    const exp = s.subscription_expires_at || s.expires_at;
+    if(!exp) return false;
+    const t = new Date(exp).getTime();
+    return t > now && t < sevenDays;
+  }).length;
+}
+
+function renderTable(){
+  const q = document.getElementById('search').value.toLowerCase();
+  const fPlan = document.getElementById('filterPlan').value;
+  const fStatus = document.getElementById('filterStatus').value;
+  const fLevel = document.getElementById('filterLevel').value;
+  let filtered = SCHOOLS.filter(s=>{
+    const status = s.status || (s.active==0?'suspended':'active');
+    const hay = `${s.school_name||s.name||''} ${s.subdomain||''} ${s.admin_email||''}`.toLowerCase();
+    if(q && !hay.includes(q)) return false;
+    if(fPlan && (s.package||s.plan)!==fPlan) return false;
+    if(fStatus && status!==fStatus) return false;
+    if(fLevel && (s.education_level||'')!==fLevel) return false;
+    return true;
+  });
+  document.getElementById('countInfo').textContent = `${filtered.length} / ${SCHOOLS.length} shule`;
+  const tbody=document.getElementById('tbody');
+  if(filtered.length===0){ tbody.innerHTML='<tr><td colspan="7" class="p-10 text-center text-slate-400">Hakuna shule iliyopatikana</td></tr>'; return; }
+  tbody.innerHTML = filtered.map((s,i)=>{
+    const status = s.status || (s.active==0?'suspended':'active');
+    const exp = s.subscription_expires_at || s.expires_at || '';
+    const expStr = exp ? new Date(exp).toISOString().slice(0,10) : '-';
+    const isExpired = exp && new Date(exp).getTime() < Date.now();
+    const plan = s.package || s.plan || 'basic';
+    const planLabel = plan==='basic'?'Basic 10k': plan==='pro'?'Pro 20k':'Advanced 30k';
+    const planColor = plan==='basic'?'bg-slate-100 text-slate-700': plan==='pro'?'bg-indigo-100 text-indigo-700':'bg-amber-100 text-amber-700';
+    return `<tr class="border-b hover:bg-slate-50">
+      <td class="p-3 text-slate-400">${i+1}</td>
+      <td class="p-3"><div class="font-bold">${esc(s.school_name||s.name||'-')}</div><div class="text-xs text-indigo-600 font-mono">${esc(s.subdomain||'-')}.shulesaas.co.tz</div><div class="text-xs text-slate-400">${esc(s.admin_email||'')}</div></td>
+      <td class="p-3"><span class="px-2 py-1 rounded-full text-xs font-bold bg-slate-100">${esc(s.education_level||'-')}</span></td>
+      <td class="p-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${planColor}">${planLabel}</span></td>
+      <td class="p-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${status==='active'?'bg-emerald-100 text-emerald-700':'bg-red-100 text-red-700'}">${status}</span></td>
+      <td class="p-3 whitespace-nowrap ${isExpired?'text-red-600 font-bold':''}">${expStr}</td>
+      <td class="p-3 text-right whitespace-nowrap">
+        <button onclick='openModal(${JSON.stringify(s).replace(/'/g,"&#39;")})' class="px-3 py-1.5 bg-white border rounded-lg text-xs font-bold hover:bg-slate-50"><i class="fa-solid fa-pen"></i> Hariri</button>
+        ${status==='active'
+          ? `<button onclick="toggleStatus('${s.id||s.subdomain}', 'suspended')" class="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-bold ml-1">Simamisha</button>`
+          : `<button onclick="toggleStatus('${s.id||s.subdomain}', 'active')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold ml-1">Washa</button>`}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function openModal(s){
+  CURRENT = s;
+  document.getElementById('modalTitle').textContent = s.school_name || s.name;
+  document.getElementById('mPlan').value = s.package || s.plan || 'basic';
+  const exp = s.subscription_expires_at || s.expires_at || '';
+  document.getElementById('mExpires').value = exp ? new Date(exp).toISOString().slice(0,10) : '';
+  document.getElementById('modal').classList.remove('hidden');
+  document.getElementById('modal').classList.add('flex');
+}
+function closeModal(){ document.getElementById('modal').classList.add('hidden'); document.getElementById('modal').classList.remove('flex'); CURRENT=null; }
+function quickAdd(days){
+  const input=document.getElementById('mExpires');
+  let base = input.value ? new Date(input.value) : new Date();
+  if(isNaN(base.getTime())) base = new Date();
+  base.setDate(base.getDate()+days);
+  input.value = base.toISOString().slice(0,10);
+}
+async function saveChanges(){
+  if(!CURRENT) return;
+  const id = CURRENT.id || CURRENT.subdomain;
+  const payload = {
+    package: document.getElementById('mPlan').value,
+    subscription_expires_at: document.getElementById('mExpires').value ? new Date(document.getElementById('mExpires').value).toISOString() : null
+  };
+  const btn=document.getElementById('saveBtn'); btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Inahifadhi...';
+  try{
+    const res = await fetch(`/api/superadmin/schools/${encodeURIComponent(id)}`, { method:'PATCH', headers:{ 'Content-Type':'application/json', 'x-super-admin-key': SUPER_KEY, 'Authorization':'Bearer '+SUPER_KEY }, body: JSON.stringify(payload) });
+    const j=await res.json(); if(!res.ok) throw new Error(j.error||'Imeshindikana');
+    toast('✓ Imehifadhiwa');
+    closeModal(); loadSchools();
+  }catch(e){ toast(e.message, true); }
+  finally{ btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-floppy-disk mr-1"></i> Hifadhi'; }
+}
+async function toggleStatus(id, newStatus){
+  if(!confirm(`Una uhakika unataka ${newStatus==='suspended'?'KUSIMAMISHA':'KUWASHA'} shule hii?`)) return;
+  try{
+    const res = await fetch(`/api/superadmin/schools/${encodeURIComponent(id)}/status`, { method:'PATCH', headers:{ 'Content-Type':'application/json', 'x-super-admin-key': SUPER_KEY, 'Authorization':'Bearer '+SUPER_KEY }, body: JSON.stringify({ status: newStatus }) });
+    // fallback kwa API ya zamani inayotumia active
+    let ok = res.ok;
+    if(!ok){
+      const r2 = await fetch(`/api/superadmin/schools/${encodeURIComponent(id)}`, { method:'PATCH', headers:{ 'Content-Type':'application/json', 'x-super-admin-key': SUPER_KEY, 'Authorization':'Bearer '+SUPER_KEY }, body: JSON.stringify({ status: newStatus, active: newStatus==='active'?1:0 }) });
+      if(!r2.ok){ const j=await r2.json(); throw new Error(j.error||'Imeshindikana'); }
+    }
+    toast(newStatus==='active'?'✓ Shule imewashwa':'✓ Shule imesimamishwa'); loadSchools();
+  }catch(e){ toast(e.message,true); }
+}
+function toast(msg, isErr=false){
+  const t=document.getElementById('toast'); t.textContent=msg; t.className=`fixed bottom-4 right-4 px-4 py-3 rounded-xl shadow-xl text-sm font-semibold ${isErr?'bg-red-600':'bg-slate-900'} text-white`;
+  t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'),3000);
+}
+</script>
+</body>
+</html>

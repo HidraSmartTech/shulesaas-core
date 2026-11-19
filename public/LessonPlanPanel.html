@@ -1,0 +1,991 @@
+﻿<!-- LessonPlanPanel.html — Lesson Plan panel for Academic, Class Teacher, Subject Teacher and Depute Headmaster.
+     Injected into those dashboards by rbacInject_ (RBAC.gs) through lpInjectPanel_ (LessonPlan.gs). Generated file. -->
+<style>
+#lpApp{--lp-navy:#0d1b36;--lp-navy2:#162447;--lp-blue:#1a56db;--lp-blue-l:#3b82f6;--lp-bd:#dde4ef;--lp-mu:#64748b;--lp-tx:#1e2a3a;--lp-bg:#f6f8fc;--lp-ok:#16a34a;--lp-warn:#d97706;--lp-bad:#dc2626;color:var(--lp-tx);font-size:13.5px;max-width:1180px;margin:0 auto;padding-bottom:90px}
+#lpApp *{box-sizing:border-box}
+#lpApp .lp-hero{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;background:linear-gradient(120deg,var(--lp-navy),var(--lp-navy2) 60%,#1e3a8a);color:#fff;border-radius:16px;padding:20px 22px;margin-bottom:16px;box-shadow:0 10px 30px rgba(13,27,54,.18)}
+#lpApp .lp-hero h2{margin:0;font-size:20px;font-weight:800;letter-spacing:.2px;display:flex;align-items:center;gap:10px}
+#lpApp .lp-hero p{margin:6px 0 0;color:rgba(255,255,255,.72);font-size:12.5px;max-width:520px}
+#lpApp .lp-who{font-size:11.5px;color:rgba(255,255,255,.8);margin-top:8px}
+#lpApp .lp-who b{color:#fff}
+#lpApp .lp-tabs{display:flex;gap:6px;background:rgba(255,255,255,.1);padding:4px;border-radius:12px}
+#lpApp .lp-tabs button{border:0;background:transparent;color:rgba(255,255,255,.75);font:inherit;font-weight:700;font-size:12.5px;padding:9px 14px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:7px}
+#lpApp .lp-tabs button.on{background:#fff;color:var(--lp-navy)}
+#lpApp .lp-pill{background:var(--lp-blue);color:#fff;border-radius:99px;padding:1px 7px;font-size:10.5px}
+#lpApp .lp-tabs button.on .lp-pill{background:var(--lp-navy)}
+#lpApp .lp-card{background:#fff;border:1px solid var(--lp-bd);border-radius:14px;margin-bottom:14px;overflow:hidden}
+#lpApp .lp-ch{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--lp-bd);background:var(--lp-bg)}
+#lpApp .lp-ch h3{margin:0;font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:9px;color:var(--lp-navy)}
+#lpApp .lp-step{width:24px;height:24px;border-radius:50%;background:var(--lp-navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;flex-shrink:0}
+#lpApp .lp-cb{padding:16px}
+#lpApp .lp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 14px}
+#lpApp .lp-f{display:flex;flex-direction:column;gap:5px;min-width:0}
+#lpApp .lp-f.wide{grid-column:1/-1}
+#lpApp label.lp-l{font-size:10.5px;font-weight:800;color:var(--lp-mu);text-transform:uppercase;letter-spacing:.5px}
+#lpApp .lp-l small{text-transform:none;letter-spacing:0;font-weight:600;color:#94a3b8}
+#lpApp input,#lpApp select,#lpApp textarea{width:100%;font:inherit;font-size:13px;color:var(--lp-tx);background:#fff;border:1.5px solid var(--lp-bd);border-radius:9px;padding:8px 10px;outline:none;transition:border-color .15s,box-shadow .15s}
+#lpApp textarea{resize:vertical;min-height:58px;line-height:1.45}
+#lpApp input:focus,#lpApp select:focus,#lpApp textarea:focus{border-color:var(--lp-blue-l);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+#lpApp input[readonly]{background:var(--lp-bg);color:var(--lp-mu)}
+#lpApp .lp-syl{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:8px 14px;align-items:start;padding:12px 0;border-bottom:1px dashed var(--lp-bd)}
+#lpApp .lp-syl:first-child{padding-top:0}
+#lpApp .lp-syl:last-child{border-bottom:0;padding-bottom:0}
+#lpApp .lp-syl .lp-pick{display:flex;flex-direction:column;gap:5px}
+#lpApp .lp-row{display:flex;gap:8px;align-items:stretch}
+#lpApp .lp-row>select{width:auto;min-width:150px}
+#lpApp .lp-hint{font-size:11.5px;color:var(--lp-mu);line-height:1.45}
+#lpApp .lp-hint b{color:var(--lp-tx)}
+#lpApp .lp-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1.5px solid var(--lp-bd);background:#fff;color:var(--lp-navy);font:inherit;font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:9px;cursor:pointer;white-space:nowrap;transition:transform .1s,box-shadow .15s,background .15s}
+#lpApp .lp-btn:hover{background:var(--lp-bg)}
+#lpApp .lp-btn:active{transform:translateY(1px)}
+#lpApp .lp-btn.pri{background:linear-gradient(135deg,var(--lp-blue),var(--lp-blue-l));border-color:transparent;color:#fff;box-shadow:0 6px 16px rgba(26,86,219,.28)}
+#lpApp .lp-btn.dark{background:var(--lp-navy);border-color:var(--lp-navy);color:#fff}
+#lpApp .lp-btn.danger{color:var(--lp-bad)}
+#lpApp .lp-btn.sm{padding:5px 9px;font-size:11.5px}
+#lpApp .lp-btn[disabled]{opacity:.55;cursor:not-allowed}
+#lpApp table.lp-t{width:100%;border-collapse:collapse}
+#lpApp table.lp-t th{background:var(--lp-navy);color:#fff;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;padding:8px;text-align:center;font-weight:800}
+#lpApp table.lp-t td{border:1px solid var(--lp-bd);padding:6px;vertical-align:top}
+#lpApp .lp-count td{text-align:center}
+#lpApp .lp-count input{text-align:center;max-width:110px;margin:0 auto}
+#lpApp .lp-count .tot{font-weight:800;font-size:15px;color:var(--lp-navy);padding-top:12px}
+#lpApp .lp-stages td.nm{font-weight:800;font-size:11.5px;color:var(--lp-navy);width:150px;vertical-align:middle}
+#lpApp .lp-stages textarea.lp-sn{min-height:0;font-weight:800;font-size:11.5px;color:var(--lp-navy);text-transform:uppercase;resize:none;text-align:center;line-height:1.35;padding:8px 6px}
+#lpApp .lp-stages td.mn{width:80px}
+#lpApp .lp-stages td.mn input{text-align:center;padding:8px 4px}
+#lpApp .lp-stages textarea{min-height:96px;font-size:12.5px;border-color:transparent;background:var(--lp-bg)}
+#lpApp .lp-stages textarea:focus{background:#fff}
+#lpApp .lp-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:99px;font-size:11.5px;font-weight:800}
+#lpApp .lp-badge.match{background:#dcfce7;color:#166534}
+#lpApp .lp-badge.over{background:#fee2e2;color:#991b1b}
+#lpApp .lp-badge.under{background:#fef3c7;color:#92400e}
+#lpApp .lp-empty{text-align:center;padding:30px 12px;color:var(--lp-mu)}
+#lpApp .lp-empty i{font-size:26px;color:#cbd5e1;display:block;margin-bottom:8px}
+#lpApp .lp-msg{display:none;margin-bottom:12px;padding:10px 14px;border-radius:10px;font-weight:600;font-size:12.5px}
+#lpApp .lp-msg.ok{display:block;background:#dcfce7;color:#166534}
+#lpApp .lp-msg.err{display:block;background:#fee2e2;color:#991b1b}
+#lpApp .lp-msg.info{display:block;background:#dbeafe;color:#1e40af}
+#lpApp .lp-bar{position:sticky;bottom:10px;z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,255,255,.96);border:1px solid var(--lp-bd);border-radius:14px;padding:10px 12px;box-shadow:0 12px 30px rgba(13,27,54,.14);backdrop-filter:blur(6px)}
+#lpApp .lp-bar .lp-acts{display:flex;flex-wrap:wrap;gap:8px}
+#lpApp .lp-state{font-size:11.5px;color:var(--lp-mu);font-weight:600}
+#lpApp .lp-list-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+#lpApp .lp-list-top input{max-width:320px}
+#lpApp .lp-list td{font-size:12.5px;vertical-align:middle}
+#lpApp .lp-list td.act{white-space:nowrap;text-align:right}
+#lpApp .lp-list td.act .lp-btn{margin-left:4px}
+#lpApp .lp-loading{padding:40px;text-align:center;color:var(--lp-mu);font-weight:600}
+#lpModal{position:fixed;inset:0;background:rgba(13,27,54,.55);z-index:9999;display:none;align-items:center;justify-content:center;padding:18px}
+#lpModal.on{display:flex}
+#lpModal .lp-mbox{background:#fff;border-radius:14px;width:min(920px,100%);height:min(94vh,1200px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+#lpModal .lp-mbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;background:#0d1b36;color:#fff;font-weight:800;font-size:13px}
+#lpModal .lp-mbar button{border:0;border-radius:8px;padding:7px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-left:6px}
+#lpModal iframe{flex:1;border:0;width:100%;background:#e5e7eb}
+#lpNav.lp-off{display:none!important}
+@media (max-width:760px){
+  #lpApp .lp-syl{grid-template-columns:1fr}
+  #lpApp .lp-stages,#lpApp .lp-stages tbody,#lpApp .lp-stages tr,#lpApp .lp-stages td{display:block;width:100%!important}
+  #lpApp .lp-stages thead{display:none}
+  #lpApp .lp-stages tr{border:1px solid var(--lp-bd);border-radius:10px;margin-bottom:10px;overflow:hidden}
+  #lpApp .lp-stages td{border:0;border-bottom:1px solid var(--lp-bd)}
+  #lpApp .lp-stages td[data-h]::before{content:attr(data-h);display:block;font-size:10px;font-weight:800;color:var(--lp-mu);text-transform:uppercase;margin-bottom:4px}
+  #lpApp .lp-list thead{display:none}
+  #lpApp .lp-list tr{display:block;border:1px solid var(--lp-bd);border-radius:10px;margin-bottom:8px;padding:6px}
+  #lpApp .lp-list td{display:block;border:0}
+  #lpApp .lp-list td.act{text-align:left}
+}
+</style>
+<script>
+/* LPGen — pure lesson plan rules (no DOM, no server). Shared by the GAS panel and the tests. */
+var LPGen = (function () {
+  var STAGE_NAMES = {
+    en: ['INTRODUCTION', 'COMPETENCE DEVELOPMENT', 'DESIGN', 'REALIZATION'],
+    sw: ['UTANGULIZI', 'KUJENGA UMAHIRI', 'KUBUNI', 'KUTAMBUA']
+  };
+  /* Minutes for an 80-minute double period, as in the school's sample lesson plans. */
+  var BASE_MINUTES = [10, 40, 15, 15];
+  var BASE_PERIOD = 80;
+
+  var VERBS_EN = ['Demonstrate', 'Calculate', 'Explain', 'Describe', 'Identify', 'Use', 'Solve', 'Draw',
+    'Analyse', 'Apply', 'Classify', 'Compare', 'Construct', 'Create', 'Design', 'Differentiate', 'Discuss',
+    'Conduct', 'Interpret', 'Investigate', 'Measure', 'Outline', 'Perform', 'Practise', 'Prepare', 'Read',
+    'Write', 'State', 'Define', 'Locate', 'Examine', 'Evaluate'];
+  var VERBS_SW = ['Kueleza', 'Kufafanua', 'Kutumia', 'Kuchambua', 'Kujadili', 'Kutambua', 'Kubainisha',
+    'Kuandika', 'Kusoma', 'Kutunga', 'Kuonesha', 'Kulinganisha', 'Kuchora', 'Kukokotoa', 'Kutathmini',
+    'Kuigiza', 'Kusimulia', 'Kuainisha'];
+  var ING_EXCEPTIONS = { Use: 'Using', Write: 'Writing', Practise: 'Practising', Create: 'Creating',
+    Prepare: 'Preparing', Define: 'Defining', Locate: 'Locating', Evaluate: 'Evaluating', Examine: 'Examining',
+    State: 'Stating', Outline: 'Outlining', Analyse: 'Analysing', Compare: 'Comparing', Describe: 'Describing',
+    Calculate: 'Calculating', Demonstrate: 'Demonstrating', Solve: 'Solving', Differentiate: 'Differentiating',
+    Investigate: 'Investigating', Measure: 'Measuring', Interpret: 'Interpreting', Apply: 'Applying' };
+
+  function ing(verb) {
+    verb = String(verb || '').trim();
+    if (!verb) return '';
+    if (ING_EXCEPTIONS[verb]) return ING_EXCEPTIONS[verb];
+    if (/ie$/.test(verb)) return verb.slice(0, -2) + 'ying';
+    if (/[^e]e$/.test(verb)) return verb.slice(0, -1) + 'ing';
+    return verb + 'ing';
+  }
+
+  /* Text that sits in the middle of a sentence: trimmed, no closing full stop, first letter small
+     unless the first word looks like an acronym (e.g. "ICT tools"). */
+  function midSentence(text) {
+    var t = String(text || '').replace(/\s+/g, ' ').trim().replace(/[.\s]+$/, '');
+    if (t.length > 1 && !/^[A-Z]{2}/.test(t)) t = t.charAt(0).toLowerCase() + t.slice(1);
+    return t;
+  }
+
+  function cap(t) { t = String(t || ''); return t.charAt(0).toUpperCase() + t.slice(1); }
+
+  /* Each style: 4 stages x [teaching, learning, assessment]. v = verb (small), g = -ing form, x = activity. */
+  var STYLES = {
+    en: [
+      [
+        [function (v, g, x) { return 'Showing teaching aids and facilitating discussion about ' + x; },
+         function (v, g, x) { return 'Reviewing the teaching aid and providing answers about ' + x; },
+         function (v, g, x) { return 'Questions about ' + x + ' are answered'; }],
+        [function (v, g, x) { return 'Providing students with ' + x + ' teaching aids and asking them in groups to ' + v + ' ' + x; },
+         function (v, g, x) { return cap(g) + ' ' + x + ' in small groups'; },
+         function (v, g, x) { return 'Group work shows comprehension of ' + x; }],
+        [function (v, g, x) { return 'Prompting group members to ' + v + ' ' + x; },
+         function (v, g, x) { return 'Applying skills to ' + v + ' ' + x; },
+         function (v, g, x) { return cap(x) + ' concepts are reinforced'; }],
+        [function (v, g, x) { return 'Requesting individual students to select a card and ' + v + ' ' + x; },
+         function (v, g, x) { return 'Picking a card and ' + g + ' ' + x; },
+         function (v, g, x) { return 'Students successfully ' + v + ' ' + x; }]
+      ],
+      [
+        [function (v, g, x) { return 'Displaying learning resources and posing questions on ' + x; },
+         function (v, g, x) { return 'Looking at the teaching aid and participating in discussion on ' + x; },
+         function (v, g, x) { return 'Students respond correctly to questions on ' + x; }],
+        [function (v, g, x) { return 'Sharing resources on ' + x + ' and prompting groups to ' + v + ' ' + x; },
+         function (v, g, x) { return 'Working in groups to ' + v + ' ' + x; },
+         function (v, g, x) { return 'Key concepts about ' + x + ' are grasped'; }],
+        [function (v, g, x) { return 'Prompting group members to ' + v + ' ' + x; },
+         function (v, g, x) { return cap(g) + ' ' + x; },
+         function (v, g, x) { return 'Mastery of ' + x + ' is demonstrated'; }],
+        [function (v, g, x) { return 'Having students pick cards and ' + v + ' ' + x; },
+         function (v, g, x) { return 'Drawing a card and ' + g + ' ' + x; },
+         function (v, g, x) { return 'Individual understanding of ' + x + ' is demonstrated'; }]
+      ]
+    ],
+    sw: [
+      [
+        [function (v, g, x) { return 'Kuonesha zana za kufundishia na kuongoza majadiliano kuhusu ' + x; },
+         function (v, g, x) { return 'Kuchunguza zana na kujibu maswali kuhusu ' + x; },
+         function (v, g, x) { return 'Maswali kuhusu ' + x + ' yamejibiwa'; }],
+        [function (v, g, x) { return 'Kuwapa wanafunzi zana kuhusu ' + x + ' na kuwataka katika vikundi ' + v + ' ' + x; },
+         function (v, g, x) { return cap(v) + ' ' + x + ' katika vikundi vidogo'; },
+         function (v, g, x) { return 'Kazi za vikundi zinaonesha uelewa wa ' + x; }],
+        [function (v, g, x) { return 'Kuwaongoza wanavikundi ' + v + ' ' + x; },
+         function (v, g, x) { return 'Kutumia maarifa waliyopata ' + v + ' ' + x; },
+         function (v, g, x) { return 'Dhana za ' + x + ' zimeimarishwa'; }],
+        [function (v, g, x) { return 'Kuwataka wanafunzi mmoja mmoja kuchagua kadi na ' + v + ' ' + x; },
+         function (v, g, x) { return 'Kuchagua kadi na ' + v + ' ' + x; },
+         function (v, g, x) { return 'Wanafunzi wameweza ' + v + ' ' + x; }]
+      ],
+      [
+        [function (v, g, x) { return 'Kuonesha zana za kujifunzia na kuuliza maswali kuhusu ' + x; },
+         function (v, g, x) { return 'Kuangalia zana na kushiriki majadiliano kuhusu ' + x; },
+         function (v, g, x) { return 'Wanafunzi wanajibu kwa usahihi maswali kuhusu ' + x; }],
+        [function (v, g, x) { return 'Kugawa zana kuhusu ' + x + ' na kuongoza vikundi ' + v + ' ' + x; },
+         function (v, g, x) { return 'Kufanya kazi katika vikundi ' + v + ' ' + x; },
+         function (v, g, x) { return 'Dhana kuu za ' + x + ' zimeeleweka'; }],
+        [function (v, g, x) { return 'Kuwaongoza wanavikundi ' + v + ' ' + x; },
+         function (v, g, x) { return cap(v) + ' ' + x; },
+         function (v, g, x) { return 'Umahiri wa ' + x + ' umeoneshwa'; }],
+        [function (v, g, x) { return 'Kuwataka wanafunzi kuokota kadi na ' + v + ' ' + x; },
+         function (v, g, x) { return 'Kuokota kadi na ' + v + ' ' + x; },
+         function (v, g, x) { return 'Uelewa wa mwanafunzi mmoja mmoja kuhusu ' + x + ' umeoneshwa'; }]
+      ]
+    ]
+  };
+
+  function remarks(lang, v, x) {
+    if (lang === 'sw') {
+      return 'Wanafunzi waliweza ' + v + ' ' + x + ' kutokana na matumizi ya mbinu shirikishi za ufundishaji na ujifunzaji, ' +
+        'shughuli na zana. Hata hivyo, baadhi ya wanafunzi hawakuweza ' + v + ' ' + x + ', hivyo nitafafanua tena katika kipindi kijacho.';
+    }
+    return 'The students were able to ' + v + ' ' + x + ' due to the use of interactive teaching and learning methods, ' +
+      'activities and resources. However, some students failed to ' + v + ' ' + x + ', therefore I will clarify it in the next period.';
+  }
+
+  function toCount(n) { n = Number(n); return isFinite(n) && n > 0 ? Math.floor(n) : 0; }
+
+  /* Stage minutes for a period: the sample split (10/40/15/15 of 80) scaled to the period, always summing to it. */
+  function stageMinutes(periodMinutes) {
+    var period = toCount(periodMinutes);
+    if (!period) return BASE_MINUTES.slice();
+    var mins = BASE_MINUTES.map(function (m) { return Math.round(m * period / BASE_PERIOD); });
+    var diff = period - mins.reduce(function (a, b) { return a + b; }, 0);
+    mins[1] += diff;
+    return mins;
+  }
+
+  /* Full plan text from the chosen verb + specific activity. */
+  function generate(opts) {
+    var lang = opts.lang === 'sw' ? 'sw' : 'en';
+    var styleIdx = Math.max(0, Math.min(1, toCount(opts.style)));
+    var verb = String(opts.verb || (lang === 'sw' ? 'Kueleza' : 'Demonstrate')).trim();
+    var v = verb.toLowerCase();
+    var g = lang === 'sw' ? v : ing(verb).toLowerCase();
+    var x = midSentence(opts.text);
+    var mins = stageMinutes(opts.periodMinutes);
+    var style = STYLES[lang][styleIdx];
+    var stages = STAGE_NAMES[lang].map(function (name, i) {
+      return { name: name, minutes: mins[i], teaching: style[i][0](v, g, x), learning: style[i][1](v, g, x), assessment: style[i][2](v, g, x) };
+    });
+    return { stages: stages, remarks: remarks(lang, v, x), specificActivities: cap(verb) + ' ' + x };
+  }
+
+  function total(count) { count = count || {}; return toCount(count.girls) + toCount(count.boys); }
+
+  function sumMinutes(stages) {
+    return (stages || []).reduce(function (s, st) { return s + toCount(st && st.minutes); }, 0);
+  }
+
+  function timeStatus(stages, periodMinutes) {
+    var t = sumMinutes(stages), p = toCount(periodMinutes);
+    return t === p ? 'match' : (t > p ? 'over' : 'under');
+  }
+
+  function parseHM(hm) {
+    var m = String(hm || '').match(/^(\d{1,2}):(\d{2})/);
+    if (!m) return null;
+    var h = +m[1], mi = +m[2];
+    return h < 24 && mi < 60 ? h * 60 + mi : null;
+  }
+
+  function minutesBetween(start, end) {
+    var a = parseHM(start), b = parseHM(end);
+    if (a === null || b === null) return 0;
+    return b >= a ? b - a : b + 1440 - a;
+  }
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+  /* "11:00" -> "11 : 00 A.M"; "13:20" -> "01 : 20 P.M" (format used on the sample lesson plans). */
+  function clock(hm) {
+    var t = parseHM(hm);
+    if (t === null) return '';
+    var h = Math.floor(t / 60), m = t % 60, pm = h >= 12, h12 = h % 12 === 0 ? 12 : h % 12;
+    return pad(h12) + ' : ' + pad(m) + ' ' + (pm ? 'P.M' : 'A.M');
+  }
+
+  function timeRange(start, end) {
+    var a = clock(start), b = clock(end);
+    return a && b ? a + ' - ' + b : (a || b);
+  }
+
+  var FORM_WORDS = { en: ['', 'one', 'two', 'three', 'four'], sw: ['', 'kwanza', 'pili', 'tatu', 'nne'] };
+
+  /* Form number (1-4) from a class name: "Form 2A", "F2", "FORM TWO A&B", "Kidato cha Pili", "Form II". */
+  function formNumber(className) {
+    var s = String(className || '').toLowerCase();
+    var d = s.match(/(\d)/);
+    if (d && +d[1] >= 1 && +d[1] <= 4) return +d[1];
+    var words = { one: 1, two: 2, three: 3, four: 4, kwanza: 1, pili: 2, tatu: 3, nne: 4 };
+    for (var w in words) if (new RegExp('\\b' + w + '\\b').test(s)) return words[w];
+    var r = s.match(/(?:form|kidato(?:\s+cha)?|f)\s*(iv|iii|ii|i)\b/);
+    if (r) return { i: 1, ii: 2, iii: 3, iv: 4 }[r[1]];
+    return 0;
+  }
+
+  function reference(subject, form, lang) {
+    subject = String(subject || '').trim();
+    var f = FORM_WORDS[lang === 'sw' ? 'sw' : 'en'][form] || '';
+    if (lang === 'sw') {
+      return 'Taasisi ya Elimu Tanzania. (2024). ' + subject + ' kwa shule za sekondari: kitabu cha mwanafunzi, kidato cha ' + f + '. Taasisi ya Elimu Tanzania.';
+    }
+    return 'Tanzania Institute of Education. (2024). ' + subject + " for secondary schools student's book, form " + f + '. Tanzania Institute of Education.';
+  }
+
+  /* Picks the verb a syllabus activity starts with ("Use internet services..." -> "Use"). */
+  function guessVerb(activity, lang) {
+    var first = String(activity || '').trim().split(/\s+/)[0] || '';
+    first = cap(first.toLowerCase());
+    var list = lang === 'sw' ? VERBS_SW : VERBS_EN;
+    return list.indexOf(first) >= 0 ? first : list[0];
+  }
+
+  return {
+    STAGE_NAMES: STAGE_NAMES, VERBS_EN: VERBS_EN, VERBS_SW: VERBS_SW, BASE_MINUTES: BASE_MINUTES,
+    ing: ing, midSentence: midSentence, stageMinutes: stageMinutes, generate: generate, total: total,
+    sumMinutes: sumMinutes, timeStatus: timeStatus, minutesBetween: minutesBetween, clock: clock,
+    timeRange: timeRange, formNumber: formNumber, reference: reference, guessVerb: guessVerb
+  };
+})();
+
+/* Lesson Plan panel — installs itself into the dashboard (nav item + pane) and talks to LessonPlan.gs. */
+(function () {
+  if (window.__lpInstalled) return;
+  window.__lpInstalled = true;
+  var G = LPGen;
+  var ST = { boot: null, syl: {}, plan: null, list: [], dirty: false, rendered: false, refAuto: '', resAuto: '' };
+
+  /* ───────────── helpers ───────────── */
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function val(id) { var e = $(id); return e ? String(e.value || '').trim() : ''; }
+  function setVal(id, v) { var e = $(id); if (e) e.value = v == null ? '' : v; }
+  function num(id) { var n = parseInt(val(id), 10); return isFinite(n) && n > 0 ? n : 0; }
+  function call(fn) {
+    var args = [].slice.call(arguments, 1);
+    return new Promise(function (res, rej) {
+      var r = google.script.run.withSuccessHandler(res).withFailureHandler(function (e) { rej(e && e.message ? e : new Error(String(e))); });
+      r[fn].apply(r, args);
+    });
+  }
+  var msgTimer;
+  function msg(text, kind) {
+    var m = $('lpMsg'); if (!m) return;
+    m.className = 'lp-msg ' + (kind || 'info'); m.innerHTML = text;
+    clearTimeout(msgTimer);
+    if (kind !== 'err') msgTimer = setTimeout(function () { m.className = 'lp-msg'; }, 5000);
+    try { m.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {}
+  }
+  function opt(v, label, sel) { return '<option value="' + esc(v) + '"' + (sel ? ' selected' : '') + '>' + esc(label) + '</option>'; }
+  function norm(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+
+  /* ───────────── install into the dashboard ───────────── */
+  function install() {
+    var dash = $('pane-dashboard');
+    if (!dash) return;
+    if (!$('pane-lessonplan')) {
+      var pane = document.createElement('div');
+      pane.id = 'pane-lessonplan'; pane.style.display = 'none';
+      dash.parentNode.appendChild(pane);
+    }
+    try { if (typeof PANES !== 'undefined' && PANES.indexOf('lessonplan') < 0) PANES.push('lessonplan'); } catch (e) {}
+    try { if (typeof PTITLES !== 'undefined') PTITLES.lessonplan = 'Lesson Plan'; } catch (e) {}
+    if (!$('lpNav')) {
+      var nav = document.createElement('div');
+      nav.className = 'ni'; nav.id = 'lpNav';
+      nav.setAttribute('onclick', "goTo('lessonplan')");
+      nav.innerHTML = '<i class="fas fa-book-open"></i><span>Lesson Plan</span>';
+      var before = document.querySelector('.ni[data-p="messages"]') || document.querySelector('.ni[data-p="password"]');
+      if (before) before.parentNode.insertBefore(nav, before);
+      else {
+        var all = document.querySelectorAll('.ni[data-p]'), last = all[all.length - 1];
+        if (last) last.parentNode.insertBefore(nav, last.nextSibling);
+      }
+    }
+    var og = window.goTo;
+    if (typeof og === 'function' && !og.__lp) {
+      var wrapped = function (id) {
+        var r = og.apply(this, arguments);
+        var n = $('lpNav'); if (n) n.classList.toggle('active', id === 'lessonplan');
+        var pane = $('pane-lessonplan');
+        if (id === 'lessonplan' && pane && pane.style.display !== 'none') open();
+        return r;
+      };
+      wrapped.__lp = true;
+      window.goTo = wrapped;
+    }
+    if (!$('lpModal')) {
+      var md = document.createElement('div');
+      md.id = 'lpModal';
+      md.innerHTML = '<div class="lp-mbox"><div class="lp-mbar"><span><i class="fas fa-eye"></i> Lesson plan preview</span><span>' +
+        '<button type="button" id="lpMPrint" style="background:#fff;color:#0d1b36"><i class="fas fa-print"></i> Print</button>' +
+        '<button type="button" id="lpMClose" style="background:rgba(255,255,255,.15);color:#fff">Close</button></span></div><iframe id="lpFrame" title="Lesson plan preview"></iframe></div>';
+      document.body.appendChild(md);
+      $('lpMClose').onclick = function () { md.classList.remove('on'); };
+      $('lpMPrint').onclick = function () { printPlan(ST.previewPlan || readForm()); };
+      md.addEventListener('click', function (e) { if (e.target === md) md.classList.remove('on'); });
+    }
+  }
+
+  /* ───────────── shell ───────────── */
+  function shell() {
+    var stagesHead = '<thead><tr><th>Stage</th><th>Time (min)</th><th>Teaching activities</th><th>Learning activities</th><th>Assessment</th></tr></thead>';
+    return '<div id="lpApp">' +
+      '<div class="lp-hero"><div><h2><i class="fas fa-book-open"></i> Lesson Plan</h2>' +
+      '<p>Choose the class, subject and syllabus activity, generate the teaching and learning process, then save, print or download it as PDF.</p>' +
+      '<div class="lp-who" id="lpWho"></div></div>' +
+      '<div class="lp-tabs"><button type="button" data-tab="new" class="on"><i class="fas fa-pen"></i> <span id="lpTabNewLbl">New lesson plan</span></button>' +
+      '<button type="button" data-tab="list"><i class="fas fa-folder-open"></i> My lesson plans <span class="lp-pill" id="lpCount">0</span></button></div></div>' +
+      '<div id="lpMsg" class="lp-msg"></div>' +
+
+      '<section data-view="new">' +
+      /* 1 details */
+      '<div class="lp-card"><div class="lp-ch"><h3><span class="lp-step">1</span> Lesson details</h3></div><div class="lp-cb"><div class="lp-grid">' +
+      '<div class="lp-f"><label class="lp-l" for="lpSchool">School</label><input id="lpSchool"></div>' +
+      '<div class="lp-f"><label class="lp-l" for="lpTeacher">Teacher\'s name</label><input id="lpTeacher"></div>' +
+      '<div class="lp-f"><label class="lp-l" for="lpClass">Class <small>(e.g. Form Two A&amp;B)</small></label><input id="lpClass" list="lpClassList" autocomplete="off"><datalist id="lpClassList"></datalist></div>' +
+      '<div class="lp-f"><label class="lp-l" for="lpSubject">Subject</label><select id="lpSubject"></select><input id="lpSubjectOther" placeholder="Type the subject name" style="display:none"></div>' +
+      '<div class="lp-f"><label class="lp-l" for="lpForm">Syllabus form</label><select id="lpForm">' + opt('1', 'Form I') + opt('2', 'Form II') + opt('3', 'Form III') + opt('4', 'Form IV') + '</select></div>' +
+      '<div class="lp-f"><label class="lp-l" for="lpDate">Date</label><input id="lpDate" type="date"></div>' +
+      '<div class="lp-f"><label class="lp-l" for="lpStart">Start time</label><input id="lpStart" type="time"></div>' +
+      '<div class="lp-f"><label class="lp-l" for="lpEnd">End time</label><input id="lpEnd" type="time"></div>' +
+      '<div class="lp-f wide"><div class="lp-hint" id="lpTimeText"></div></div>' +
+      '</div></div></div>' +
+      /* 2 students */
+      '<div class="lp-card"><div class="lp-ch"><h3><span class="lp-step">2</span> Number of students</h3>' +
+      '<button type="button" class="lp-btn sm" id="lpFill"><i class="fas fa-rotate"></i> Fill from register &amp; attendance</button></div><div class="lp-cb">' +
+      '<table class="lp-t lp-count"><thead><tr><th colspan="3">Registered</th><th colspan="3">Present</th></tr>' +
+      '<tr><th>Girls</th><th>Boys</th><th>Total</th><th>Girls</th><th>Boys</th><th>Total</th></tr></thead><tbody><tr>' +
+      '<td><input id="lpRegG" type="number" min="0" aria-label="Registered girls"></td><td><input id="lpRegB" type="number" min="0" aria-label="Registered boys"></td><td class="tot" id="lpRegT">0</td>' +
+      '<td><input id="lpPreG" type="number" min="0" aria-label="Present girls"></td><td><input id="lpPreB" type="number" min="0" aria-label="Present boys"></td><td class="tot" id="lpPreT">0</td>' +
+      '</tr></tbody></table><div class="lp-hint" id="lpCountNote" style="margin-top:8px"></div></div></div>' +
+      /* 3 syllabus */
+      '<div class="lp-card"><div class="lp-ch"><h3><span class="lp-step">3</span> Competences and activities</h3><span class="lp-hint" id="lpSylNote"></span></div><div class="lp-cb">' +
+      '<div class="lp-syl"><div class="lp-pick"><label class="lp-l" for="lpSylMc">Main competence</label><select id="lpSylMc"></select></div><div class="lp-f"><label class="lp-l" for="lpMc">Text on the lesson plan</label><textarea id="lpMc" rows="2"></textarea></div></div>' +
+      '<div class="lp-syl"><div class="lp-pick"><label class="lp-l" for="lpSylSc">Specific competence</label><select id="lpSylSc"></select></div><div class="lp-f"><label class="lp-l" for="lpSc">Text on the lesson plan</label><textarea id="lpSc" rows="2"></textarea></div></div>' +
+      '<div class="lp-syl"><div class="lp-pick"><label class="lp-l" for="lpSylTopic">Topic</label><select id="lpSylTopic"></select><label class="lp-l" for="lpSylAct" style="margin-top:6px">Main activity</label><select id="lpSylAct"></select></div>' +
+      '<div class="lp-f"><label class="lp-l" for="lpMa">Main activity</label><textarea id="lpMa" rows="2"></textarea><div class="lp-hint" id="lpMethods"></div></div></div>' +
+      '<div class="lp-syl"><div class="lp-pick"><label class="lp-l">Specific activities</label><div class="lp-hint">Pick the action verb, then write what the students should be able to do.</div></div>' +
+      '<div class="lp-f"><div class="lp-row"><select id="lpVerb" aria-label="Action verb"></select><textarea id="lpSpec" rows="2" placeholder="the students should be able to ..." aria-label="Specific activity"></textarea></div></div></div>' +
+      '<div class="lp-syl"><div class="lp-pick"><label class="lp-l" for="lpRes">T &amp; L resources</label></div><div class="lp-f"><textarea id="lpRes" rows="2"></textarea></div></div>' +
+      '<div class="lp-syl"><div class="lp-pick"><label class="lp-l" for="lpRef">References</label></div><div class="lp-f"><textarea id="lpRef" rows="2"></textarea></div></div>' +
+      '</div></div>' +
+      /* 4 process */
+      '<div class="lp-card"><div class="lp-ch"><h3><span class="lp-step">4</span> Teaching and learning process</h3>' +
+      '<div class="lp-row"><select id="lpStyle" aria-label="Wording style">' + opt('0', 'Wording style 1') + opt('1', 'Wording style 2') + '</select>' +
+      '<button type="button" class="lp-btn dark" id="lpGen"><i class="fas fa-wand-magic-sparkles"></i> Generate</button></div></div><div class="lp-cb">' +
+      '<table class="lp-t lp-stages">' + stagesHead + '<tbody id="lpStages"></tbody></table>' +
+      '<div style="display:flex;justify-content:flex-end;margin-top:10px"><span class="lp-badge under" id="lpTimeBadge">0 / 0 min</span></div>' +
+      '<div class="lp-f" style="margin-top:12px"><label class="lp-l" for="lpRemarks">Remarks</label><textarea id="lpRemarks" rows="3"></textarea></div>' +
+      '</div></div>' +
+      /* actions */
+      '<div class="lp-bar"><span class="lp-state" id="lpState">Not saved yet</span><div class="lp-acts">' +
+      '<button type="button" class="lp-btn" id="lpNew"><i class="fas fa-file"></i> New</button>' +
+      '<button type="button" class="lp-btn" id="lpPrev"><i class="fas fa-eye"></i> Preview</button>' +
+      '<button type="button" class="lp-btn" id="lpPrint"><i class="fas fa-print"></i> Print</button>' +
+      '<button type="button" class="lp-btn" id="lpPdfBtn"><i class="fas fa-file-pdf"></i> Download PDF</button>' +
+      '<button type="button" class="lp-btn pri" id="lpSave"><i class="fas fa-floppy-disk"></i> Save</button>' +
+      '</div></div></section>' +
+
+      '<section data-view="list" style="display:none"><div class="lp-card"><div class="lp-cb">' +
+      '<div class="lp-list-top"><input id="lpSearch" placeholder="Search class, subject or activity" aria-label="Search lesson plans">' +
+      '<button type="button" class="lp-btn sm" id="lpReload"><i class="fas fa-rotate"></i> Refresh</button></div>' +
+      '<div id="lpListBox"></div></div></div></section>' +
+      '</div>';
+  }
+
+  /* ───────────── open / boot ───────────── */
+  function open() {
+    var pane = $('pane-lessonplan');
+    if (!pane) return;
+    if (!ST.rendered) {
+      pane.innerHTML = '<div class="lp-loading"><i class="fas fa-spinner fa-spin"></i> Loading lesson plan…</div>';
+      call('lpBootstrap').then(function (b) {
+        ST.boot = b;
+        pane.innerHTML = shell();
+        ST.rendered = true;
+        bind();
+        fillStatic();
+        newPlan(true);
+        loadList();
+      }).catch(function (e) {
+        pane.innerHTML = '<div class="lp-empty"><i class="fas fa-lock"></i>' + esc(e.message) + '</div>';
+      });
+    }
+  }
+
+  function fillStatic() {
+    var b = ST.boot;
+    $('lpWho').innerHTML = '<b>' + esc(b.teacher) + '</b> · ' + esc(b.account) + (b.school ? ' · ' + esc(b.school) : '');
+    var classes = [], seen = {};
+    (b.myClasses || []).concat(b.allClasses || []).forEach(function (c) { c = String(c || '').trim(); if (c && !seen[c]) { seen[c] = 1; classes.push(c); } });
+    $('lpClassList').innerHTML = classes.map(function (c) { return opt(c, c); }).join('');
+    var mine = [], rest = [];
+    (b.subjects || []).forEach(function (s) {
+      var isMine = (b.mySubjects || []).some(function (m) { var a = norm(m), z = norm(s.name); return a && (a === z || a.indexOf(z) >= 0 || z.indexOf(a) >= 0); });
+      (isMine ? mine : rest).push(s);
+    });
+    var html = opt('', '— Select subject —');
+    if (mine.length) html += '<optgroup label="My subjects">' + mine.map(function (s) { return opt(s.name, s.name); }).join('') + '</optgroup>';
+    html += '<optgroup label="' + (mine.length ? 'Other subjects' : 'Subjects') + '">' + rest.map(function (s) { return opt(s.name, s.name); }).join('') + '</optgroup>';
+    html += opt('__other', 'Other subject (no syllabus)…');
+    $('lpSubject').innerHTML = html;
+  }
+
+  /* ───────────── events ───────────── */
+  function bind() {
+    var app = $('lpApp');
+    app.querySelectorAll('.lp-tabs button').forEach(function (b) { b.onclick = function () { tab(b.getAttribute('data-tab')); }; });
+    app.addEventListener('input', function (e) {
+      var id = e.target.id;
+      if (id !== 'lpSearch') { ST.dirty = true; setState(); }
+      if (/^lp(Reg|Pre)[GB]$/.test(id)) totals();
+      if (id === 'lpStart' || id === 'lpEnd') timeText();
+      if (e.target.classList.contains('lp-min')) badge();
+      if (id === 'lpSearch') renderList();
+      if (id === 'lpSubjectOther') autoRef();
+    });
+    $('lpClass').addEventListener('change', function () {
+      var f = G.formNumber(val('lpClass'));
+      // Reload the syllabus pickers only when the form changes, so edits to the class name keep the teacher's choices.
+      if (f && String(f) !== val('lpForm')) { setVal('lpForm', String(f)); sylRefresh(); }
+      autoRef(); fillCounts(false);
+    });
+    $('lpDate').addEventListener('change', function () { fillCounts(false); });
+    $('lpForm').addEventListener('change', function () { sylRefresh(); autoRef(); });
+    $('lpSubject').addEventListener('change', onSubject);
+    $('lpSylMc').addEventListener('change', onMc);
+    $('lpSylSc').addEventListener('change', onSc);
+    $('lpSylTopic').addEventListener('change', onTopic);
+    $('lpSylAct').addEventListener('change', onAct);
+    $('lpFill').onclick = function () { fillCounts(true); };
+    $('lpGen').onclick = generate;
+    $('lpNew').onclick = function () { if (confirmLeave()) newPlan(false); };
+    $('lpSave').onclick = save;
+    $('lpPrev').onclick = function () { preview(readForm()); };
+    $('lpPrint').onclick = function () { printPlan(readForm()); };
+    $('lpPdfBtn').onclick = function () { pdf(readForm(), $('lpPdfBtn')); };
+    $('lpReload').onclick = loadList;
+    $('lpListBox').addEventListener('click', onListClick);
+  }
+
+  function tab(name) {
+    $('lpApp').querySelectorAll('.lp-tabs button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === name); });
+    $('lpApp').querySelectorAll('section[data-view]').forEach(function (s) { s.style.display = s.getAttribute('data-view') === name ? '' : 'none'; });
+    if (name === 'list') renderList();
+  }
+
+  function confirmLeave() { return !ST.dirty || window.confirm('You have unsaved changes on this lesson plan. Continue without saving?'); }
+  function setState(text) {
+    var s = $('lpState'); if (!s) return;
+    if (text) { s.textContent = text; return; }
+    s.textContent = ST.dirty ? (ST.plan && ST.plan.id ? 'Unsaved changes' : 'Not saved yet') : (ST.plan && ST.plan.id ? 'Saved' : 'Not saved yet');
+  }
+
+  /* ───────────── subject / syllabus ───────────── */
+  function subjectName() { return val('lpSubject') === '__other' ? val('lpSubjectOther') : val('lpSubject'); }
+  function sylSubject() { var s = val('lpSubject'); return s && s !== '__other' ? s : ''; }
+  function langOf() {
+    var s = sylSubject(), b = ST.boot;
+    if (s) { var f = (b.subjects || []).filter(function (x) { return x.name === s; })[0]; return f && f.lang === 'sw' ? 'sw' : 'en'; }
+    return /kiswahili|historia|uraia|maadili/i.test(subjectName()) ? 'sw' : 'en';
+  }
+  function rows() {
+    var s = sylSubject(), f = parseInt(val('lpForm'), 10) || 0;
+    return s && ST.syl[s] && f ? (ST.syl[s][f - 1] || []) : [];
+  }
+
+  function onSubject() {
+    $('lpSubjectOther').style.display = val('lpSubject') === '__other' ? '' : 'none';
+    verbs();
+    autoRef();
+    var s = sylSubject();
+    if (!s) { sylRefresh(); return; }
+    if (ST.syl[s]) { sylRefresh(); return; }
+    $('lpSylNote').textContent = 'Loading syllabus…';
+    return loadSyl(s).then(function () { if (sylSubject() === s) sylRefresh(); })
+      .catch(function (e) { $('lpSylNote').textContent = ''; msg(esc(e.message), 'err'); });
+  }
+  // One request per subject: a second, late reply would otherwise reset the teacher's syllabus choices.
+  function loadSyl(s) {
+    ST.sylP = ST.sylP || {};
+    if (!ST.sylP[s]) ST.sylP[s] = call('lpGetSyllabus', s).then(function (forms) { ST.syl[s] = forms || []; return ST.syl[s]; },
+      function (e) { delete ST.sylP[s]; throw e; });
+    return ST.sylP[s];
+  }
+
+  function sylRefresh(keep) {
+    var r = rows(), s = sylSubject(), f = val('lpForm');
+    var note = $('lpSylNote');
+    if (!s) note.textContent = val('lpSubject') === '__other' ? 'No syllabus for this subject — type the texts below.' : 'Select a subject to load its syllabus.';
+    else note.textContent = 'Syllabus: ' + s + ' · Form ' + ['', 'I', 'II', 'III', 'IV'][+f] + ' · ' + r.length + ' topic' + (r.length === 1 ? '' : 's');
+    var seen = {}, html = opt('', r.length ? '— Choose from syllabus —' : '— Nothing in syllabus —');
+    r.forEach(function (row) { var k = row.mcCode + '|' + row.mc; if (!seen[k]) { seen[k] = 1; html += opt(k, (row.mcCode ? row.mcCode + ' ' : '') + row.mc); } });
+    $('lpSylMc').innerHTML = html;
+    if (keep && keep.mc) setVal('lpSylMc', keep.mc);
+    fillSc(keep);
+  }
+  function fillSc(keep) {
+    var mc = val('lpSylMc'), seen = {}, html = opt('', '— Choose —');
+    rows().forEach(function (row) {
+      if (mc && row.mcCode + '|' + row.mc !== mc) return;
+      var k = row.scCode + '|' + row.sc; if (!seen[k]) { seen[k] = 1; html += opt(k, (row.scCode ? row.scCode + ' ' : '') + row.sc); }
+    });
+    $('lpSylSc').innerHTML = html;
+    if (keep && keep.sc) setVal('lpSylSc', keep.sc);
+    fillTopics(keep);
+  }
+  function topicRows() {
+    var mc = val('lpSylMc'), sc = val('lpSylSc');
+    return rows().map(function (row, i) { return { row: row, i: i }; }).filter(function (x) {
+      return (!mc || x.row.mcCode + '|' + x.row.mc === mc) && (!sc || x.row.scCode + '|' + x.row.sc === sc);
+    });
+  }
+  function fillTopics(keep) {
+    var html = opt('', '— Choose topic —');
+    topicRows().forEach(function (x) { html += opt(String(x.i), x.row.topic); });
+    $('lpSylTopic').innerHTML = html;
+    if (keep && keep.topic) {
+      var match = topicRows().filter(function (x) { return x.row.topic === keep.topic; })[0];
+      if (match) setVal('lpSylTopic', String(match.i));
+    }
+    fillActs(keep);
+  }
+  function curRow() { var i = val('lpSylTopic'); return i === '' ? null : rows()[+i] || null; }
+  function fillActs(keep) {
+    var row = curRow(), html = opt('', row ? '— Choose main activity —' : '— Choose a topic first —');
+    if (row) row.activities.forEach(function (a, i) { html += opt(String(i), a); });
+    $('lpSylAct').innerHTML = html;
+    if (keep && keep.ma && row) { var i = row.activities.indexOf(keep.ma); if (i >= 0) setVal('lpSylAct', String(i)); }
+    var m = $('lpMethods');
+    if (row) {
+      var bits = [];
+      if (row.methods && row.methods.length) bits.push('<b>Suggested methods:</b> ' + esc(row.methods.join('; ')));
+      if (row.assessment && row.assessment.length) bits.push('<b>Assessment:</b> ' + esc(row.assessment.join('; ')));
+      if (row.periods) bits.push('<b>Periods:</b> ' + esc(row.periods));
+      m.innerHTML = bits.join('<br>');
+    } else m.innerHTML = '';
+  }
+
+  function onMc() {
+    var mc = val('lpSylMc');
+    if (mc) { setVal('lpMc', mc.split('|').slice(1).join('|')); ST.dirty = true; setState(); }
+    fillSc();
+  }
+  function onSc() {
+    var sc = val('lpSylSc');
+    if (sc) {
+      setVal('lpSc', sc.split('|').slice(1).join('|'));
+      var first = rows().filter(function (r) { return r.scCode + '|' + r.sc === sc; })[0];
+      if (first && !val('lpSylMc')) { setVal('lpSylMc', first.mcCode + '|' + first.mc); setVal('lpMc', first.mc); }
+      ST.dirty = true; setState();
+    }
+    fillTopics();
+  }
+  function onTopic() {
+    var row = curRow();
+    if (row) {
+      if (!val('lpSylMc')) { setVal('lpMc', row.mc); }
+      if (!val('lpSylSc')) { setVal('lpSc', row.sc); }
+      var res = (row.resources || []).join(', ');
+      if (res && (!val('lpRes') || val('lpRes') === ST.resAuto)) { setVal('lpRes', res); ST.resAuto = res; }
+      if (row.activities.length === 1) { fillActs(); setVal('lpSylAct', '0'); onAct(); return; }
+    }
+    fillActs();
+  }
+  function onAct() {
+    var row = curRow(), i = val('lpSylAct');
+    if (!row || i === '') return;
+    var a = row.activities[+i] || '';
+    setVal('lpMa', a);
+    setVal('lpVerb', G.guessVerb(a, langOf()));
+    ST.dirty = true; setState();
+  }
+
+  function verbs(selected) {
+    var lang = langOf(), list = lang === 'sw' ? G.VERBS_SW : G.VERBS_EN;
+    var cur = selected || val('lpVerb');
+    if (cur && list.indexOf(cur) < 0) list = [cur].concat(list);
+    $('lpVerb').innerHTML = list.map(function (v) { return opt(v, v, v === cur); }).join('');
+  }
+
+  function autoRef() {
+    var subj = subjectName(), f = parseInt(val('lpForm'), 10) || 0;
+    if (!subj || !f) return;
+    var ref = G.reference(subj, f, langOf());
+    if (!val('lpRef') || val('lpRef') === ST.refAuto) { setVal('lpRef', ref); ST.refAuto = ref; }
+  }
+
+  /* ───────────── students ───────────── */
+  function totals() {
+    $('lpRegT').textContent = num('lpRegG') + num('lpRegB');
+    $('lpPreT').textContent = num('lpPreG') + num('lpPreB');
+  }
+  function fillCounts(force) {
+    var cls = val('lpClass'), d = val('lpDate'), note = $('lpCountNote');
+    if (!cls) { if (force) msg('Type or choose the class first.', 'err'); return; }
+    if (!force && (num('lpRegG') || num('lpRegB'))) return;
+    note.textContent = 'Reading the class register…';
+    call('lpStudentCounts', cls, d).then(function (c) {
+      setVal('lpRegG', c.registered.girls); setVal('lpRegB', c.registered.boys);
+      if (c.presentFound) { setVal('lpPreG', c.present.girls); setVal('lpPreB', c.present.boys); }
+      totals();
+      var reg = c.registered.girls + c.registered.boys;
+      note.textContent = (reg ? 'Registered numbers come from the class register.' : 'No students found in the register for this class — type the numbers.') + ' ' +
+        (c.presentFound ? 'Present numbers come from attendance on ' + d + '.' : 'No attendance found for this date — type the present numbers.');
+    }).catch(function (e) { note.textContent = e.message; });
+  }
+
+  /* ───────────── time ───────────── */
+  function period() { return G.minutesBetween(val('lpStart'), val('lpEnd')); }
+  function timeText() {
+    var t = G.timeRange(val('lpStart'), val('lpEnd')), p = period();
+    $('lpTimeText').innerHTML = t ? 'On the lesson plan: <b>' + esc(t) + '</b> · Period: <b>' + p + ' minutes</b>' : 'Set the start and end time of the period.';
+    badge();
+  }
+  function badge() {
+    var st = readStages(), p = period() || 0, total = G.sumMinutes(st), s = G.timeStatus(st, p), b = $('lpTimeBadge');
+    b.className = 'lp-badge ' + s;
+    b.innerHTML = '<i class="fas ' + (s === 'match' ? 'fa-circle-check' : 'fa-triangle-exclamation') + '"></i> Stages ' + total + ' / ' + p + ' min' +
+      (s === 'over' ? ' — too long' : s === 'under' ? ' — too short' : '');
+  }
+
+  /* ───────────── stages ───────────── */
+  function renderStages(stages) {
+    $('lpStages').innerHTML = stages.map(function (s, i) {
+      return '<tr data-i="' + i + '"><td class="nm" data-h="Stage"><textarea class="lp-sn" rows="2" aria-label="Stage name">' + esc(s.name) + '</textarea></td>' +
+        '<td class="mn" data-h="Time (min)"><input class="lp-min" type="number" min="0" value="' + esc(s.minutes) + '" aria-label="Minutes"></td>' +
+        '<td data-h="Teaching activities"><textarea class="lp-te" aria-label="Teaching activities">' + esc(s.teaching) + '</textarea></td>' +
+        '<td data-h="Learning activities"><textarea class="lp-le" aria-label="Learning activities">' + esc(s.learning) + '</textarea></td>' +
+        '<td data-h="Assessment"><textarea class="lp-as" aria-label="Assessment">' + esc(s.assessment) + '</textarea></td></tr>';
+    }).join('');
+    badge();
+  }
+  function readStages() {
+    var out = [];
+    document.querySelectorAll('#lpStages tr').forEach(function (tr) {
+      function q(c) { var e = tr.querySelector(c); return e ? String(e.value || '').trim() : ''; }
+      out.push({ name: q('.lp-sn'), minutes: parseInt(q('.lp-min'), 10) || 0, teaching: q('.lp-te'), learning: q('.lp-le'), assessment: q('.lp-as') });
+    });
+    return out;
+  }
+  function emptyStages(lang) {
+    var mins = G.stageMinutes(period() || 80);
+    return G.STAGE_NAMES[lang].map(function (n, i) { return { name: n, minutes: mins[i], teaching: '', learning: '', assessment: '' }; });
+  }
+
+  function generate() {
+    var lang = langOf(), verb = val('lpVerb'), text = val('lpSpec');
+    if (!text) {
+      var ma = val('lpMa');
+      if (!ma) { msg('Choose a main activity or write the specific activity first.', 'err'); $('lpSpec').focus(); return; }
+      var words = ma.split(/\s+/), first = words[0] || '';
+      var list = lang === 'sw' ? G.VERBS_SW : G.VERBS_EN, firstCap = first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
+      if (list.indexOf(firstCap) >= 0) { verb = firstCap; text = words.slice(1).join(' '); verbs(verb); }
+      else text = ma;
+      setVal('lpSpec', text);
+    }
+    var has = readStages().some(function (s) { return s.teaching || s.learning || s.assessment; });
+    if (has && !window.confirm('Replace the current teaching and learning process and remarks with newly generated text?')) return;
+    var out = G.generate({ lang: lang, verb: verb, text: text, style: parseInt(val('lpStyle'), 10) || 0, periodMinutes: period() || 80 });
+    renderStages(out.stages);
+    setVal('lpRemarks', out.remarks);
+    ST.dirty = true; setState();
+    msg('Teaching and learning process generated. You can edit any cell before saving.', 'ok');
+  }
+
+  /* ───────────── plan <-> form ───────────── */
+  function readForm() {
+    var lang = langOf(), stages = readStages(), verb = val('lpVerb'), spec = val('lpSpec');
+    var mc = val('lpSylMc'), sc = val('lpSylSc'), row = curRow();
+    return {
+      id: ST.plan && ST.plan.id || '', school: val('lpSchool'), teacher: val('lpTeacher'), className: val('lpClass'),
+      subject: subjectName(), syllabusSubject: sylSubject(), lang: lang, form: parseInt(val('lpForm'), 10) || 0,
+      date: val('lpDate'), start: val('lpStart'), end: val('lpEnd'), timeText: G.timeRange(val('lpStart'), val('lpEnd')),
+      registered: { girls: num('lpRegG'), boys: num('lpRegB') }, present: { girls: num('lpPreG'), boys: num('lpPreB') },
+      mainCompetence: val('lpMc'), specificCompetence: val('lpSc'), topic: row ? row.topic : (ST.plan && ST.plan.topic || ''),
+      mainActivity: val('lpMa'), verb: verb, specificText: spec,
+      specificActivities: spec ? (verb ? verb + ' ' + G.midSentence(spec) : spec) : '',
+      resources: val('lpRes'), references: val('lpRef'), style: parseInt(val('lpStyle'), 10) || 0,
+      stages: stages, remarks: val('lpRemarks'), _mc: mc, _sc: sc
+    };
+  }
+
+  function writeForm(p) {
+    ST.plan = p;
+    setVal('lpSchool', p.school); setVal('lpTeacher', p.teacher); setVal('lpClass', p.className);
+    var known = (ST.boot.subjects || []).some(function (s) { return s.name === p.syllabusSubject; });
+    setVal('lpSubject', known ? p.syllabusSubject : (p.subject ? '__other' : ''));
+    $('lpSubjectOther').style.display = val('lpSubject') === '__other' ? '' : 'none';
+    setVal('lpSubjectOther', known ? '' : p.subject);
+    setVal('lpForm', String(p.form || G.formNumber(p.className) || 1));
+    setVal('lpDate', p.date); setVal('lpStart', p.start); setVal('lpEnd', p.end);
+    setVal('lpRegG', p.registered.girls || ''); setVal('lpRegB', p.registered.boys || '');
+    setVal('lpPreG', p.present.girls || ''); setVal('lpPreB', p.present.boys || '');
+    setVal('lpMc', p.mainCompetence); setVal('lpSc', p.specificCompetence); setVal('lpMa', p.mainActivity);
+    setVal('lpSpec', p.specificText); setVal('lpRes', p.resources); setVal('lpRef', p.references);
+    setVal('lpStyle', String(p.style || 0)); setVal('lpRemarks', p.remarks);
+    ST.refAuto = p.references; ST.resAuto = '';
+    verbs(p.verb);
+    totals(); timeText();
+    renderStages(p.stages && p.stages.length ? p.stages : emptyStages(p.lang || 'en'));
+    var keep = { mc: '', sc: '', topic: p.topic, ma: p.mainActivity };
+    var after = function () {
+      // re-select syllabus pickers that match the saved texts
+      rows().forEach(function (r) {
+        if (!keep.mc && r.mc === p.mainCompetence) keep.mc = r.mcCode + '|' + r.mc;
+        if (!keep.sc && r.sc === p.specificCompetence) keep.sc = r.scCode + '|' + r.sc;
+      });
+      sylRefresh(keep);
+    };
+    var s = sylSubject();
+    if (s && !ST.syl[s]) loadSyl(s).then(function () { if (sylSubject() === s) after(); }).catch(function () { sylRefresh(); });
+    else after();
+    $('lpTabNewLbl').textContent = p.id ? 'Edit lesson plan' : 'New lesson plan';
+    ST.dirty = false; setState();
+  }
+
+  function newPlan(first) {
+    var b = ST.boot, mySub = '';
+    (b.subjects || []).some(function (s) {
+      return (b.mySubjects || []).some(function (m) { var a = norm(m), z = norm(s.name); if (a && (a === z || a.indexOf(z) >= 0 || z.indexOf(a) >= 0)) { mySub = s.name; return true; } return false; });
+    });
+    var cls = (b.myClasses || [])[0] || '';
+    var lang = (b.subjects || []).filter(function (s) { return s.name === mySub; }).map(function (s) { return s.lang; })[0] || 'en';
+    var p = {
+      id: '', school: b.school, teacher: b.teacher, className: cls, subject: mySub, syllabusSubject: mySub, lang: lang,
+      form: G.formNumber(cls) || 1, date: b.today, start: '08:00', end: '09:20',
+      registered: { girls: 0, boys: 0 }, present: { girls: 0, boys: 0 },
+      mainCompetence: '', specificCompetence: '', topic: '', mainActivity: '', verb: '', specificText: '',
+      resources: '', references: mySub ? G.reference(mySub, G.formNumber(cls) || 1, lang) : '', style: 0, stages: [], remarks: ''
+    };
+    writeForm(p);
+    if (cls) fillCounts(false);
+    if (!first) { tab('new'); msg('New lesson plan started.', 'info'); }
+  }
+
+  /* ───────────── save / list ───────────── */
+  function missing(p) {
+    var m = [];
+    if (!p.className) m.push('class');
+    if (!p.subject) m.push('subject');
+    if (!p.date) m.push('date');
+    if (!p.timeText) m.push('start and end time');
+    if (!p.mainActivity) m.push('main activity');
+    if (!p.stages.some(function (s) { return s.teaching; })) m.push('teaching and learning process (press Generate)');
+    return m;
+  }
+  function save() {
+    var p = readForm(), m = missing(p);
+    if (m.length) { msg('Please fill: ' + esc(m.join(', ')) + '.', 'err'); return; }
+    var btn = $('lpSave'); btn.disabled = true; setState('Saving…');
+    delete p._mc; delete p._sc;
+    call('lpSave', p).then(function (r) {
+      p.id = r.id; ST.plan = p; ST.dirty = false;
+      $('lpTabNewLbl').textContent = 'Edit lesson plan';
+      setState('Saved · ' + r.updated);
+      msg('<i class="fas fa-circle-check"></i> Lesson plan saved.', 'ok');
+      loadList();
+    }).catch(function (e) { setState(); msg(esc(e.message), 'err'); })
+      .then(function () { btn.disabled = false; });
+  }
+
+  function loadList() {
+    var box = $('lpListBox'); if (!box) return;
+    box.innerHTML = '<div class="lp-loading"><i class="fas fa-spinner fa-spin"></i> Loading…</div>';
+    call('lpList').then(function (l) { ST.list = l || []; $('lpCount').textContent = ST.list.length; renderList(); })
+      .catch(function (e) { box.innerHTML = '<div class="lp-empty">' + esc(e.message) + '</div>'; });
+  }
+  function renderList() {
+    var box = $('lpListBox'); if (!box) return;
+    var q = val('lpSearch').toLowerCase();
+    var l = ST.list.filter(function (x) { return !q || (x.className + ' ' + x.subject + ' ' + x.mainActivity + ' ' + x.date).toLowerCase().indexOf(q) >= 0; });
+    if (!l.length) {
+      box.innerHTML = '<div class="lp-empty"><i class="fas fa-folder-open"></i>' + (ST.list.length ? 'No lesson plan matches your search.' : 'No saved lesson plans yet. Create one in "New lesson plan".') + '</div>';
+      return;
+    }
+    box.innerHTML = '<table class="lp-t lp-list"><thead><tr><th>Date</th><th>Class</th><th>Subject</th><th>Main activity</th><th>Updated</th><th></th></tr></thead><tbody>' +
+      l.map(function (x) {
+        return '<tr><td><b>' + esc(x.date) + '</b><div class="lp-hint">' + esc(x.time) + '</div></td><td>' + esc(x.className) + '</td><td>' + esc(x.subject) + '</td>' +
+          '<td>' + esc(x.mainActivity) + '</td><td class="lp-hint">' + esc(x.updated) + '</td><td class="act" data-id="' + esc(x.id) + '">' +
+          '<button type="button" class="lp-btn sm" data-a="open"><i class="fas fa-pen"></i> Open</button>' +
+          '<button type="button" class="lp-btn sm" data-a="print" title="Print"><i class="fas fa-print"></i></button>' +
+          '<button type="button" class="lp-btn sm" data-a="pdf" title="Download PDF"><i class="fas fa-file-pdf"></i></button>' +
+          '<button type="button" class="lp-btn sm" data-a="copy" title="Use as a new lesson plan"><i class="fas fa-copy"></i></button>' +
+          '<button type="button" class="lp-btn sm danger" data-a="del" title="Delete"><i class="fas fa-trash"></i></button></td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+  function onListClick(e) {
+    var b = e.target.closest('button[data-a]'); if (!b) return;
+    var id = b.parentNode.getAttribute('data-id'), a = b.getAttribute('data-a');
+    if (a === 'del') {
+      if (!window.confirm('Delete this lesson plan? This cannot be undone.')) return;
+      b.disabled = true;
+      call('lpDelete', id).then(function () {
+        if (ST.plan && ST.plan.id === id) { ST.plan.id = ''; setState(); }
+        msg('Lesson plan deleted.', 'ok'); loadList();
+      }).catch(function (er) { b.disabled = false; msg(esc(er.message), 'err'); });
+      return;
+    }
+    if ((a === 'open' || a === 'copy') && !confirmLeave()) return;
+    b.disabled = true;
+    call('lpGet', id).then(function (p) {
+      b.disabled = false;
+      if (a === 'open') { writeForm(p); tab('new'); msg('Lesson plan opened.', 'info'); }
+      else if (a === 'copy') { p.id = ''; p.date = ST.boot.today; writeForm(p); ST.dirty = true; setState(); tab('new'); msg('Copied as a new lesson plan — change what you need and save.', 'info'); }
+      else if (a === 'print') printPlan(p);
+      else if (a === 'pdf') pdf(p, b);
+    }).catch(function (er) { b.disabled = false; msg(esc(er.message), 'err'); });
+  }
+
+  /* ───────────── printable document ───────────── */
+  var DOC_LABELS = {
+    en: { title: 'LESSON PLAN', school: 'SCHOOL', teacher: "TEACHER'S NAME", cls: 'CLASS', subject: 'SUBJECT', time: 'TIME', date: 'DATE',
+      students: 'NUMBER OF STUDENTS', reg: 'REGISTERED', pre: 'PRESENT', girls: 'GIRLS', boys: 'BOYS', total: 'TOTAL',
+      mc: 'MAIN COMPETENCE', sc: 'SPECIFIC COMPETENCE', ma: 'MAIN ACTIVITY', sa: 'SPECIFIC ACTIVITIES', res: 'T &amp; L RESOURCES', ref: 'REFERENCES',
+      process: 'TEACHING AND LEARNING PROCESS', stage: 'STAGES', min: 'TIME (MIN)', te: 'TEACHING ACTIVITIES', le: 'LEARNING ACTIVITIES', as: 'ASSESSMENT', rm: 'REMARKS' },
+    sw: { title: 'ANDALIO LA SOMO', school: 'SHULE', teacher: 'JINA LA MWALIMU', cls: 'DARASA', subject: 'SOMO', time: 'MUDA', date: 'TAREHE',
+      students: 'IDADI YA WANAFUNZI', reg: 'WALIOANDIKISHWA', pre: 'WALIOHUDHURIA', girls: 'WASICHANA', boys: 'WAVULANA', total: 'JUMLA',
+      mc: 'UMAHIRI MKUU', sc: 'UMAHIRI MAHUSUSI', ma: 'SHUGHULI KUU', sa: 'SHUGHULI MAHUSUSI', res: 'ZANA ZA KUFUNDISHIA NA KUJIFUNZIA', ref: 'REJEA',
+      process: 'HATUA ZA UFUNDISHAJI NA UJIFUNZAJI', stage: 'HATUA', min: 'MUDA (DK)', te: 'SHUGHULI ZA UFUNDISHAJI', le: 'SHUGHULI ZA UJIFUNZAJI', as: 'TATHMINI', rm: 'MAONI' }
+  };
+  function refHtml(r) {
+    var m = String(r || '').match(/^(.*?\(\d{4}\)\.\s*)(.+?)(\.\s*(?:Tanzania Institute of Education|Taasisi ya Elimu Tanzania)\.?)$/);
+    return m ? esc(m[1]) + '<i>' + esc(m[2]) + '</i>' + esc(m[3]) : esc(r);
+  }
+  function buildDoc(p) {
+    var L = DOC_LABELS[p.lang === 'sw' ? 'sw' : 'en'], rt = G.total(p.registered), pt = G.total(p.present);
+    function hv(v) { return esc(String(v || '').toUpperCase()); }
+    var css = '@page{size:A4;margin:14mm 13mm}body{font-family:Arial,Helvetica,sans-serif;color:#000;font-size:11pt;margin:0;background:#fff}' +
+      '.pg{max-width:184mm;margin:0 auto;padding:6mm 0}h1{text-align:center;font-size:21pt;margin:0 0 16px;font-weight:bold;letter-spacing:.5px}' +
+      'table{border-collapse:collapse;width:100%}.hd td{padding:7px 5px 3px;vertical-align:bottom;font-weight:bold;font-size:11pt}' +
+      '.hd td.k{white-space:nowrap;width:13%}.hd td.v{border-bottom:1.5px solid #000;text-align:center;width:37%}' +
+      '.ns{margin-top:26px}.ns td{border:1px solid #000;text-align:center;padding:5px;font-size:11pt}.ns .b{font-weight:bold}' +
+      '.ft{margin-top:20px}.ft td{padding:6px 5px 3px;vertical-align:bottom;font-size:11pt}.ft td.k{font-weight:bold;white-space:nowrap;width:24%}.ft td.v{border-bottom:1.5px solid #000}' +
+      'h2{text-align:center;font-size:13pt;margin:28px 0 12px;font-weight:bold}' +
+      '.pr th{border:1px solid #000;padding:6px;font-size:11pt;font-weight:bold;text-align:center}.pr td{border:1px solid #000;padding:6px;vertical-align:middle;font-size:11pt;line-height:1.35}' +
+      '.pr td.s{font-weight:bold;width:16%}.pr td.m{text-align:center;font-weight:bold;width:8%}tr{page-break-inside:avoid}' +
+      '.rm{margin-top:12px;font-weight:bold;font-size:11pt;line-height:1.4}';
+    var html = '<!DOCTYPE html><html><head>`n<script src="/gas-compat.js"></script><meta charset="utf-8"><title>' + esc(L.title + ' - ' + p.subject + ' - ' + p.className + ' - ' + p.date) + '</title><style>' + css + '</style></head><body><div class="pg">' +
+      '<h1>' + L.title + '</h1>' +
+      '<table class="hd"><tr><td class="k">' + L.school + ' :</td><td class="v">' + hv(p.school) + '</td><td class="k">' + L.teacher + ' :</td><td class="v">' + hv(p.teacher) + '</td></tr>' +
+      '<tr><td class="k">' + L.cls + ' :</td><td class="v">' + hv(p.className) + '</td><td class="k">' + L.subject + ' :</td><td class="v">' + hv(p.subject) + '</td></tr>' +
+      '<tr><td class="k">' + L.time + ' :</td><td class="v">' + esc(p.timeText) + '</td><td class="k">' + L.date + ' :</td><td class="v">' + esc(p.date) + '</td></tr></table>' +
+      '<table class="ns"><tr><td class="b" colspan="6">' + L.students + '</td></tr><tr><td class="b" colspan="3">' + L.reg + '</td><td class="b" colspan="3">' + L.pre + '</td></tr>' +
+      '<tr><td>' + L.girls + '</td><td>' + L.boys + '</td><td>' + L.total + '</td><td>' + L.girls + '</td><td>' + L.boys + '</td><td>' + L.total + '</td></tr>' +
+      '<tr><td>' + G.total({ girls: p.registered.girls }) + '</td><td>' + G.total({ boys: p.registered.boys }) + '</td><td>' + rt + '</td><td>' + G.total({ girls: p.present.girls }) + '</td><td>' + G.total({ boys: p.present.boys }) + '</td><td>' + pt + '</td></tr></table>' +
+      '<table class="ft">' +
+      '<tr><td class="k">' + L.mc + ' :</td><td class="v">' + esc(p.mainCompetence) + '</td></tr>' +
+      '<tr><td class="k">' + L.sc + ' :</td><td class="v">' + esc(p.specificCompetence) + '</td></tr>' +
+      '<tr><td class="k">' + L.ma + ' :</td><td class="v">' + esc(p.mainActivity) + '</td></tr>' +
+      '<tr><td class="k">' + L.sa + ' :</td><td class="v">' + esc(p.specificActivities) + '</td></tr>' +
+      '<tr><td class="k">' + L.res + ' :</td><td class="v">' + esc(p.resources) + '</td></tr>' +
+      '<tr><td class="k">' + L.ref + ' :</td><td class="v">' + refHtml(p.references) + '</td></tr></table>' +
+      '<h2>' + L.process + '</h2>' +
+      '<table class="pr"><thead><tr><th>' + L.stage + '</th><th>' + L.min + '</th><th>' + L.te + '</th><th>' + L.le + '</th><th>' + L.as + '</th></tr></thead><tbody>' +
+      (p.stages || []).map(function (s) {
+        return '<tr><td class="s">' + esc(String(s.name || '').toUpperCase()) + '</td><td class="m">' + esc(s.minutes) + '</td><td>' + esc(s.teaching) + '</td><td>' + esc(s.learning) + '</td><td>' + esc(s.assessment) + '</td></tr>';
+      }).join('') + '</tbody></table>' +
+      (p.remarks ? '<div class="rm">' + L.rm + ' : ' + esc(p.remarks) + '</div>' : '') +
+      '</div><\/body><\/html>';
+    return html;
+  }
+  function fileName(p) { return ['Lesson_Plan', p.subject, p.className, p.date].filter(Boolean).join('_'); }
+
+  function preview(p) {
+    ST.previewPlan = p;
+    var md = $('lpModal'); md.classList.add('on');
+    $('lpFrame').srcdoc = buildDoc(p);
+  }
+  function printPlan(p) {
+    var w = window.open('', '_blank', 'width=900,height=1100');
+    if (!w) { msg('Please allow pop-ups to print.', 'err'); return; }
+    w.document.open(); w.document.write(buildDoc(p)); w.document.close();
+    setTimeout(function () { try { w.focus(); w.print(); } catch (e) {} }, 500);
+  }
+  function pdf(p, btn) {
+    if (btn) btn.disabled = true;
+    msg('<i class="fas fa-spinner fa-spin"></i> Creating PDF…', 'info');
+    call('lpPdf', buildDoc(p), fileName(p)).then(function (r) {
+      var bin = atob(r.data), bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      var url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+      var a = document.createElement('a'); a.href = url; a.download = r.name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+      msg('<i class="fas fa-circle-check"></i> PDF downloaded: ' + esc(r.name), 'ok');
+    }).catch(function (e) { msg(esc(e.message) + ' — use Print and choose "Save as PDF" instead.', 'err'); })
+      .then(function () { if (btn) btn.disabled = false; });
+  }
+
+  window.lpOpenPanel = open;
+  if ($('pane-dashboard') || document.readyState !== 'loading') install(); else document.addEventListener('DOMContentLoaded', install);
+})();
+</script>

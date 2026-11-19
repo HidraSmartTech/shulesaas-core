@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en" data-title-suffix="OPSMS">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPSMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ════════════════════════════════
+   RESET & TOKENS
+════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --ink:#03091a;
+  --navy:#061530;
+  --deep:#0b2152;
+  --royal:#1249a8;
+  --sky:#3b82f6;
+  --cyan:#06b6d4;
+  --emerald:#10b981;
+  --gold:#f59e0b;
+  --gold2:#fcd34d;
+  --coral:#f97316;
+  --rose:#fb7185;
+  --violet:#8b5cf6;
+  --white:#ffffff;
+  --off:#f8faff;
+  --muted:#64748b;
+  --border:#dde4f0;
+  --r:20px;
+  --r-sm:12px;
+  --ffd:'Cormorant Garamond',serif;
+  --ffb:'Plus Jakarta Sans',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--ffb);background:var(--white);color:var(--ink);overflow-x:hidden;line-height:1.6;}
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;display:block;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:#f1f5f9;}
+::-webkit-scrollbar-thumb{background:var(--royal);border-radius:99px;}
+
+/* ════ UTILITY ════ */
+.container{width:90%;max-width:1200px;margin:0 auto;}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  border-radius:99px;padding:6px 18px;
+  font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  margin-bottom:18px;
+}
+.chip-blue{background:rgba(18,73,168,.08);color:var(--royal);border:1px solid rgba(18,73,168,.18);}
+.chip-gold{background:rgba(245,158,11,.1);color:#b45309;border:1px solid rgba(245,158,11,.2);}
+.chip-white{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.2);}
+.ttl{font-family:var(--ffd);font-size:2.5rem;line-height:1.12;font-weight:800;color:var(--ink);}
+.ttl em{font-style:normal;background:linear-gradient(135deg,var(--royal),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.ttl-white{color:#fff;}
+.ttl-white em{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sub{font-size:.97rem;color:var(--muted);line-height:1.8;max-width:660px;}
+.sub-white{color:rgba(255,255,255,.6);}
+.ctr{text-align:center;}
+.ctr .sub{margin:0 auto;}
+
+/* ════ HEADER ════ */
+header{
+  position:fixed;top:12px;left:50%;transform:translateX(-50%);
+  width:calc(100% - 40px);max-width:1180px;
+  z-index:1000;border-radius:18px;
+  background:rgba(6,21,48,.55);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.08);
+  transition:all .4s;
+  box-shadow:0 8px 40px rgba(0,0,0,.25);
+}
+header.compact{
+  top:0;border-radius:0;width:100%;max-width:none;
+  background:rgba(6,21,48,.96);
+  box-shadow:0 4px 30px rgba(0,0,0,.35);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;}
+.logo{display:flex;align-items:center;gap:11px;}
+.logo-mark{
+  width:42px;height:42px;border-radius:11px;
+  background:linear-gradient(135deg,var(--gold),var(--coral));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ffd);font-size:1.1rem;font-weight:800;color:var(--ink);
+  overflow:hidden;
+}
+.logo-mark img{width:100%;height:100%;object-fit:cover;}
+.logo-name{font-family:var(--ffd);font-size:1.5rem;font-weight:800;color:#fff;letter-spacing:-.3px;}
+.logo-name span{color:var(--gold2);}
+.logo-tagline{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1.2px;text-transform:uppercase;display:block;}
+
+nav ul{display:flex;list-style:none;align-items:center;gap:2px;}
+nav ul li a{
+  color:rgba(255,255,255,.75);font-size:.86rem;font-weight:500;
+  padding:8px 13px;border-radius:99px;transition:.2s;display:block;letter-spacing:.2px;
+}
+nav ul li a:hover{color:#fff;background:rgba(255,255,255,.09);}
+
+.btn-nav{
+  background:linear-gradient(135deg,var(--gold),var(--coral));
+  color:var(--ink)!important;font-weight:700!important;font-size:.84rem!important;
+  padding:9px 22px!important;border-radius:99px!important;
+  border:none;cursor:pointer;
+  box-shadow:0 4px 20px rgba(245,158,11,.35);
+  transition:all .25s!important;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn-nav:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(245,158,11,.5);}
+.btn-nav:disabled{opacity:.6;cursor:not-allowed;transform:none!important;}
+
+.menu-tog{display:none;cursor:pointer;font-size:1.3rem;color:#fff;padding:6px;}
+
+/* Mobile Nav */
+.mob-nav{
+  display:none;position:fixed;inset:0;
+  background:rgba(3,9,26,.96);backdrop-filter:blur(24px);
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;z-index:1200;
+}
+.mob-nav.open{display:flex;}
+.mob-nav a{color:#fff;font-size:1.3rem;font-weight:700;padding:13px 48px;border-radius:14px;transition:.2s;letter-spacing:.3px;}
+.mob-nav a:hover{background:rgba(255,255,255,.07);color:var(--gold2);}
+.mob-close{position:absolute;top:22px;right:24px;font-size:1.7rem;color:rgba(255,255,255,.6);cursor:pointer;transition:.2s;}
+.mob-close:hover{color:#fff;}
+.mob-signin{margin-top:12px;}
+
+/* ════ HERO SLIDER ════ */
+.hero{
+  position:relative;height:100vh;min-height:640px;
+  overflow:hidden;display:flex;align-items:center;
+}
+.slides{position:absolute;inset:0;z-index:0;}
+.slide{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  opacity:0;transition:opacity 1.4s cubic-bezier(.4,0,.2,1);
+  transform:scale(1.04);
+}
+.slide.active{opacity:1;transform:scale(1);transition:opacity 1.4s ease,transform 7s ease;}
+
+/* — 7 Classroom / School slides — */
+.s1{background-image:url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1800&q=85');}
+.s2{background-image:url('https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1800&q=85');}
+.s3{background-image:url('https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1800&q=85');}
+.s4{background-image:url('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=1800&q=85');}
+.s5{background-image:url('https://images.unsplash.com/photo-1588072432836-e10032774350?w=1800&q=85');}
+.s6{background-image:url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1800&q=85');}
+.s7{background-image:url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1800&q=85');}
+
+/* gradient overlay — left darker for text */
+.slide::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(110deg,rgba(3,9,26,.88) 0%,rgba(6,21,48,.7) 45%,rgba(18,73,168,.18) 100%);
+}
+
+/* Mesh blob decorations */
+.hero-blob{
+  position:absolute;z-index:5;border-radius:50%;
+  filter:blur(80px);pointer-events:none;opacity:.35;
+}
+.hb1{width:500px;height:500px;background:radial-gradient(circle,rgba(59,130,246,.5),transparent 70%);top:-100px;right:0;}
+.hb2{width:380px;height:380px;background:radial-gradient(circle,rgba(6,182,212,.4),transparent 70%);bottom:80px;right:200px;}
+.hb3{width:300px;height:300px;background:radial-gradient(circle,rgba(245,158,11,.3),transparent 70%);bottom:60px;left:60px;}
+
+/* Content */
+.hero-inner{position:relative;z-index:10;color:#fff;max-width:780px;padding:0 20px;}
+.hero-live{
+  display:inline-flex;align-items:center;gap:9px;
+  background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);
+  color:#6ee7b7;border-radius:99px;padding:7px 18px;
+  font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+  margin-bottom:22px;animation:fadeUp .7s .1s both;
+}
+.hero-live span.dot{width:8px;height:8px;border-radius:50%;background:#10b981;animation:blink 1.6s infinite;}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(1.6)}}
+
+.hero-inner h1{
+  font-family:var(--ffd);font-size:3.8rem;font-weight:800;
+  line-height:1.05;margin-bottom:20px;
+  text-shadow:0 4px 24px rgba(0,0,0,.4);
+  animation:fadeUp .7s .2s both;
+}
+.hero-inner h1 .accent{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-inner p{
+  font-size:1.08rem;color:rgba(255,255,255,.82);line-height:1.82;
+  margin-bottom:34px;max-width:580px;animation:fadeUp .7s .35s both;
+}
+.hero-btns{display:flex;gap:13px;flex-wrap:wrap;animation:fadeUp .7s .5s both;}
+.hbtn-gold{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:15px 38px;border-radius:99px;
+  background:linear-gradient(135deg,var(--gold),var(--coral));
+  color:var(--ink);font-weight:800;font-size:.98rem;border:none;cursor:pointer;
+  box-shadow:0 8px 36px rgba(245,158,11,.4);transition:.3s;
+}
+.hbtn-gold:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 14px 44px rgba(245,158,11,.55);}
+.hbtn-gold:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.hbtn-ghost{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:14px 32px;border-radius:99px;
+  background:rgba(255,255,255,.09);color:#fff;
+  border:1.5px solid rgba(255,255,255,.25);
+  font-weight:600;font-size:.98rem;cursor:pointer;transition:.3s;
+}
+.hbtn-ghost:hover{background:rgba(255,255,255,.17);transform:translateY(-2px);}
+
+/* Slide bottom caption */
+.slide-caption{
+  position:absolute;bottom:100px;right:40px;z-index:10;
+  background:rgba(3,9,26,.65);backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.08);border-radius:16px;
+  padding:14px 20px;max-width:260px;animation:fadeUp .7s .65s both;
+}
+.sc-label{font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);margin-bottom:4px;}
+.sc-text{font-size:.82rem;color:rgba(255,255,255,.7);line-height:1.5;}
+
+/* Stats bar */
+.hero-statsbar{
+  position:absolute;bottom:0;left:0;right:0;z-index:10;
+  display:grid;grid-template-columns:repeat(5,1fr);
+  background:rgba(3,9,26,.72);backdrop-filter:blur(24px);
+  border-top:1px solid rgba(255,255,255,.06);
+  animation:fadeUp .7s .7s both;
+}
+.hsb-item{
+  padding:16px 10px;text-align:center;
+  border-right:1px solid rgba(255,255,255,.05);
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+}
+.hsb-item:last-child{border-right:none;}
+.hsb-num{font-family:var(--ffd);font-size:1.8rem;font-weight:800;color:var(--gold2);line-height:1;}
+.hsb-lbl{font-size:.72rem;color:rgba(255,255,255,.48);font-weight:600;text-transform:uppercase;letter-spacing:.7px;}
+
+/* Arrows */
+.arr{
+  position:absolute;top:50%;transform:translateY(-50%);
+  z-index:20;width:48px;height:48px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.07);backdrop-filter:blur(10px);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.25s;font-size:.95rem;
+}
+.arr:hover{background:rgba(255,255,255,.18);}
+.arr-prev{left:24px;}
+.arr-next{right:24px;}
+
+/* Dots */
+.sdots{
+  position:absolute;bottom:68px;left:50%;transform:translateX(-50%);
+  display:flex;gap:8px;z-index:20;
+}
+.sdot{
+  width:7px;height:7px;border-radius:99px;
+  background:rgba(255,255,255,.3);border:none;cursor:pointer;transition:.4s;padding:0;
+}
+.sdot.active{background:var(--gold);width:26px;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+
+/* ════ CLASSROOM GALLERY STRIP ════ */
+.gallery-section{padding:70px 0 80px;background:var(--off);}
+.gallery-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  grid-template-rows:220px 200px;
+  gap:14px;margin-top:44px;
+  border-radius:var(--r);overflow:hidden;
+}
+.gp{overflow:hidden;border-radius:var(--r-sm);position:relative;cursor:pointer;}
+.gp img{width:100%;height:100%;object-fit:cover;transition:transform .55s ease;}
+.gp:hover img{transform:scale(1.07);}
+.gp-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 45%,rgba(3,9,26,.75) 100%);
+  opacity:0;transition:.35s;display:flex;align-items:flex-end;padding:14px;
+}
+.gp:hover .gp-overlay{opacity:1;}
+.gp-label{
+  font-size:.78rem;font-weight:700;color:#fff;letter-spacing:.5px;
+  background:rgba(18,73,168,.75);padding:4px 10px;border-radius:99px;
+}
+/* Big left tile spans 2 rows */
+.gp-big{grid-row:1/3;border-radius:var(--r);}
+.gp-tall{grid-row:1/3;}
+
+/* ════ FEATURES ════ */
+.features-section{padding:96px 0 88px;background:var(--white);}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.feat-card{
+  background:var(--white);border-radius:var(--r);padding:30px 26px;
+  border:1px solid var(--border);
+  box-shadow:0 2px 16px rgba(3,9,26,.04);
+  transition:all .35s;position:relative;overflow:hidden;
+  cursor:default;
+}
+/* shimmer top line */
+.feat-card::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:3px;
+  background:linear-gradient(90deg,transparent,var(--royal),var(--cyan),transparent);
+  transition:.5s;
+}
+.feat-card:hover{transform:translateY(-7px);box-shadow:0 24px 60px rgba(3,9,26,.1);border-color:rgba(18,73,168,.15);}
+.feat-card:hover::before{left:100%;}
+.fc-ico{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.45rem;margin-bottom:18px;}
+.feat-card h3{font-size:1.04rem;font-weight:700;color:var(--navy);margin-bottom:9px;font-family:var(--ffd);font-size:1.15rem;}
+.feat-card p{font-size:.875rem;color:var(--muted);line-height:1.72;}
+.fc-ghost{
+  position:absolute;bottom:-8px;right:10px;
+  font-family:var(--ffd);font-size:4.5rem;font-weight:800;
+  color:rgba(18,73,168,.04);line-height:1;pointer-events:none;
+}
+/* icon bg variants */
+.ico-b{background:#dbeafe;color:#1d4ed8;}
+.ico-g{background:#d1fae5;color:#065f46;}
+.ico-a{background:#fef3c7;color:#92400e;}
+.ico-p{background:#ede9fe;color:#5b21b6;}
+.ico-c{background:#cffafe;color:#0e7490;}
+.ico-r{background:#fee2e2;color:#991b1b;}
+.ico-o{background:#ffedd5;color:#9a3412;}
+.ico-pk{background:#fce7f3;color:#9d174d;}
+.ico-t{background:#ccfbf1;color:#134e4a;}
+
+/* ════ HOW IT WORKS ════ */
+.how-section{
+  padding:90px 0;
+  background:linear-gradient(160deg,var(--navy) 0%,var(--deep) 55%,#0f2d6e 100%);
+  position:relative;overflow:hidden;
+}
+.how-section::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:56px;position:relative;}
+.steps::before{
+  content:'';position:absolute;top:46px;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.12) 20%,rgba(255,255,255,.12) 80%,transparent);
+}
+.step{text-align:center;padding:0 14px;position:relative;z-index:1;}
+.step-orb{
+  width:94px;height:94px;border-radius:50%;margin:0 auto 22px;
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;color:var(--gold2);
+  box-shadow:0 0 40px rgba(59,130,246,.15);
+  transition:.35s;position:relative;
+}
+.step:hover .step-orb{
+  background:rgba(18,73,168,.3);
+  border-color:rgba(59,130,246,.4);
+  box-shadow:0 0 60px rgba(59,130,246,.3);
+  transform:scale(1.07);
+}
+.step-n{
+  position:absolute;top:-5px;right:-5px;
+  width:26px;height:26px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--coral));
+  color:var(--ink);font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--navy);
+}
+.step h3{font-weight:700;font-size:.97rem;color:#fff;margin-bottom:8px;letter-spacing:.2px;}
+.step p{font-size:.84rem;color:rgba(255,255,255,.55);line-height:1.68;}
+
+/* ════ STATS ════ */
+.stats-section{padding:90px 0;background:var(--off);}
+.stats-mosaic{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:auto auto;
+  gap:18px;margin-top:52px;
+}
+.sm-card{
+  background:var(--white);border-radius:var(--r);
+  padding:32px 28px;border:1px solid var(--border);
+  box-shadow:0 4px 20px rgba(3,9,26,.04);
+  transition:all .32s;display:flex;flex-direction:column;align-items:center;text-align:center;
+  position:relative;overflow:hidden;
+}
+.sm-card::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent,rgba(18,73,168,.03));
+  opacity:0;transition:.3s;
+}
+.sm-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(3,9,26,.1);}
+.sm-card:hover::after{opacity:1;}
+.sm-card i{font-size:2.2rem;margin-bottom:14px;display:block;}
+.sm-num{font-family:var(--ffd);font-size:3rem;font-weight:800;line-height:1;margin-bottom:6px;}
+.sm-lbl{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;}
+/* colour accents per card */
+.sc-blue i,.sc-blue .sm-num{color:var(--royal);}
+.sc-cyan i,.sc-cyan .sm-num{color:var(--cyan);}
+.sc-emerald i,.sc-emerald .sm-num{color:var(--emerald);}
+.sc-violet i,.sc-violet .sm-num{color:var(--violet);}
+.sc-gold i,.sc-gold .sm-num{color:var(--gold);}
+.sc-coral i,.sc-coral .sm-num{color:var(--coral);}
+/* wide card */
+.sm-card.wide{grid-column:1/3;flex-direction:row;align-items:center;text-align:left;gap:24px;padding:28px 36px;}
+.sm-card.wide .sm-icon-box{
+  width:72px;height:72px;border-radius:18px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:2rem;
+}
+.sm-card.wide .sm-icon-box.bg-blue{background:#dbeafe;color:var(--royal);}
+.sm-card.wide i{margin-bottom:0;}
+
+/* ════ GALLERY MOSAIC (second gallery) ════ */
+.gallery2-section{padding:80px 0;background:var(--white);}
+.mosaic{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr;
+  grid-template-rows:200px 200px;
+  gap:12px;margin-top:44px;
+}
+.mp{border-radius:var(--r-sm);overflow:hidden;position:relative;cursor:pointer;}
+.mp img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
+.mp:hover img{transform:scale(1.09);}
+.mp-tall{grid-row:1/3;}
+.mp-wide{grid-column:2/4;}
+.mp-overlay{
+  position:absolute;inset:0;opacity:0;
+  background:linear-gradient(180deg,transparent 40%,rgba(6,21,48,.8));
+  display:flex;align-items:flex-end;padding:16px;transition:.3s;
+}
+.mp:hover .mp-overlay{opacity:1;}
+.mp-tag{background:rgba(18,73,168,.8);color:#fff;font-size:.76rem;font-weight:700;padding:5px 12px;border-radius:99px;}
+
+/* ════ ABOUT ════ */
+.about-section{padding:96px 0;background:var(--off);}
+.about-layout{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
+.about-vis{position:relative;}
+.about-imgstack{position:relative;height:460px;}
+.aimg-main{
+  position:absolute;top:0;left:0;right:60px;bottom:60px;
+  border-radius:var(--r);overflow:hidden;
+  box-shadow:0 30px 80px rgba(3,9,26,.18);
+}
+.aimg-main img{width:100%;height:100%;object-fit:cover;}
+.aimg-second{
+  position:absolute;bottom:0;right:0;width:56%;height:55%;
+  border-radius:var(--r);overflow:hidden;
+  border:4px solid var(--white);
+  box-shadow:0 16px 50px rgba(3,9,26,.16);
+}
+.aimg-second img{width:100%;height:100%;object-fit:cover;}
+.avis-badge{
+  position:absolute;top:24px;right:24px;
+  background:rgba(3,9,26,.82);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.08);border-radius:14px;
+  padding:14px 18px;display:flex;align-items:center;gap:12px;
+}
+.avb-dot{width:10px;height:10px;border-radius:50%;background:var(--emerald);animation:blink 1.8s infinite;flex-shrink:0;}
+.avb-text{font-size:.8rem;font-weight:600;color:rgba(255,255,255,.8);}
+.about-copy p{font-size:.95rem;color:var(--muted);line-height:1.85;margin-bottom:22px;}
+.atags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;}
+.atag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--white);border:1px solid var(--border);
+  color:var(--ink);border-radius:99px;padding:6px 14px;
+  font-size:11.5px;font-weight:600;
+  box-shadow:0 2px 8px rgba(3,9,26,.04);
+}
+.atag i{color:var(--royal);font-size:10px;}
+.tech-pill{
+  background:linear-gradient(135deg,var(--navy),var(--deep));
+  border-radius:16px;padding:18px 22px;
+  display:flex;align-items:center;gap:14px;
+}
+.tp-icon{width:40px;height:40px;background:rgba(245,158,11,.15);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1rem;flex-shrink:0;}
+.tp-text{color:rgba(255,255,255,.75);font-size:.875rem;line-height:1.55;}
+.tp-text b{color:var(--gold2);}
+
+/* ════ ROLES ════ */
+.roles-section{padding:90px 0;background:var(--white);}
+.roles-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:52px;}
+.role-card{
+  border-radius:var(--r);padding:32px 22px 28px;text-align:center;
+  position:relative;overflow:hidden;
+  transition:transform .32s,box-shadow .32s;cursor:default;
+}
+/* decorative arc */
+.role-card::before{
+  content:'';position:absolute;bottom:-50px;right:-50px;
+  width:160px;height:160px;border-radius:50%;
+  background:rgba(255,255,255,.04);pointer-events:none;
+}
+.role-card:hover{transform:translateY(-7px);box-shadow:0 22px 56px rgba(3,9,26,.22);}
+.rc-navy{background:linear-gradient(145deg,#061530,#1249a8);}
+.rc-forest{background:linear-gradient(145deg,#052e16,#166534);}
+.rc-plum{background:linear-gradient(145deg,#3b0764,#7c3aed);}
+.rc-ember{background:linear-gradient(145deg,#431407,#ea580c);}
+.rico{
+  width:64px;height:64px;border-radius:18px;
+  background:rgba(255,255,255,.1);
+  margin:0 auto 18px;display:flex;align-items:center;justify-content:center;
+  font-size:1.7rem;color:#fff;
+}
+.role-card h3{font-family:var(--ffd);font-size:1.2rem;font-weight:800;color:#fff;margin-bottom:10px;}
+.role-card p{font-size:.845rem;color:rgba(255,255,255,.62);line-height:1.68;}
+.rbadge{
+  display:inline-flex;align-items:center;gap:5px;margin-top:16px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);
+  color:rgba(255,255,255,.82);border-radius:99px;
+  padding:5px 13px;font-size:10.5px;font-weight:700;letter-spacing:.5px;
+}
+.rbadge i{font-size:9px;}
+
+/* ════ QUOTE ════ */
+.quote-section{
+  padding:80px 0;
+  background:linear-gradient(135deg,#eef3ff,#f8faff);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.quote-box{
+  max-width:800px;margin:0 auto;text-align:center;
+}
+.qmark{
+  width:60px;height:60px;border-radius:50%;
+  background:linear-gradient(135deg,var(--royal),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;color:#fff;margin:0 auto 24px;
+  box-shadow:0 8px 28px rgba(18,73,168,.25);
+}
+.qtext{
+  font-family:var(--ffd);font-size:1.75rem;font-style:italic;
+  color:var(--navy);line-height:1.5;margin-bottom:28px;
+}
+.qauthor{display:flex;align-items:center;justify-content:center;gap:13px;}
+.qav{
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,var(--navy),var(--royal));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:1.1rem;
+}
+.qname{font-weight:700;font-size:.93rem;color:var(--navy);}
+.qrole{font-size:.8rem;color:var(--muted);}
+
+/* ════ CTA ════ */
+.cta-section{
+  padding:96px 20px;text-align:center;
+  background:linear-gradient(155deg,var(--navy) 0%,var(--deep) 40%,#0b2a6e 70%,#0d1f4a 100%);
+  position:relative;overflow:hidden;
+}
+/* animated gradient orbs */
+.cta-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px);}
+.co1{width:600px;height:600px;background:radial-gradient(circle,rgba(59,130,246,.12),transparent 70%);top:-200px;left:-100px;animation:drift1 12s infinite alternate ease-in-out;}
+.co2{width:500px;height:500px;background:radial-gradient(circle,rgba(245,158,11,.1),transparent 70%);bottom:-150px;right:-50px;animation:drift2 14s infinite alternate ease-in-out;}
+.co3{width:350px;height:350px;background:radial-gradient(circle,rgba(6,182,212,.08),transparent 70%);top:50%;right:30%;animation:drift1 10s 2s infinite alternate ease-in-out;}
+@keyframes drift1{from{transform:translate(0,0)}to{transform:translate(40px,-30px)}}
+@keyframes drift2{from{transform:translate(0,0)}to{transform:translate(-30px,40px)}}
+
+.cta-inner{position:relative;z-index:2;}
+.cta-section .ttl{margin-bottom:14px;}
+.cta-section .sub{margin:0 auto 36px;}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-cta{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:16px 42px;border-radius:99px;
+  background:linear-gradient(135deg,var(--gold),var(--coral));
+  color:var(--ink);font-weight:800;font-size:1rem;border:none;cursor:pointer;
+  box-shadow:0 8px 36px rgba(245,158,11,.4);transition:.3s;
+}
+.btn-cta:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(245,158,11,.55);}
+.btn-cta:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.btn-ghost-wh{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:15px 36px;border-radius:99px;
+  background:transparent;color:#fff;
+  border:1.5px solid rgba(255,255,255,.28);
+  font-weight:600;font-size:1rem;cursor:pointer;transition:.3s;
+}
+.btn-ghost-wh:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.5);}
+
+/* ════ FOOTER ════ */
+footer{background:var(--ink);padding:52px 0 24px;border-top:1px solid rgba(255,255,255,.04);}
+.ft-grid{display:grid;grid-template-columns:2.2fr 1fr 1fr;gap:48px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.05);margin-bottom:24px;}
+.ft-brand .fl{display:flex;align-items:center;gap:11px;margin-bottom:16px;}
+.ft-brand .fl-mark{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--gold),var(--coral));display:flex;align-items:center;justify-content:center;font-family:var(--ffd);font-weight:800;color:var(--ink);overflow:hidden;}
+.ft-brand .fl-mark img{width:100%;height:100%;object-fit:cover;}
+.ft-brand .fl-name{font-family:var(--ffd);font-size:1.35rem;font-weight:800;color:#fff;}
+.ft-brand .fl-name span{color:var(--gold2);}
+.ft-brand p{font-size:.85rem;color:rgba(255,255,255,.35);line-height:1.75;max-width:290px;}
+.ft-col h4{font-size:.85rem;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:18px;letter-spacing:.4px;text-transform:uppercase;}
+.ft-col ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+.ft-col ul li a{font-size:.845rem;color:rgba(255,255,255,.38);transition:.2s;display:flex;align-items:center;gap:7px;}
+.ft-col ul li a i{font-size:9px;color:var(--gold);opacity:.7;}
+.ft-col ul li a:hover{color:var(--gold2);}
+.ft-bot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.ft-copy{font-size:.78rem;color:rgba(255,255,255,.2);}
+.ft-copy span{color:var(--gold2);opacity:.7;}
+.ft-soc{display:flex;gap:9px;}
+.fsoc{
+  width:34px;height:34px;border-radius:9px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.35);font-size:.88rem;transition:.2s;
+}
+.fsoc:hover{background:rgba(255,255,255,.1);color:var(--gold2);}
+
+/* ════ SCROLL TOP ════ */
+#goTop{
+  position:fixed;bottom:24px;right:24px;z-index:800;
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--navy),var(--royal));
+  color:#fff;border:none;cursor:pointer;font-size:.95rem;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 24px rgba(3,9,26,.3);
+  opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;
+  transform:translateY(12px);
+}
+#goTop.on{opacity:1;pointer-events:all;transform:translateY(0);}
+#goTop:hover{transform:translateY(-3px);}
+
+/* ════ REVEAL ════ */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease;}
+.rv.show{opacity:1;transform:translateY(0);}
+
+/* ════ SPINNER ════ */
+.sp{display:inline-block;width:15px;height:15px;border:2.5px solid rgba(0,0,0,.15);
+  border-top-color:var(--ink);border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ════ RESPONSIVE ════ */
+@media(max-width:1024px){
+  header{width:calc(100% - 24px);}
+  .feat-grid{grid-template-columns:repeat(2,1fr);}
+  .stats-mosaic{grid-template-columns:repeat(2,1fr);}
+  .sm-card.wide{grid-column:1/3;}
+  .roles-grid{grid-template-columns:repeat(2,1fr);}
+  .about-layout{grid-template-columns:1fr;}
+  .about-vis{display:none;}
+  .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto;height:auto;}
+  .gp-big{grid-row:auto;}
+  .gp-tall{grid-row:auto;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .ft-grid{grid-template-columns:1fr 1fr;gap:32px;}
+  .ft-brand{grid-column:1/-1;}
+  .hero-statsbar{display:none;}
+  .slide-caption{display:none;}
+}
+@media(max-width:768px){
+  header{top:0;width:100%;border-radius:0;}
+  .hero-inner h1{font-size:2.5rem;}
+  .ttl{font-size:1.85rem;}
+  .feat-grid{grid-template-columns:1fr;}
+  .steps{grid-template-columns:repeat(2,1fr);gap:36px;}
+  .steps::before{display:none;}
+  .stats-mosaic{grid-template-columns:1fr;}
+  .sm-card.wide{grid-column:1;}
+  .roles-grid{grid-template-columns:1fr;}
+  .gallery-grid{grid-template-columns:1fr;}
+  .mosaic{grid-template-columns:1fr 1fr;grid-template-rows:auto;}
+  .mp-tall,.mp-wide{grid-row:auto;grid-column:auto;}
+  nav ul{display:none;}
+  .menu-tog{display:block;}
+  .ft-grid{grid-template-columns:1fr;}
+  .hero-btns{flex-direction:column;align-items:flex-start;}
+  .qtext{font-size:1.3rem;}
+}
+
+.logo-fb{display:none}
+[data-no-logo] > .logo-fb{display:inline-flex;align-items:center;justify-content:center}
+</style>
+<script src="/gas-compat.js" data-restore-session="true"></script><script src="/school-public.js"></script></head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header id="hdr">
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-mark">
+        <img data-school-logo alt="" style="display:none"><span class="logo-fb"><i class="fas fa-graduation-cap"></i></span>
+      </div>
+      <div>
+        <div class="logo-name">ORS<span>MS</span></div>
+        <span class="logo-tagline" data-school="name" data-school-fallback="School Management System"></span>
+      </div>
+    </div>
+    <nav>
+      <ul id="navUl">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#how">Process</a></li>
+        <li><a href="#stats">Stats</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#roles">Roles</a></li>
+        <button class="btn-nav" id="hdrBtn" onclick="openLogin(this)">
+          <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
+      </ul>
+    </nav>
+    <span class="menu-tog" onclick="openMob()"><i class="fas fa-bars"></i></span>
+  </div>
+</header>
+
+<!-- Mobile Nav -->
+<div class="mob-nav" id="mobNav">
+  <span class="mob-close" onclick="closeMob()"><i class="fas fa-times"></i></span>
+  <a href="#features" onclick="closeMob()"><i class="fas fa-star" style="opacity:.5;margin-right:8px"></i>Features</a>
+  <a href="#gallery" onclick="closeMob()"><i class="fas fa-images" style="opacity:.5;margin-right:8px"></i>Gallery</a>
+  <a href="#how" onclick="closeMob()"><i class="fas fa-route" style="opacity:.5;margin-right:8px"></i>Process</a>
+  <a href="#stats" onclick="closeMob()"><i class="fas fa-chart-bar" style="opacity:.5;margin-right:8px"></i>Stats</a>
+  <a href="#about" onclick="closeMob()"><i class="fas fa-info-circle" style="opacity:.5;margin-right:8px"></i>About</a>
+  <a href="#roles" onclick="closeMob()"><i class="fas fa-users" style="opacity:.5;margin-right:8px"></i>Roles</a>
+  <button class="hbtn-gold mob-signin" onclick="openLogin(this);closeMob()">
+    <i class="fas fa-sign-in-alt"></i> Sign In
+  </button>
+</div>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="slides">
+    <div class="slide s1 active"></div>
+    <div class="slide s2"></div>
+    <div class="slide s3"></div>
+    <div class="slide s4"></div>
+    <div class="slide s5"></div>
+    <div class="slide s6"></div>
+    <div class="slide s7"></div>
+  </div>
+
+  <!-- Ambient blobs -->
+  <div class="hero-blob hb1"></div>
+  <div class="hero-blob hb2"></div>
+  <div class="hero-blob hb3"></div>
+
+  <!-- Arrows -->
+  <button class="arr arr-prev" onclick="sPrev()"><i class="fas fa-chevron-left"></i></button>
+  <button class="arr arr-next" onclick="sNext()"><i class="fas fa-chevron-right"></i></button>
+
+  <!-- Content -->
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-live"><span class="dot"></span> Live System — Academic Year <span data-school-year></span></div>
+      <h1><span data-school="name" data-school-fallback="Welcome"></span><br><span class="accent">OPSMS</span></h1>
+      <p>A unified digital platform for <span data-school="name" data-school-fallback="your school"></span> — managing exam scores, attendance, report cards, and parent access in one seamless experience.</p>
+      <div class="hero-btns">
+        <button class="hbtn-gold" id="heroBtn" onclick="openLogin(this)">
+          <i class="fas fa-rocket"></i> Access Dashboard
+        </button>
+        <a href="#features" class="hbtn-ghost">
+          <i class="fas fa-compass"></i> Explore System
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Caption -->
+  <div class="slide-caption" id="slideCaption">
+    <div class="sc-label">Slide 1 of 7</div>
+    <div class="sc-text" id="captionText">Modern classrooms powered by a smart management system.</div>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="hero-statsbar">
+    <div class="hsb-item"><div class="hsb-num" data-school-count="students">—</div><div class="hsb-lbl">Students</div></div>
+    <div class="hsb-item"><div class="hsb-num" data-school-count="teachers">—</div><div class="hsb-lbl">Teachers</div></div>
+    <div class="hsb-item"><div class="hsb-num" data-school-count="subjects">—</div><div class="hsb-lbl">Subjects</div></div>
+    <div class="hsb-item"><div class="hsb-num" data-school-count="classes">—</div><div class="hsb-lbl">Classes</div></div>
+    <div class="hsb-item"><div class="hsb-num" data-school-count="parents">—</div><div class="hsb-lbl">Parents</div></div>
+  </div>
+
+  <!-- Dots -->
+  <div class="sdots" id="sdots">
+    <button class="sdot active" onclick="gSlide(0);rAuto()"></button>
+    <button class="sdot" onclick="gSlide(1);rAuto()"></button>
+    <button class="sdot" onclick="gSlide(2);rAuto()"></button>
+    <button class="sdot" onclick="gSlide(3);rAuto()"></button>
+    <button class="sdot" onclick="gSlide(4);rAuto()"></button>
+    <button class="sdot" onclick="gSlide(5);rAuto()"></button>
+    <button class="sdot" onclick="gSlide(6);rAuto()"></button>
+  </div>
+</section>
+
+<!-- ══ CLASSROOM GALLERY ══ -->
+<section class="gallery-section" id="gallery">
+  <div class="container">
+    <div class="ctr rv">
+      <div class="chip chip-blue"><i class="fas fa-images"></i> Campus Life</div>
+      <h2 class="ttl">Our <em>Classrooms</em> &amp; Campus</h2>
+      <p class="sub" style="margin:12px auto 0">A glimpse into the learning environment at <span data-school="name" data-school-fallback="your school"></span> — where every student is empowered to achieve their best.</p>
+    </div>
+    <div class="gallery-grid rv">
+      <div class="gp gp-big">
+        <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=900&q=85" alt="Classroom">
+        <div class="gp-overlay"><span class="gp-label">Main Classroom Block</span></div>
+      </div>
+      <div class="gp">
+        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500&q=80" alt="Students">
+        <div class="gp-overlay"><span class="gp-label">Student Learning</span></div>
+      </div>
+      <div class="gp">
+        <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?w=500&q=80" alt="Lesson">
+        <div class="gp-overlay"><span class="gp-label">Daily Lessons</span></div>
+      </div>
+      <div class="gp">
+        <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&q=80" alt="Books">
+        <div class="gp-overlay"><span class="gp-label">Learning Resources</span></div>
+      </div>
+      <div class="gp">
+        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=500&q=80" alt="Teacher">
+        <div class="gp-overlay"><span class="gp-label">Teacher Guidance</span></div>
+      </div>
+      <div class="gp">
+        <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=500&q=80" alt="Class">
+        <div class="gp-overlay"><span class="gp-label">Form 4 Class</span></div>
+      </div>
+      <div class="gp">
+        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=500&q=80" alt="Campus">
+        <div class="gp-overlay"><span class="gp-label">School Campus</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURES ══ -->
+<section class="features-section" id="features">
+  <div class="container">
+    <div class="ctr rv">
+      <div class="chip chip-blue"><i class="fas fa-layer-group"></i> Platform Features</div>
+      <h2 class="ttl">Everything Your School <em>Needs</em></h2>
+      <p class="sub" style="margin:12px auto 0">From score entry to printed report cards — every academic workflow built into one clean, modern system.</p>
+    </div>
+    <div class="feat-grid" style="margin-top:52px">
+      <div class="feat-card rv"><div class="fc-ghost">01</div><div class="fc-ico ico-b"><i class="fas fa-file-alt"></i></div><h3>Score Submission</h3><p>Teachers enter and update exam scores with real-time validation, subject-level accuracy, and admin-controlled deadlines.</p></div>
+      <div class="feat-card rv"><div class="fc-ghost">02</div><div class="fc-ico ico-g"><i class="fas fa-calendar-check"></i></div><h3>Attendance Tracking</h3><p>Morning and afternoon attendance with weekly/monthly summaries, automatic reports, and teacher-on-duty scheduling.</p></div>
+      <div class="feat-card rv"><div class="fc-ghost">03</div><div class="fc-ico ico-a"><i class="fas fa-chart-bar"></i></div><h3>Class Reports</h3><p>Full examination result reports with division analysis, grade distribution, and subject performance breakdowns.</p></div>
+      <div class="feat-card rv"><div class="fc-ghost">04</div><div class="fc-ico ico-p"><i class="fas fa-user-graduate"></i></div><h3>Student Report Cards</h3><p>Individual A4 report cards with grades, behaviour scores, teacher signatures, and term-by-term progress tracking.</p></div>
+      <div class="feat-card rv"><div class="fc-ghost">05</div><div class="fc-ico ico-c"><i class="fas fa-users"></i></div><h3>Parent Portal</h3><p>Parents log in securely with personal credentials to view their child's reports, attendance, and academic performance.</p></div>
+      <div class="feat-card rv"><div class="fc-ghost">06</div><div class="fc-ico ico-r"><i class="fas fa-shield-alt"></i></div><h3>Submission Control</h3><p>Admins open and close the submission window, enforce deadlines, and monitor which teachers have submitted scores.</p></div>
+      <div class="feat-card rv"><div class="fc-ghost">07</div><div class="fc-ico ico-o"><i class="fas fa-print"></i></div><h3>Print-Ready Outputs</h3><p>All reports formatted for A4 printing with school headers, footers, stamps, and signatures — ready to hand out.</p></div>
+      <div class="feat-card rv"><div class="fc-ghost">08</div><div class="fc-ico ico-t"><i class="fas fa-lock"></i></div><h3>Role-Based Access</h3><p>Separate, secure dashboards for admins, teachers, students, and parents — each scoped to their specific permissions.</p></div>
+      <div class="feat-card rv"><div class="fc-ghost">09</div><div class="fc-ico ico-pk"><i class="fas fa-bell"></i></div><h3>Deadline Alerts</h3><p>Visual and system-level alerts when submission windows are approaching — no teacher misses their deadline.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section class="how-section" id="how">
+  <div class="container">
+    <div class="ctr rv">
+      <div class="chip chip-white"><i class="fas fa-route"></i> Simple 4-Step Process</div>
+      <h2 class="ttl ttl-white">How <em>OPSMS</em> Works</h2>
+      <p class="sub sub-white" style="margin:12px auto 0">From login to printed report cards in four clean steps — designed to be fast, intuitive, and error-free.</p>
+    </div>
+    <div class="steps">
+      <div class="step rv">
+        <div class="step-orb"><i class="fas fa-sign-in-alt"></i><div class="step-n">1</div></div>
+        <h3>Sign In</h3>
+        <p>Log in using your role-based credentials assigned by the school administrator.</p>
+      </div>
+      <div class="step rv">
+        <div class="step-orb"><i class="fas fa-keyboard"></i><div class="step-n">2</div></div>
+        <h3>Enter Data</h3>
+        <p>Teachers submit scores and attendance through validated, easy-to-use input forms.</p>
+      </div>
+      <div class="step rv">
+        <div class="step-orb"><i class="fas fa-microchip"></i><div class="step-n">3</div></div>
+        <h3>Auto-Calculate</h3>
+        <p>OPSMS computes grades, rankings, and class-wide performance analytics instantly.</p>
+      </div>
+      <div class="step rv">
+        <div class="step-orb"><i class="fas fa-file-download"></i><div class="step-n">4</div></div>
+        <h3>Generate Reports</h3>
+        <p>Download or print professional A4 report cards and class summaries ready for distribution.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATS ══ -->
+<section class="stats-section" id="stats">
+  <div class="container">
+    <div class="ctr rv">
+      <div class="chip chip-blue"><i class="fas fa-chart-pie"></i> By the Numbers</div>
+      <h2 class="ttl"><span data-school="name" data-school-fallback="your school"></span> at a <em>Glance</em></h2>
+      <p class="sub" style="margin:12px auto 0">Key numbers from our school community, tracked and managed by OPSMS every single day.</p>
+    </div>
+    <div class="stats-mosaic">
+      <div class="sm-card sc-blue rv">
+        <i class="fas fa-school"></i>
+        <div class="sm-num" data-school-count="classes">—</div>
+        <div class="sm-lbl">Classes</div>
+      </div>
+      <div class="sm-card sc-emerald rv">
+        <i class="fas fa-users"></i>
+        <div class="sm-num" data-school-count="students">—</div>
+        <div class="sm-lbl">Students Enrolled</div>
+      </div>
+      <div class="sm-card sc-violet rv">
+        <i class="fas fa-chalkboard-teacher"></i>
+        <div class="sm-num" data-school-count="teachers">—</div>
+        <div class="sm-lbl">Teachers</div>
+      </div>
+      <div class="sm-card sc-gold rv">
+        <i class="fas fa-book"></i>
+        <div class="sm-num" data-school-count="subjects">—</div>
+        <div class="sm-lbl">Subjects</div>
+      </div>
+      <div class="sm-card sc-coral rv">
+        <i class="fas fa-id-card"></i>
+        <div class="sm-num" data-school-count="parents">—</div>
+        <div class="sm-lbl">Parents Connected</div>
+      </div>
+      <div class="sm-card sc-cyan rv">
+        <i class="fas fa-calendar-alt"></i>
+        <div class="sm-num" data-school-year style="font-size:.62em">—</div>
+        <div class="sm-lbl">Academic Year</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECOND GALLERY ══ -->
+<section class="gallery2-section">
+  <div class="container">
+    <div class="ctr rv">
+      <div class="chip chip-blue"><i class="fas fa-camera"></i> School Environment</div>
+      <h2 class="ttl">Where Learning <em>Happens</em></h2>
+    </div>
+    <div class="mosaic rv">
+      <div class="mp mp-tall">
+        <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=500&q=85" alt="Classroom">
+        <div class="mp-overlay"><span class="mp-tag">Active Learning</span></div>
+      </div>
+      <div class="mp mp-wide">
+        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=900&q=85" alt="Students in class">
+        <div class="mp-overlay"><span class="mp-tag">Student Engagement</span></div>
+      </div>
+      <div class="mp">
+        <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500&q=85" alt="Books">
+        <div class="mp-overlay"><span class="mp-tag">Library Resources</span></div>
+      </div>
+      <div class="mp">
+        <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?w=500&q=85" alt="Lesson">
+        <div class="mp-overlay"><span class="mp-tag">Teacher &amp; Students</span></div>
+      </div>
+      <div class="mp">
+        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=500&q=85" alt="Students studying">
+        <div class="mp-overlay"><span class="mp-tag">Academic Focus</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="about-layout">
+      <div class="about-vis rv">
+        <div class="about-imgstack">
+          <div class="aimg-main">
+            <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=900&q=85" alt="School">
+          </div>
+          <div class="aimg-second">
+            <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=500&q=85" alt="Campus">
+          </div>
+          <div class="avis-badge">
+            <div class="avb-dot"></div>
+            <div class="avb-text">System is live &amp; active</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-copy rv">
+        <div class="chip chip-blue"><i class="fas fa-info-circle"></i> About OPSMS</div>
+        <h2 class="ttl" style="margin:14px 0 18px">Built Specifically for <em data-school="name" data-school-fallback="Your School"></em></h2>
+        <p>The Online Result &amp; Student Management System (OPSMS) was built to replace slow, paper-based academic administration with a fast, reliable digital alternative — tailored precisely for <span data-school="name" data-school-fallback="your school"></span>.</p>
+        <p>Running on Google Apps Script and Google Sheets, it costs nothing to host, works on any device, and requires zero technical maintenance — making it the most practical solution for a Tanzanian school setting.</p>
+        <div class="atags">
+          <span class="atag"><i class="fas fa-cloud"></i> Google Sheets Powered</span>
+          <span class="atag"><i class="fas fa-mobile-alt"></i> Mobile Friendly</span>
+          <span class="atag"><i class="fas fa-lock"></i> Role-Based Access</span>
+          <span class="atag"><i class="fas fa-print"></i> A4 Print Ready</span>
+          <span class="atag"><i class="fas fa-bolt"></i> Real-Time Data</span>
+          <span class="atag"><i class="fas fa-infinity"></i> Zero Server Cost</span>
+        </div>
+        <div class="tech-pill">
+          <div class="tp-icon"><i class="fas fa-code"></i></div>
+          <div class="tp-text">Powered by <b>Google Apps Script</b> &amp; <b>Google Sheets</b> — the most reliable, free, and widely accessible backend available for schools in Tanzania.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ROLES ══ -->
+<section class="roles-section" id="roles">
+  <div class="container">
+    <div class="ctr rv">
+      <div class="chip chip-blue"><i class="fas fa-user-friends"></i> User Roles</div>
+      <h2 class="ttl">One System, <em>Every Role</em></h2>
+      <p class="sub" style="margin:12px auto 0">Dedicated, purpose-built dashboards for every member of the school community.</p>
+    </div>
+    <div class="roles-grid">
+      <div class="role-card rc-navy rv">
+        <div class="rico"><i class="fas fa-user-shield"></i></div>
+        <h3>Administrator</h3>
+        <p>Full system control — manage users, open/close submissions, generate school-wide reports, and oversee all data and settings.</p>
+        <div class="rbadge"><i class="fas fa-crown"></i> Full Access</div>
+      </div>
+      <div class="role-card rc-forest rv">
+        <div class="rico"><i class="fas fa-chalkboard-teacher"></i></div>
+        <h3>Teacher</h3>
+        <p>Submit scores and attendance, view class reports, manage your assigned subjects, and track student progress term by term.</p>
+        <div class="rbadge"><i class="fas fa-book-open"></i> Class Access</div>
+      </div>
+      <div class="role-card rc-plum rv">
+        <div class="rico"><i class="fas fa-user-graduate"></i></div>
+        <h3>Student</h3>
+        <p>View personal report cards, grades, attendance, and track your own academic performance across all terms and examinations.</p>
+        <div class="rbadge"><i class="fas fa-id-card"></i> Personal Access</div>
+      </div>
+      <div class="role-card rc-ember rv" id="parentAccessPanel">
+        <div class="rico"><i class="fas fa-user-lock"></i></div>
+        <h3>Parent Login Access</h3>
+        <p>This is the parents' entrance. Sign in with the <b>username and password</b> given by your child's Class Teacher to view report cards, attendance and academic progress — from any device, any time.</p>
+        <div class="rbadge"><i class="fas fa-eye"></i> Child's Data</div>
+        <button type="button" onclick="openParentLogin()" style="margin-top:16px;width:100%;padding:11px 14px;border:none;border-radius:12px;background:linear-gradient(90deg,#7c3aed,#a855f7);color:#fff;font-weight:800;font-size:.85rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <i class="fas fa-sign-in-alt"></i> Parent Sign In
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section">
+  <div class="cta-orb co1"></div>
+  <div class="cta-orb co2"></div>
+  <div class="cta-orb co3"></div>
+  <div class="container cta-inner">
+    <div class="ctr rv">
+      <div class="chip chip-gold"><i class="fas fa-rocket"></i> Get Started Today</div>
+      <h2 class="ttl ttl-white" style="margin:14px 0 12px">Ready to Modernize Your<br><em>School Administration?</em></h2>
+      <p class="sub sub-white">Sign in with your assigned credentials to access your personalized dashboard and experience the difference OPSMS makes.</p>
+      <div class="cta-row" style="margin-top:34px">
+        <button class="btn-cta" id="ctaBtn" onclick="openLogin(this)">
+          <i class="fas fa-sign-in-alt"></i> Sign In Now
+        </button>
+        <a href="#features" class="btn-ghost-wh">
+          <i class="fas fa-list-ul"></i> View Features
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="container">
+    <div class="ft-grid">
+      <div class="ft-brand">
+        <div class="fl">
+          <div class="fl-mark">
+            <img data-school-logo alt="" style="display:none"><span class="logo-fb"><i class="fas fa-graduation-cap"></i></span>
+          </div>
+          <div class="fl-name">ORS<span>MS</span></div>
+        </div>
+        <p>The Online Result &amp; Student Management System — digitizing academic administration at <span data-school="name" data-school-fallback="your school"></span>.</p>
+      </div>
+      <div class="ft-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="#features"><i class="fas fa-star"></i>Features</a></li>
+          <li><a href="#gallery"><i class="fas fa-images"></i>Gallery</a></li>
+          <li><a href="#how"><i class="fas fa-route"></i>How It Works</a></li>
+          <li><a href="#stats"><i class="fas fa-chart-bar"></i>Stats</a></li>
+          <li><a href="#about"><i class="fas fa-info-circle"></i>About</a></li>
+          <li><a href="#roles"><i class="fas fa-users"></i>User Roles</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h4>Quick Login</h4>
+        <ul>
+          <li><a href="javascript:void(0)" onclick="openLogin(this)"><i class="fas fa-user-shield"></i>Administrator</a></li>
+          <li><a href="javascript:void(0)" onclick="openLogin(this)"><i class="fas fa-chalkboard-teacher"></i>Teacher Portal</a></li>
+          <li><a href="javascript:void(0)" onclick="openLogin(this)"><i class="fas fa-user-graduate"></i>Student Portal</a></li>
+          <li><a href="javascript:void(0)" onclick="openParentLogin()"><i class="fas fa-heart"></i>Parent Login Access</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <div class="ft-copy">&copy; <span data-cur-year></span> <span data-school="name" data-school-fallback="OPSMS"></span> — OPSMS. All Rights Reserved.</div>
+      <div class="ft-soc">
+        <a class="fsoc" href="#"><i class="fab fa-facebook-f"></i></a>
+        <a class="fsoc" href="#"><i class="fab fa-twitter"></i></a>
+        <a class="fsoc" href="#"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<button id="goTop" onclick="scrollTo({top:0,behavior:'smooth'})" aria-label="Top">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<script>
+/* ── Header compact on scroll ── */
+const hdr = document.getElementById('hdr');
+window.addEventListener('scroll', () => {
+  hdr.classList.toggle('compact', scrollY > 60);
+  document.getElementById('goTop').classList.toggle('on', scrollY > 400);
+});
+
+/* ── Mobile nav ── */
+function openMob(){ document.getElementById('mobNav').classList.add('open'); }
+function closeMob(){ document.getElementById('mobNav').classList.remove('open'); }
+
+/* ── Hero Slider (7 slides) ── */
+const captions = [
+  'Modern classrooms powered by a smart digital system.',
+  'Exam management made simple and reliable.',
+  'Every student\'s progress tracked in real time.',
+  'A rich library of resources for every learner.',
+  'Interactive lessons that inspire achievement.',
+  'Experienced teachers guided by accurate data.',
+  'A vibrant school campus.'
+];
+let heroSlideIdx = 0;
+const sls = document.querySelectorAll('.slide');
+const dts = document.querySelectorAll('.sdot');
+let timer;
+
+function gSlide(n){
+  sls[heroSlideIdx].classList.remove('active');
+  dts[heroSlideIdx].classList.remove('active');
+  heroSlideIdx = (n + sls.length) % sls.length;
+  sls[heroSlideIdx].classList.add('active');
+  dts[heroSlideIdx].classList.add('active');
+  document.getElementById('captionText').textContent = captions[heroSlideIdx];
+  document.querySelector('.sc-label').textContent = 'Slide ' + (heroSlideIdx+1) + ' of ' + sls.length;
+}
+function sNext(){ gSlide(heroSlideIdx+1); rAuto(); }
+function sPrev(){ gSlide(heroSlideIdx-1); rAuto(); }
+function rAuto(){ clearInterval(timer); timer = setInterval(()=>gSlide(heroSlideIdx+1), 5800); }
+rAuto();
+
+/* ── Scroll reveal ── */
+const rvEls = document.querySelectorAll('.rv');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if(e.isIntersecting){
+      const el = e.target;
+      setTimeout(()=>el.classList.add('show'), +(el.dataset.d||0));
+      obs.unobserve(el);
+    }
+  });
+}, {threshold:.1});
+rvEls.forEach((el,i)=>{ el.dataset.d = (i%4)*70; obs.observe(el); });
+
+/* ── Counter animation ── */
+function animateNum(el, end, duration){
+  let start = 0, step = end/60;
+  const isPlus = String(end).includes('+') || el.dataset.plus;
+  const numVal = parseFloat(end);
+  const pct = el.dataset.pct;
+  const run = ()=>{
+    start = Math.min(start+step, numVal);
+    el.textContent = Math.floor(start) + (start>=numVal ? (isPlus?'+': pct?'%':'') : '');
+    if(start < numVal) requestAnimationFrame(run);
+  };
+  run();
+}
+const numObs = new IntersectionObserver(entries => {
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el = e.target;
+      const raw = el.textContent;
+      const val = parseFloat(raw);
+      if(!isNaN(val) && !el.hasAttribute('data-school-year')){
+        el.dataset.plus = raw.includes('+') ? '1' : '';
+        el.dataset.pct = raw.includes('%') ? '1' : '';
+        animateNum(el, val, 1200);
+      }
+      numObs.unobserve(el);
+    }
+  });
+}, {threshold:.5});
+document.querySelectorAll('.sm-num, .hsb-num, .hero-stat-num').forEach(el=>numObs.observe(el));
+
+/* ── Login handler ── */
+function openLogin(btn){
+  document.querySelectorAll('.btn-nav,.hbtn-gold,.btn-cta').forEach(b=>b.disabled=true);
+  if(btn){ btn._orig=btn.innerHTML; btn.innerHTML='<span class="sp"></span> Loading...'; }
+  if(typeof google!=='undefined'&&google.script){
+    google.script.run
+      .withSuccessHandler(html=>{
+        if(html){document.open();document.write(html);document.close();}
+        else resetBtns(btn);
+      })
+      .withFailureHandler(err=>{ resetBtns(btn); alert('Error: '+(err&&err.message?err.message:'Please refresh.')); })
+      .getLoginPage();
+  } else {
+    setTimeout(()=>{ resetBtns(btn); alert('Login available when deployed via Google Apps Script.'); },1200);
+  }
+}
+function resetBtns(btn){
+  document.querySelectorAll('.btn-nav,.hbtn-gold,.btn-cta').forEach(b=>b.disabled=false);
+  if(btn&&btn._orig) btn.innerHTML=btn._orig;
+}
+</script>
+<!-- ════════════════════════════════
+     POP GLASS LOGIN MODAL - INJECT HERE
+════════════════════════════════ -->
+<div id="loginModal" class="login-modal">
+  <div class="login-backdrop" onclick="closeLoginModal()"></div>
+  <div class="login-card" id="loginCard">
+    <button class="login-close" onclick="closeLoginModal()" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <div class="logo-wrap">
+      <img data-school-logo alt="Logo" style="display:none"><i class="fas fa-graduation-cap logo-fb"></i></i>'">
+    </div>
+    <h2>School Management System</h2>
+    <div class="school" data-school="name" data-school-fallback="School Management System"></div>
+    <div class="subtitle">Sign in to access your dashboard</div>
+    
+    <div class="lc-div"><span>Enter your credentials</span></div>
+    
+    <div class="mode-tabs" role="tablist">
+      <button type="button" class="mode-tab active" id="mTabStaff" onclick="setModalMode('staff')"><i class="fas fa-chalkboard-teacher"></i> Staff / Teacher</button>
+      <button type="button" class="mode-tab" id="mTabParent" onclick="setModalMode('parent')"><i class="fas fa-users"></i> Parent Login Access</button>
+    </div>
+    <div class="pa-panel" id="mParentPanel">
+      <div class="pa-title"><i class="fas fa-user-lock"></i> Parent Login Access</div>
+      Use the <b>Username</b> and <b>Password</b> given to you by your child's <b>Class Teacher</b>.
+      You will be taken straight to the Parent Portal. Forgot them? Contact the Class Teacher.
+    </div>
+    <div class="role-pills" id="mRolePills">
+      <span class="rp rp-admin"><i class="fas fa-user-shield"></i> Admin</span>
+      <span class="rp rp-teacher"><i class="fas fa-chalkboard-teacher"></i> Teacher</span>
+      <span class="rp rp-academic"><i class="fas fa-user-tie"></i> Academic</span>
+      <span class="rp rp-parent"><i class="fas fa-users"></i> Parent</span>
+      <span class="rp rp-staff"><i class="fas fa-briefcase"></i> Staff</span>
+    </div>
+    
+    <div class="input-group">
+      <label>Username</label>
+      <div class="ig-wrap">
+        <i class="ig-icon fas fa-user"></i>
+        <input type="text" id="modalUsername" placeholder="Enter your username" autocomplete="username">
+      </div>
+    </div>
+    
+    <div class="input-group">
+      <label>Password</label>
+      <div class="ig-wrap">
+        <i class="ig-icon fas fa-lock"></i>
+        <input type="password" id="modalPassword" placeholder="Enter your password" class="pw-input" autocomplete="current-password">
+        <button class="eye-btn" type="button" onclick="toggleModalPassword()" tabindex="-1">
+          <i class="fas fa-eye" id="modalEyeIcon"></i>
+        </button>
+      </div>
+    </div>
+    
+    <button class="login-btn" id="modalLoginBtn" onclick="doModalLogin()">
+      <i class="fas fa-sign-in-alt"></i> Sign In
+    </button>
+    
+    <div class="lc-msg" id="modalLcMsg">
+      <i class="fas fa-exclamation-circle" id="modalLcIcon"></i>
+      <span id="modalLcText"></span>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ════════════════════════════════
+   POP GLASS LOGIN MODAL STYLES
+════════════════════════════════ */
+.login-modal{
+  position:fixed; inset:0; z-index:2000;
+  display:none; align-items:center; justify-content:center;
+  padding:20px;
+}
+.login-modal.show{display:flex;}
+
+.login-backdrop{
+  position:absolute; inset:0;
+  background:rgba(3,9,26,.75);
+  backdrop-filter:blur(8px);
+  animation:fadeIn .3s ease;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.login-modal .login-card{
+  width:440px; max-width:100%; padding:40px 32px 36px;
+  border-radius:24px;
+  background:rgba(255,255,255,0.09);
+  backdrop-filter:blur(32px) saturate(180%);
+  -webkit-backdrop-filter:blur(32px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow: 
+    0 24px 80px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    inset 0 -1px 0 rgba(255,255,255,0.05);
+  color:#fff; text-align:center; position:relative;
+  animation:popIn .4s cubic-bezier(.34,1.56,.64,1);
+  font-family:var(--ffb);
+}
+@keyframes popIn{
+  from{opacity:0; transform:scale(.9) translateY(20px)}
+  to{opacity:1; transform:scale(1) translateY(0)}
+}
+
+/* Glass noise texture */
+.login-modal .login-card::after{
+  content:''; position:absolute; inset:0; border-radius:24px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+
+.login-close{
+  position:absolute; top:16px; right:16px;
+  width:32px; height:32px; border-radius:50%;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.6); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; transition:.2s;
+}
+.login-close:hover{background:rgba(255,255,255,.15); color:#fff; transform:rotate(90deg);}
+
+.login-modal .logo-wrap{
+  width:80px; height:80px; border-radius:20px;
+  margin:0 auto 16px;
+  background:linear-gradient(135deg, var(--royal), var(--cyan));
+  display:flex; align-items:center; justify-content:center;
+  font-size:32px; color:var(--gold); overflow:hidden;
+  box-shadow: 0 8px 24px rgba(18,73,168,.4), inset 0 2px 4px rgba(255,255,255,0.2);
+  position:relative;
+}
+.login-modal .logo-wrap::before{
+  content:''; position:absolute; inset:-2px; border-radius:22px;
+  background:linear-gradient(135deg, var(--royal), var(--cyan), var(--gold));
+  z-index:-1; filter:blur(8px); opacity:.6;
+}
+.login-modal .logo-wrap img{width:100%; height:100%; object-fit:contain;}
+.login-modal h2{font-size:22px; margin-bottom:6px; font-weight:800; font-family:var(--ffd); letter-spacing:-0.3px;}
+.login-modal .school{font-size:12px; opacity:.8; margin-bottom:6px; font-weight:600;}
+.login-modal .subtitle{font-size:12px; opacity:.6; margin-bottom:24px;}
+
+.login-modal .lc-div{
+  display:flex; align-items:center; gap:12px; margin:0 0 18px;
+}
+.login-modal .lc-div::before,.login-modal .lc-div::after{
+  content:''; flex:1; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+}
+.login-modal .lc-div span{
+  font-size:10px; font-weight:700; opacity:.6;
+  text-transform:uppercase; letter-spacing:1px; white-space:nowrap;
+}
+
+.login-modal .role-pills{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-bottom:22px;}
+.login-modal .rp{
+  display:inline-flex; align-items:center; gap:5px;
+  padding:4px 10px; border-radius:99px;
+  font-size:10px; font-weight:700;
+  border:1px solid transparent;
+  backdrop-filter:blur(10px); transition:.2s;
+}
+.login-modal .rp:hover{transform: translateY(-1px);}
+.login-modal .rp-admin{background:rgba(220,38,38,.15); color:#fca5a5; border-color:rgba(220,38,38,.25);}
+.login-modal .rp-teacher{background:rgba(26,86,219,.15); color:#93c5fd; border-color:rgba(26,86,219,.25);}
+.login-modal .rp-academic{background:rgba(6,182,212,.15); color:#67e8f9; border-color:rgba(6,182,212,.25);}
+.login-modal .rp-parent{background:rgba(124,58,237,.15); color:#c4b5fd; border-color:rgba(124,58,237,.25);}
+.login-modal .rp-staff{background:rgba(22,163,74,.15); color:#86efac; border-color:rgba(22,163,74,.25);}
+
+.login-modal .input-group{position:relative; margin-bottom:16px; text-align:left;}
+.login-modal .input-group label{
+  display:block; font-size:10px; font-weight:700; opacity:.7;
+  text-transform:uppercase; letter-spacing:.8px; margin-bottom:6px;
+}
+.login-modal .ig-wrap{position:relative;}
+.login-modal .ig-wrap .ig-icon{
+  position:absolute; left:14px; top:50%; transform:translateY(-50%);
+  opacity:.5; font-size:14px; pointer-events:none; transition:.2s;
+}
+.login-modal .input-group input{
+  width:100%; padding:13px 14px 13px 42px;
+  border-radius:12px; border:1.5px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.06); color:#fff; font-size:14px; font-weight:500;
+  outline:none; transition:.25s; font-family:inherit;
+}
+.login-modal .input-group input::placeholder{color:rgba(255,255,255,.35); font-weight:400;}
+.login-modal .input-group input:hover{border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.08);}
+.login-modal .input-group input:focus{
+  border-color: var(--cyan); background:rgba(255,255,255,.1);
+  box-shadow: 0 0 0 3px rgba(6,182,212,.15), 0 0 20px rgba(0,240,255,.15);
+}
+.login-modal .input-group:focus-within .ig-icon{opacity:.9; color:var(--cyan);}
+.login-modal .pw-input{padding-right:44px!important;}
+.login-modal .eye-btn{
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  background:none; border:none; cursor:pointer;
+  color:rgba(255,255,255,.45); font-size:14px; padding:4px;
+  border-radius:6px; transition:.2s;
+}
+.login-modal .eye-btn:hover{color:#fff; background:rgba(255,255,255,.1);}
+
+.login-modal .login-btn{
+  width:100%; padding:14px; margin-top:8px; border-radius:12px; border:none;
+  background:linear-gradient(90deg, #6a11cb, var(--royal));
+  color:#fff; font-size:15px; font-weight:800; cursor:pointer;
+  transition:.25s; display:flex; align-items:center; justify-content:center; gap:8px;
+  font-family:inherit; position:relative; overflow:hidden;
+  box-shadow: 0 4px 16px rgba(18,73,168,.35);
+}
+.login-modal .login-btn::before{
+  content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+  transition:left .5s;
+}
+.login-modal .login-btn:hover::before{left:100%;}
+.login-modal .login-btn:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(18,73,168,.5);}
+.login-modal .login-btn:active{transform:translateY(0);}
+.login-modal .login-btn:disabled{opacity:.6; cursor:not-allowed; transform:none; box-shadow:none;}
+.login-modal .login-btn:disabled::before{display:none;}
+
+.login-modal .lc-msg{
+  border-radius:10px; padding:11px 14px; margin-top:14px;
+  font-size:13px; font-weight:600; display:none; align-items:center; gap:9px;
+  text-align:left; backdrop-filter:blur(10px);
+}
+.login-modal .lc-msg.err{background:rgba(220,38,38,.18); color:#fca5a5; border:1px solid rgba(220,38,38,.3);}
+.login-modal .lc-msg.ok{background:rgba(22,163,74,.18); color:#86efac; border:1px solid rgba(22,163,74,.3);}
+
+.login-modal .spinner{
+  display:inline-block; width:18px; height:18px;
+  border:2.5px solid rgba(255,255,255,.3); border-top-color:#fff;
+  border-radius:50%; animation:spin .75s linear infinite; flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{
+  0%,100%{transform:translateX(0)} 
+  20%{transform:translateX(-8px)} 
+  40%{transform:translateX(8px)} 
+  60%{transform:translateX(-5px)} 
+  80%{transform:translateX(5px)}
+}
+
+.login-modal .mode-tabs{display:flex;gap:6px;padding:4px;margin:0 0 16px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);}
+.login-modal .mode-tab{flex:1;padding:9px 8px;border:none;border-radius:10px;background:transparent;color:rgba(255,255,255,.65);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:.2s;}
+.login-modal .mode-tab:hover{color:#fff;}
+.login-modal .mode-tab.active{background:linear-gradient(90deg,#6a11cb,var(--accent));color:#fff;box-shadow:0 4px 14px rgba(37,117,252,.35);}
+.login-modal .mode-tab.active.parent{background:linear-gradient(90deg,#7c3aed,#a855f7);box-shadow:0 4px 14px rgba(124,58,237,.4);}
+.login-modal .pa-panel{display:none;text-align:left;margin:0 0 18px;padding:12px 14px;border-radius:14px;background:rgba(124,58,237,.14);border:1px solid rgba(167,139,250,.35);color:#ddd6fe;font-size:12px;line-height:1.55;}
+.login-modal .pa-panel.show{display:block;}
+.login-modal .pa-panel .pa-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#fff;margin-bottom:4px;}
+.login-modal .pa-panel .pa-title i{color:#c4b5fd;}
+.login-modal .pa-panel b{color:#fff;}
+@media (max-width: 480px){
+  .login-modal .login-card{padding:32px 24px 28px;}
+  .login-modal h2{font-size:20px;}
+}
+</style>
+
+<script>
+// ════════════════════════════════
+// POP GLASS LOGIN MODAL LOGIC
+// ════════════════════════════════
+
+// Override your existing openLogin function
+function openLogin(btn){
+  document.getElementById('loginModal').classList.add('show');
+  setTimeout(()=>document.getElementById('modalUsername').focus(), 300);
+  // Store button ref to reset later
+  window._loginBtn = btn;
+  if(btn){ btn._orig = btn.innerHTML; }
+}
+
+// ── Parent Login Access (same single login, parent mode) ──
+function setModalMode(m){
+  var isP=(m==='parent');
+  window._modalMode=isP?'parent':'staff';
+  document.getElementById('mTabStaff').className='mode-tab'+(isP?'':' active');
+  document.getElementById('mTabParent').className='mode-tab parent'+(isP?' active':'');
+  document.getElementById('mParentPanel').className='pa-panel'+(isP?' show':'');
+  document.getElementById('mRolePills').style.display=isP?'none':'flex';
+  var sub=document.querySelector('#loginModal .subtitle');
+  if(sub) sub.textContent=isP?"Parent Login Access — sign in to see your child's progress":'Sign in to access your dashboard';
+  document.getElementById('modalUsername').placeholder=isP?'Parent username (from Class Teacher)':'Enter your username';
+  document.getElementById('modalPassword').placeholder=isP?'Parent password (from Class Teacher)':'Enter your password';
+  document.getElementById('modalLcMsg').style.display='none';
+}
+function openParentLogin(){
+  openLogin(null);
+  setModalMode('parent');
+}
+
+function closeLoginModal(){
+  document.getElementById('loginModal').classList.remove('show');
+  document.getElementById('modalLcMsg').style.display = 'none';
+  document.getElementById('modalUsername').value = '';
+  document.getElementById('modalPassword').value = '';
+  setModalMode('staff');
+  resetModalBtn();
+}
+
+function toggleModalPassword(){
+  var p = document.getElementById('modalPassword');
+  var i = document.getElementById('modalEyeIcon');
+  p.type = p.type === 'password' ? 'text' : 'password';
+  i.className = p.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+}
+
+// Enter key support
+['modalUsername','modalPassword'].forEach(function(id){
+  document.addEventListener('DOMContentLoaded', function(){
+    var el = document.getElementById(id);
+    if(el) el.addEventListener('keypress', function(e){ if(e.key==='Enter') doModalLogin(); });
+  });
+});
+
+function showModalMsg(text, type){
+  var box = document.getElementById('modalLcMsg');
+  var ico = document.getElementById('modalLcIcon');
+  var txt = document.getElementById('modalLcText');
+  box.className = 'lc-msg ' + (type === 'ok' ? 'ok' : 'err');
+  box.style.display = 'flex';
+  ico.className = type === 'ok' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+  txt.textContent = text;
+  if(type !== 'ok'){
+    var card = document.getElementById('loginCard');
+    card.style.animation = 'none'; card.offsetHeight;
+    card.style.animation = 'shake .35s ease';
+    setTimeout(function(){ card.style.animation = ''; }, 400);
+  }
+}
+
+function resetModalBtn(){
+  var btn = document.getElementById('modalLoginBtn');
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+  if(window._loginBtn && window._loginBtn._orig){
+    window._loginBtn.innerHTML = window._loginBtn._orig;
+    window._loginBtn.disabled = false;
+  }
+}
+
+function doModalLogin(){
+  var username = document.getElementById('modalUsername').value.trim();
+  var password = document.getElementById('modalPassword').value;
+  var btn = document.getElementById('modalLoginBtn');
+  document.getElementById('modalLcMsg').style.display = 'none';
+  
+  if(!username || !password){
+    showModalMsg('Please enter both username and password.', 'err');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Signing in...';
+  if(window._loginBtn) window._loginBtn.disabled = true;
+  
+  // Your existing Apps Script backend
+  if(typeof google !== 'undefined' && google.script){
+    google.script.run
+      .withSuccessHandler(function(result){
+        resetModalBtn();
+        if(result && result.blocked && result.html){
+          document.open(); document.write(result.html); document.close();
+          return;
+        }
+        if(!result || result.status !== 'success'){
+          showModalMsg(result && result.message ? result.message : 'Invalid username or password.', 'err');
+          return;
+        }
+        
+        showModalMsg(result.role === 'parent'
+          ? 'Parent Login Access detected. Welcome, ' + (result.fullName || username) + '! Loading parent portal...'
+          : 'Welcome, ' + (result.fullName || username) + '! Loading...', 'ok');
+        
+        // Handle parent vs other roles like your original code
+        if(result.role === 'parent'){
+          try{for(var i=localStorage.length-1;i>=0;i--){var k=localStorage.key(i);if(k&&k.indexOf('sms_pane_')===0)localStorage.removeItem(k);}if(result.sessionToken)localStorage.setItem('sms_token',result.sessionToken);}catch(e){}
+          var parentData = result.parentData || {};
+          google.script.run
+            .withSuccessHandler(function(parentHtml){
+              if(!parentHtml){ showModalMsg('Parent portal file not found. Contact admin.', 'err'); return; }
+              var autoBootScript = [
+                '<script>',
+                '(function(){',
+                '  var _autoData=' + JSON.stringify(parentData) + ';',
+                '  function tryBoot(){',
+                '    if(typeof bootPortal==="function"){',
+                '      var ls=document.getElementById("loginScreen");',
+                '      if(ls)ls.style.display="none";',
+                '      bootPortal(_autoData);',
+                '    }',
+                '  }',
+                '  if(document.readyState==="complete"||document.readyState==="interactive"){',
+                '    setTimeout(tryBoot,100);',
+                '  } else {',
+                '    window.addEventListener("DOMContentLoaded",function(){setTimeout(tryBoot,100);});',
+                '  }',
+                '})();',
+                '<\/script>'
+              ].join('\n');
+              var injected = parentHtml.replace(/<\/body>/i, autoBootScript + '\n</body>');
+              document.open(); document.write(injected); document.close();
+            })
+            .withFailureHandler(function(err){
+              showModalMsg('Error loading parent portal: ' + (err && err.message ? err.message : 'Try again.'), 'err');
+            })
+            .getParentPortalHtml();
+          return;
+        }
+        
+        if(result.html){
+          setTimeout(function(){
+            document.open(); document.write(result.html); document.close();
+          }, 400);
+        } else {
+          showModalMsg('Login successful but no dashboard returned. Contact admin.', 'err');
+        }
+      })
+      .withFailureHandler(function(err){
+        resetModalBtn();
+        showModalMsg('Server error: ' + (err && err.message ? err.message : 'Please try again.'), 'err');
+      })
+      .checkLogin(username, password);
+  } else {
+    // Demo mode if not in Apps Script
+    setTimeout(function(){
+      resetModalBtn();
+      showModalMsg('Demo mode: Login works when deployed to Google Apps Script.', 'ok');
+    }, 1200);
+  }
+}
+
+// ESC key to close
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape' && document.getElementById('loginModal').classList.contains('show')){
+    closeLoginModal();
+  }
+});
+</script>
+</body>
+</html>

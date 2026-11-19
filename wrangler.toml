@@ -1,0 +1,24 @@
+﻿name = "new_cloudflare_saas"
+main = "src/index.js"
+compatibility_date = "2024-03-20"
+compatibility_flags = [ "nodejs_compat" ]
+
+rules = [
+  { type = "Text", globs = ["**/*.gs"], fallthrough = true }
+]
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "school_saas_db"
+database_id = "26ee1a21-e5d8-4579-a89c-ee852b5dada2"
+
+[vars]
+DEFAULT_TIMEZONE = "Africa/Dar_es_Salaam"
+ENVIRONMENT = "production"
+MAIN_DOMAIN = ""
+SUPER_ADMIN_KEY = "admin12345"
+# REGISTRATION_KEY = "weka-funguo-ya-siri-hapa"

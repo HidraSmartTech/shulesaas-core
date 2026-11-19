@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jisajili - Shule SaaS</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','sans-serif'] } } } }
+</script>
+</head>
+<body class="bg-[#f8fafc] font-sans text-slate-800">
+<!-- Header -->
+<header class="bg-white border-b sticky top-0 z-30">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-2 font-extrabold text-xl text-indigo-600">
+      <i class="fa-solid fa-graduation-cap bg-indigo-600 text-white p-2 rounded-lg"></i> ShuleSaaS
+    </div>
+    <a href="/login.html" class="text-sm font-semibold text-slate-600 hover:text-indigo-600">Tayari una akaunti? Ingia <i class="fa-solid fa-arrow-right ml-1"></i></a>
+  </div>
+</header>
+
+<div class="max-w-6xl mx-auto px-4 py-8 md:py-12 grid lg:grid-cols-5 gap-8">
+  <!-- Left Info -->
+  <div class="lg:col-span-2">
+    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">Sajili Shule Yako <span class="text-indigo-600">Ndani ya Dakika 2</span></h1>
+    <p class="text-slate-500 mt-3">Jaza fomu, chagua kifurushi na subdomain yako itaundwa moja kwa moja. Hakuna usumbufu.</p>
+    <div class="mt-8 space-y-4">
+      <div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-bolt"></i></div><div><h4 class="font-bold">Haraka & Rahisi</h4><p class="text-sm text-slate-500">Subdomain + Database huundwa kiotomatiki</p></div></div>
+      <div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-shield-halved"></i></div><div><h4 class="font-bold">Salama 100%</h4><p class="text-sm text-slate-500">Data ya shule imetenganishwa kwa kila shule</p></div></div>
+      <div class="flex gap-3"><div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center"><i class="fa-solid fa-headset"></i></div><div><h4 class="font-bold">Msaada 24/7</h4><p class="text-sm text-slate-500">Timu yetu iko tayari kukusaidia</p></div></div>
+    </div>
+    <div class="mt-8 bg-indigo-600 text-white p-5 rounded-2xl">
+      <p class="text-sm opacity-90">Watumiaji zaidi ya <b>1,200+</b> wanaaminika</p>
+      <div class="flex -space-x-2 mt-2"><img src="https://i.pravatar.cc/40?img=1" class="w-8 h-8 rounded-full border-2 border-white"><img src="https://i.pravatar.cc/40?img=2" class="w-8 h-8 rounded-full border-2 border-white"><img src="https://i.pravatar.cc/40?img=3" class="w-8 h-8 rounded-full border-2 border-white"><div class="w-8 h-8 rounded-full bg-white text-indigo-600 border-2 border-white flex items-center justify-center text-xs font-bold">+1k</div></div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="lg:col-span-3 bg-white rounded-[24px] shadow-xl border p-6 md:p-8">
+    <form id="registerForm" class="space-y-5" novalidate>
+      <div>
+        <label class="text-sm font-semibold">Jina la Shule <span class="text-red-500">*</span></label>
+        <input id="school_name" required placeholder="Mf: Mwangaza Primary School" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+      </div>
+
+      <div>
+        <label class="text-sm font-semibold">Subdomain <span class="text-red-500">*</span></label>
+        <div class="mt-1 flex">
+          <input id="subdomain" required pattern="^[a-z0-9-]{3,20}$" placeholder="mwangaza" class="flex-1 px-4 py-3 rounded-l-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none lowercase">
+          <span id="domainPreview" class="px-3 py-3 bg-slate-100 border border-l-0 border-slate-200 rounded-r-xl text-sm text-slate-500 whitespace-nowrap">.shulesaas.co.tz</span>
+        </div>
+        <p class="text-xs mt-1 flex justify-between"><span id="subdomainHelp" class="text-slate-400">Herufi ndogo, nambari na - tu. 3-20</span><span id="subdomainStatus" class="font-semibold"></span></p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-semibold">Ngazi ya Elimu <span class="text-red-500">*</span></label>
+          <select id="education_level" required class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+            <option value="">-- Chagua --</option>
+            <option value="Pre-Primary">Pre-Primary</option>
+            <option value="Primary">Primary</option>
+            <option value="O-Level">O-Level</option>
+            <option value="A-Level">A-Level</option>
+            <option value="Combined">Combined (Primary + Secondary)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-semibold">Jina la Mkuu wa Shule <span class="text-red-500">*</span></label>
+          <input id="admin_name" required placeholder="Jina Kamili" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm font-semibold mb-2 block">Chagua Kifurushi <span class="text-red-500">*</span></label>
+        <div class="grid md:grid-cols-3 gap-3">
+          <label class="relative cursor-pointer">
+            <input type="radio" name="package" value="basic" class="peer sr-only" checked>
+            <div class="p-4 rounded-2xl border-2 border-slate-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50 h-full">
+              <div class="font-extrabold">Basic</div><div class="text-xs text-slate-500">Kwa shule ndogo</div>
+              <div class="mt-2 font-black text-indigo-600">TZS 10,000<span class="text-xs font-normal text-slate-500">/mwezi</span></div>
+              <ul class="text-xs mt-2 space-y-1 text-slate-600"><li><i class="fa-solid fa-check text-emerald-500"></i> Wanafunzi 500</li><li><i class="fa-solid fa-check text-emerald-500"></i> Walimu 20</li></ul>
+            </div>
+          </label>
+          <label class="relative cursor-pointer">
+            <input type="radio" name="package" value="pro" class="peer sr-only">
+            <div class="p-4 rounded-2xl border-2 border-slate-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50 h-full relative">
+              <span class="absolute -top-2 right-3 bg-amber-400 text-xs font-bold px-2 py-0.5 rounded-full">POPULAR</span>
+              <div class="font-extrabold">Pro</div><div class="text-xs text-slate-500">Kwa shule za kati</div>
+              <div class="mt-2 font-black text-indigo-600">TZS 20,000<span class="text-xs font-normal text-slate-500">/mwezi</span></div>
+              <ul class="text-xs mt-2 space-y-1 text-slate-600"><li><i class="fa-solid fa-check text-emerald-500"></i> Wanafunzi 1000</li><li><i class="fa-solid fa-check text-emerald-500"></i> Walimu 50</li></ul>
+            </div>
+          </label>
+          <label class="relative cursor-pointer">
+            <input type="radio" name="package" value="advanced" class="peer sr-only">
+            <div class="p-4 rounded-2xl border-2 border-slate-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50 h-full">
+              <div class="font-extrabold">Advanced</div><div class="text-xs text-slate-500">Bila kikomo</div>
+              <div class="mt-2 font-black text-indigo-600">TZS 30,000<span class="text-xs font-normal text-slate-500">/mwezi</span></div>
+              <ul class="text-xs mt-2 space-y-1 text-slate-600"><li><i class="fa-solid fa-check text-emerald-500"></i> Unlimited</li><li><i class="fa-solid fa-check text-emerald-500"></i> Support 24/7</li></ul>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="text-sm font-semibold">Simu <span class="text-red-500">*</span></label><input id="admin_phone" required placeholder="07XXXXXXXX" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500"></div>
+        <div><label class="text-sm font-semibold">Email <span class="text-red-500">*</span></label><input id="admin_email" type="email" required placeholder="mkuu@shule.co.tz" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500"></div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div><label class="text-sm font-semibold">Password <span class="text-red-500">*</span></label><input id="admin_password" type="password" required minlength="6" placeholder="******" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500"></div>
+        <div><label class="text-sm font-semibold">Rudia Password <span class="text-red-500">*</span></label><input id="confirm_password" type="password" required placeholder="******" class="mt-1 w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500"></div>
+      </div>
+
+      <label class="flex gap-2 items-start text-sm"><input id="terms" type="checkbox" required class="mt-1"><span>Nimekubali <a href="#" class="text-indigo-600 font-semibold">Vigezo na Masharti</a></span></label>
+
+      <button id="submitBtn" type="submit" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition">
+        <span id="btnText">Sajili Shule Sasa</span><i id="btnIcon" class="fa-solid fa-arrow-right"></i><i id="btnSpinner" class="fa-solid fa-spinner fa-spin hidden"></i>
+      </button>
+      <p id="formMsg" class="text-sm text-center font-semibold hidden"></p>
+    </form>
+  </div>
+</div>
+
+<script>
+const API_BASE = '';
+const subdomainInput = document.getElementById('subdomain');
+const statusEl = document.getElementById('subdomainStatus');
+const form = document.getElementById('registerForm');
+const submitBtn = document.getElementById('submitBtn');
+const btnText = document.getElementById('btnText');
+const btnSpinner = document.getElementById('btnSpinner');
+const btnIcon = document.getElementById('btnIcon');
+const msgEl = document.getElementById('formMsg');
+
+let debounceTimer;
+subdomainInput.addEventListener('input', e => {
+  let v = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,'').replace(/--+/g,'-');
+  e.target.value = v;
+  if(v.length < 3){ statusEl.textContent=''; statusEl.className='font-semibold'; return; }
+  if(!/^[a-z0-9-]{3,20}$/.test(v)){ statusEl.textContent='Format si sahihi'; statusEl.className='font-semibold text-red-500'; return; }
+  statusEl.textContent='Inaangalia...'; statusEl.className='font-semibold text-amber-500';
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(async ()=>{
+    try{
+      const r = await fetch(`/api/check-subdomain?subdomain=${encodeURIComponent(v)}`);
+      const j = await r.json();
+      if(j.available){ statusEl.textContent='✓ Inapatikana'; statusEl.className='font-semibold text-emerald-600'; }
+      else { statusEl.textContent='✗ Imeshachukuliwa'; statusEl.className='font-semibold text-red-600'; }
+    }catch{ statusEl.textContent=''; }
+  },400);
+});
+
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const pass = document.getElementById('admin_password').value;
+  const confirm = document.getElementById('confirm_password').value;
+  if(pass !== confirm){ showMsg('Password hazifanani','text-red-600'); return; }
+  if(!document.getElementById('terms').checked){ showMsg('Kubali vigezo kwanza','text-red-600'); return; }
+  const payload = {
+    school_name: document.getElementById('school_name').value.trim(),
+    subdomain: subdomainInput.value.trim().toLowerCase(),
+    education_level: document.getElementById('education_level').value,
+    package: document.querySelector('input[name="package"]:checked').value,
+    admin_name: document.getElementById('admin_name').value.trim(),
+    admin_phone: document.getElementById('admin_phone').value.trim(),
+    admin_email: document.getElementById('admin_email').value.trim(),
+    admin_password: pass
+  };
+  setLoading(true);
+  try{
+    const res = await fetch('/api/register-school', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || data.message || 'Imeshindikana kusajili');
+    showMsg('✓ Imefanikiwa! Inaelekeza...','text-emerald-600');
+    const host = location.host.includes('localhost') ? `${payload.subdomain}.localhost:8787` : `${payload.subdomain}.${location.host.split('.').slice(-2).join('.')}`;
+    const url = `${location.protocol}//${host}`;
+    setTimeout(()=>{
+      if(confirm(`Hongera! Shule imesajiliwa.\nSubdomain: ${payload.subdomain}\n\nBonyeza OK kwenda kwenye mfumo wa shule yako:\n${url}`)){
+        location.href = url + '/login.html';
+      }
+    },800);
+  }catch(err){ showMsg(err.message,'text-red-600'); }
+  finally{ setLoading(false); }
+});
+function setLoading(v){
+  submitBtn.disabled=v; btnSpinner.classList.toggle('hidden',!v); btnIcon.classList.toggle('hidden',v);
+  btnText.textContent = v ? 'Inasajili...' : 'Sajili Shule Sasa';
+}
+function showMsg(t,c){ msgEl.textContent=t; msgEl.className=`text-sm text-center font-semibold ${c}`; msgEl.classList.remove('hidden'); }
+</script>
+</body>
+</html>

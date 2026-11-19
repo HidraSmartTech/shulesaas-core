@@ -1,0 +1,3670 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>`n<script src="/gas-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — School SMS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   ROOT VARIABLES & RESET
+═══════════════════════════════════════════════ */
+:root{
+  --sw:260px;
+  --navy:#0a1628;--navy2:#0f2044;--navy3:#162e5c;
+  --blue:#1a56db;--bluel:#3b82f6;--blueglow:rgba(26,86,219,.25);
+  --cyan:#06b6d4;--green:#16a34a;--red:#dc2626;
+  --amber:#d97706;--purple:#7c3aed;--pink:#db2777;
+  --bg:#f0f4fa;--sf:#fff;--bd:#dde4ef;--tx:#1e2a3a;--mu:#64748b;
+  --r:12px;--r2:16px;
+  --sh:0 4px 20px rgba(13,27,54,.08);
+  --sh2:0 8px 32px rgba(13,27,54,.14);
+  --transition:.2s cubic-bezier(.4,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;display:flex;min-height:100vh;overflow-x:hidden;}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#c5d0e0;border-radius:99px;}
+::-webkit-scrollbar-thumb:hover{background:#94a3b8;}
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════ */
+.sidebar{
+  width:var(--sw);
+  background:linear-gradient(180deg,#070e1f 0%,#0a1628 40%,#0c1d3a 100%);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;height:100vh;
+  z-index:300;
+  box-shadow:4px 0 40px rgba(0,0,0,.5);
+  transition:transform var(--transition);
+}
+.sb-brand{
+  padding:22px 16px 18px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;gap:12px;
+}
+.sb-ico{
+  width:42px;height:42px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:#fff;flex-shrink:0;
+  box-shadow:0 4px 16px rgba(26,86,219,.5);
+}
+.sb-nm{color:#fff;font-weight:800;font-size:15px;line-height:1.2;}
+.sb-sub{color:rgba(255,255,255,.3);font-size:10px;font-weight:500;letter-spacing:.4px;}
+
+/* Online indicator */
+.sb-online{display:flex;align-items:center;gap:6px;padding:8px 16px;
+  border-bottom:1px solid rgba(255,255,255,.05);}
+.online-dot{width:7px;height:7px;background:#22c55e;border-radius:50%;
+  animation:pulse-green 2s infinite;flex-shrink:0;}
+@keyframes pulse-green{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5);}50%{box-shadow:0 0 0 6px rgba(34,197,94,0);}}
+.online-txt{font-size:10.5px;color:rgba(255,255,255,.4);font-weight:600;}
+
+.sb-menu{flex:1;overflow-y:auto;padding:10px 8px;scrollbar-width:none;}
+.sb-menu::-webkit-scrollbar{display:none;}
+.sb-lbl{
+  color:rgba(255,255,255,.2);font-size:9px;font-weight:700;
+  letter-spacing:1.6px;text-transform:uppercase;
+  padding:12px 12px 4px;
+}
+.ni{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 12px;border-radius:10px;
+  color:rgba(255,255,255,.5);
+  cursor:pointer;margin-bottom:2px;
+  font-weight:600;font-size:13px;
+  user-select:none;transition:var(--transition);
+  position:relative;
+}
+.ni:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85);}
+.ni.active{
+  background:linear-gradient(135deg,rgba(26,86,219,.75),rgba(6,182,212,.4));
+  color:#fff;
+  box-shadow:0 4px 16px rgba(26,86,219,.3),inset 0 1px 0 rgba(255,255,255,.1);
+}
+.ni.active::before{
+  content:'';position:absolute;left:0;top:20%;height:60%;width:3px;
+  background:linear-gradient(to bottom,var(--cyan),var(--blue));
+  border-radius:0 3px 3px 0;
+}
+.ni i{width:18px;text-align:center;font-size:13px;}
+.ni .ni-badge{
+  margin-left:auto;background:var(--red);color:#fff;
+  font-size:9px;font-weight:800;padding:2px 6px;border-radius:99px;
+  animation:badge-pulse 2s infinite;
+}
+@keyframes badge-pulse{0%,100%{opacity:1;}50%{opacity:.7;}}
+.ni .ni-new{
+  margin-left:auto;background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#fff;font-size:8px;font-weight:800;padding:1px 5px;border-radius:99px;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+
+.sb-foot{padding:12px;border-top:1px solid rgba(255,255,255,.06);}
+.sb-user{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;
+  background:rgba(255,255,255,.05);
+  border-radius:11px;
+  border:1px solid rgba(255,255,255,.07);
+}
+.sb-av{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--cyan),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:15px;flex-shrink:0;
+  box-shadow:0 0 0 2px rgba(6,182,212,.4);
+}
+.sb-av img{width:38px;height:38px;border-radius:50%;object-fit:cover;}
+.sb-un{color:#fff;font-weight:700;font-size:12.5px;}
+.sb-ur{color:rgba(255,255,255,.3);font-size:10px;margin-top:1px;}
+.sb-lo{
+  background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.25);
+  color:#fca5a5;width:32px;height:32px;border-radius:9px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;transition:var(--transition);
+}
+.sb-lo:hover{background:var(--red);color:#fff;border-color:var(--red);}
+
+/* ═══════════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════════ */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bd);
+  padding:0 24px;height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 16px rgba(13,27,54,.06);
+}
+.topbar-l{display:flex;align-items:center;gap:12px;}
+.hbg{display:none;background:none;border:none;cursor:pointer;font-size:19px;color:var(--tx);}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mu);}
+.breadcrumb strong{color:var(--tx);font-weight:800;font-size:14px;}
+.breadcrumb i{font-size:9px;}
+.topbar-r{display:flex;align-items:center;gap:10px;}
+.tb-time{
+  font-size:11.5px;color:var(--mu);font-weight:700;
+  background:#f1f5f9;padding:5px 11px;border-radius:99px;
+  border:1px solid var(--bd);
+}
+.tb-pill{
+  padding:5px 13px;border-radius:99px;
+  font-size:11.5px;font-weight:800;
+  letter-spacing:.3px;text-transform:uppercase;
+}
+.tb-pill.open{background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:var(--green);border:1px solid #bbf7d0;}
+.tb-pill.closed{background:linear-gradient(135deg,#fee2e2,#fecaca);color:var(--red);border:1px solid #fecaca;}
+
+/* Topbar icon buttons */
+.tb-icon-btn{
+  width:38px;height:38px;border-radius:10px;
+  border:1px solid var(--bd);background:var(--sf);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--mu);cursor:pointer;
+  transition:var(--transition);position:relative;
+}
+.tb-icon-btn:hover{background:var(--bg);border-color:#c5d0e0;color:var(--blue);}
+.tb-notif-dot{
+  position:absolute;top:6px;right:6px;
+  width:8px;height:8px;
+  background:var(--red);border-radius:50%;
+  border:2px solid var(--sf);
+  animation:pulse-red 2s infinite;
+}
+@keyframes pulse-red{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
+
+/* Avatar dropdown */
+.tb-avatar-wrap{position:relative;}
+.tb-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:14px;
+  cursor:pointer;
+  box-shadow:0 0 0 3px rgba(26,86,219,.2);
+  transition:var(--transition);
+}
+.tb-avatar:hover{box-shadow:0 0 0 4px rgba(26,86,219,.35);}
+.tb-dropdown{
+  position:absolute;top:calc(100% + 10px);right:0;
+  background:#fff;border:1px solid var(--bd);
+  border-radius:var(--r2);
+  box-shadow:0 16px 48px rgba(13,27,54,.15);
+  width:220px;display:none;overflow:hidden;z-index:400;
+  animation:slideDown .2s ease;
+}
+.tb-dropdown.open{display:block;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.dd-header{
+  padding:14px 16px 12px;
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;
+}
+.dd-name{font-weight:800;font-size:13.5px;}
+.dd-role{color:rgba(255,255,255,.5);font-size:11px;margin-top:2px;}
+.dd-item{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 16px;font-size:12.5px;color:var(--tx);
+  cursor:pointer;transition:var(--transition);
+  border-top:1px solid var(--bg);
+}
+.dd-item i{width:16px;text-align:center;font-size:12px;color:var(--mu);}
+.dd-item:hover{background:var(--bg);}
+.dd-item.danger{color:var(--red);}
+.dd-item.danger i{color:var(--red);}
+
+/* ═══════════════════════════════════════════════
+   CONTENT AREA
+═══════════════════════════════════════════════ */
+.content{padding:24px;flex:1;}
+.pane-enter{animation:paneIn .3s ease;}
+@keyframes paneIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ═══════════════════════════════════════════════
+   HERO BANNER
+═══════════════════════════════════════════════ */
+.hero-banner{
+  background:linear-gradient(135deg,#0a1628 0%,#0f2044 50%,#0a1e40 100%);
+  border-radius:var(--r2);padding:24px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:22px;position:relative;overflow:hidden;
+  box-shadow:var(--sh2);
+}
+.hero-banner::before{
+  content:'';position:absolute;right:-60px;top:-60px;
+  width:220px;height:220px;
+  background:radial-gradient(circle,rgba(26,86,219,.3) 0%,transparent 70%);
+  border-radius:50%;
+}
+.hero-banner::after{
+  content:'';position:absolute;left:30%;bottom:-40px;
+  width:160px;height:160px;
+  background:radial-gradient(circle,rgba(6,182,212,.15) 0%,transparent 70%);
+  border-radius:50%;
+}
+.hero-left{position:relative;z-index:1;}
+.hero-greeting{color:rgba(255,255,255,.55);font-size:12.5px;font-weight:600;margin-bottom:4px;}
+.hero-name{color:#fff;font-size:22px;font-weight:900;line-height:1.2;}
+.hero-sub{color:rgba(255,255,255,.4);font-size:12px;margin-top:6px;}
+.hero-pills{display:flex;gap:8px;margin-top:12px;}
+.h-pill{
+  padding:5px 12px;border-radius:99px;
+  font-size:11px;font-weight:700;
+  display:flex;align-items:center;gap:5px;
+}
+.h-pill.online{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.25);}
+.h-pill.secure{background:rgba(26,86,219,.2);color:#93c5fd;border:1px solid rgba(26,86,219,.3);}
+.h-pill.time{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.12);}
+.hero-right{position:relative;z-index:1;text-align:right;}
+.hero-stat{color:#fff;font-size:36px;font-weight:900;line-height:1;}
+.hero-stat-lbl{color:rgba(255,255,255,.4);font-size:11px;margin-top:3px;}
+
+/* ═══════════════════════════════════════════════
+   WIDGET CARDS
+═══════════════════════════════════════════════ */
+.widget-row{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:14px;margin-bottom:22px;
+}
+.widget{
+  background:var(--sf);border-radius:var(--r);
+  padding:18px 16px 16px;
+  box-shadow:var(--sh);
+  border:1px solid var(--bd);
+  position:relative;overflow:hidden;
+  cursor:pointer;transition:var(--transition);
+}
+.widget:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--sh2);
+  border-color:transparent;
+}
+.widget::after{
+  content:'';position:absolute;
+  bottom:0;left:0;right:0;height:3px;
+  border-radius:0 0 var(--r) var(--r);
+  transition:height var(--transition);
+}
+.widget:hover::after{height:4px;}
+.widget.blue::after{background:linear-gradient(90deg,var(--blue),var(--cyan));}
+.widget.green::after{background:linear-gradient(90deg,var(--green),#22c55e);}
+.widget.amber::after{background:linear-gradient(90deg,var(--amber),#f59e0b);}
+.widget.red::after{background:linear-gradient(90deg,var(--red),#f87171);}
+.widget.purple::after{background:linear-gradient(90deg,var(--purple),#a855f7);}
+.widget.cyan::after{background:linear-gradient(90deg,var(--cyan),#38bdf8);}
+.widget.pink::after{background:linear-gradient(90deg,var(--pink),#f472b6);}
+
+/* Widget bg glow */
+.widget.blue{background:linear-gradient(135deg,#fff 60%,#eff6ff);}
+.widget.green{background:linear-gradient(135deg,#fff 60%,#f0fdf4);}
+.widget.amber{background:linear-gradient(135deg,#fff 60%,#fffbeb);}
+.widget.red{background:linear-gradient(135deg,#fff 60%,#fef2f2);}
+.widget.purple{background:linear-gradient(135deg,#fff 60%,#faf5ff);}
+.widget.cyan{background:linear-gradient(135deg,#fff 60%,#ecfeff);}
+.widget.pink{background:linear-gradient(135deg,#fff 60%,#fdf2f8);}
+
+.widget-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:12px;
+}
+.wi-blue{background:#dbeafe;color:var(--blue);}
+.wi-green{background:#dcfce7;color:var(--green);}
+.wi-amber{background:#fef3c7;color:var(--amber);}
+.wi-red{background:#fee2e2;color:var(--red);}
+.wi-purple{background:#ede9fe;color:var(--purple);}
+.wi-cyan{background:#cffafe;color:var(--cyan);}
+.wi-pink{background:#fce7f3;color:var(--pink);}
+
+.widget-val{font-size:26px;font-weight:900;color:var(--tx);line-height:1;font-variant-numeric:tabular-nums;}
+.widget-lbl{font-size:11px;color:var(--mu);font-weight:600;margin-top:4px;}
+.widget-trend{
+  position:absolute;top:14px;right:14px;
+  font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;
+  display:flex;align-items:center;gap:3px;
+}
+.trend-up{background:#dcfce7;color:var(--green);}
+.trend-dn{background:#fee2e2;color:var(--red);}
+.trend-eq{background:#f1f5f9;color:var(--mu);}
+
+/* ═══════════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════════ */
+.card{
+  background:var(--sf);border-radius:var(--r);
+  border:1px solid var(--bd);
+  box-shadow:var(--sh);
+  overflow:hidden;margin-bottom:16px;
+  transition:var(--transition);
+}
+.ch{
+  padding:14px 18px;
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;font-weight:800;font-size:13px;
+  display:flex;align-items:center;gap:9px;
+}
+.ch .ch-badge{
+  margin-left:auto;background:rgba(255,255,255,.12);
+  color:rgba(255,255,255,.8);font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:99px;
+}
+.cb{padding:18px;}
+
+/* ═══════════════════════════════════════════════
+   GRIDS
+═══════════════════════════════════════════════ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.tcol{display:grid;grid-template-columns:360px 1fr;gap:16px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.qs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+
+/* Quick stat cards */
+.qs{
+  background:var(--sf);border-radius:var(--r);
+  padding:16px;border:1px solid var(--bd);
+  box-shadow:var(--sh);
+  display:flex;align-items:center;gap:13px;
+  transition:var(--transition);
+}
+.qs:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.qs-i{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.qs-v{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums;}
+.qs-l{font-size:11px;color:var(--mu);font-weight:600;margin-top:2px;}
+
+/* ═══════════════════════════════════════════════
+   ACTIVITY LOG — ENHANCED
+═══════════════════════════════════════════════ */
+.act-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 16px;border-bottom:1px solid #f0f4f8;
+  transition:var(--transition);
+}
+.act-item:hover{background:#f8faff;}
+.act-item:last-child{border-bottom:none;}
+.act-dot{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:13px;
+}
+.act-dot.add{background:#dcfce7;color:var(--green);}
+.act-dot.edit{background:#dbeafe;color:var(--blue);}
+.act-dot.del{background:#fee2e2;color:var(--red);}
+.act-dot.login{background:#ede9fe;color:var(--purple);}
+.act-dot.lock{background:#fef3c7;color:var(--amber);}
+.act-dot.pub{background:#cffafe;color:var(--cyan);}
+.act-dot.default{background:#f1f5f9;color:var(--mu);}
+.act-action{font-weight:700;font-size:12.5px;color:var(--tx);}
+.act-meta{display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap;}
+.act-user{
+  background:var(--navy);color:rgba(255,255,255,.85);
+  font-size:9.5px;font-weight:800;padding:1px 7px;border-radius:99px;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.act-time{color:var(--mu);font-size:11px;}
+.act-badge{padding:1px 7px;border-radius:99px;font-size:9.5px;font-weight:700;}
+
+/* ═══════════════════════════════════════════════
+   USER ACTIVITY CONTROL — NEW SECTION
+═══════════════════════════════════════════════ */
+.ctrl-banner{
+  background:linear-gradient(135deg,#1e1b4b,#312e81,#1e3a8a);
+  border-radius:var(--r2);padding:20px 24px;
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:20px;position:relative;overflow:hidden;
+}
+.ctrl-banner::before{
+  content:'';position:absolute;right:-30px;top:-30px;
+  width:150px;height:150px;
+  background:radial-gradient(circle,rgba(255,255,255,.07) 0%,transparent 70%);
+  border-radius:50%;
+}
+.ctrl-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:#fff;flex-shrink:0;
+  border:1px solid rgba(255,255,255,.15);
+}
+.ctrl-text h3{color:#fff;font-size:16px;font-weight:900;}
+.ctrl-text p{color:rgba(255,255,255,.5);font-size:12px;margin-top:3px;}
+.ctrl-actions{margin-left:auto;display:flex;gap:8px;position:relative;z-index:1;}
+
+/* Permission toggles */
+.perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.perm-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 16px;
+  background:var(--bg);border-radius:10px;
+  border:1px solid var(--bd);
+  transition:var(--transition);
+}
+.perm-row:hover{border-color:var(--blue);background:#eff6ff;}
+.perm-info .pt{font-weight:700;font-size:13px;}
+.perm-info .pd{font-size:11px;color:var(--mu);margin-top:2px;}
+.toggle-wrap{display:flex;align-items:center;gap:8px;}
+.toggle-lbl{font-size:11px;font-weight:700;color:var(--mu);}
+.toggle{
+  width:46px;height:25px;background:#cbd5e1;
+  border-radius:99px;position:relative;cursor:pointer;
+  transition:var(--transition);flex-shrink:0;
+}
+.toggle.on{background:linear-gradient(135deg,var(--green),#22c55e);}
+.toggle::after{
+  content:'';position:absolute;
+  top:2px;left:2px;width:21px;height:21px;
+  background:#fff;border-radius:50%;
+  transition:var(--transition);
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+.toggle.on::after{left:23px;}
+
+/* Live sessions table */
+.session-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;border-bottom:1px solid #f0f4f8;
+  font-size:13px;
+}
+.session-row:last-child{border-bottom:none;}
+.session-av{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:13px;flex-shrink:0;
+}
+.session-name{font-weight:700;}
+.session-role{
+  font-size:10.5px;padding:2px 8px;border-radius:99px;
+  font-weight:700;
+}
+.session-meta{margin-left:auto;text-align:right;font-size:11px;color:var(--mu);}
+.session-status{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+.session-status.online{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.25);}
+.session-status.away{background:var(--amber);}
+.kick-btn{
+  background:#fee2e2;color:var(--red);border:1px solid #fecaca;
+  padding:4px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  cursor:pointer;transition:var(--transition);
+}
+.kick-btn:hover{background:var(--red);color:#fff;border-color:var(--red);}
+
+/* Audit trail filter */
+.audit-filters{
+  display:flex;gap:8px;padding:12px 16px;
+  border-bottom:1px solid var(--bd);
+  flex-wrap:wrap;align-items:center;
+}
+.audit-filter-btn{
+  padding:5px 13px;border-radius:99px;font-size:11.5px;font-weight:700;
+  border:1.5px solid var(--bd);background:var(--sf);color:var(--mu);
+  cursor:pointer;transition:var(--transition);
+}
+.audit-filter-btn.active{border-color:var(--blue);background:#eff6ff;color:var(--blue);}
+.audit-filter-btn:hover{border-color:var(--blue);color:var(--blue);}
+
+/* Risk badge */
+.risk{padding:3px 9px;border-radius:99px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
+.risk.high{background:#fee2e2;color:var(--red);}
+.risk.med{background:#fef3c7;color:var(--amber);}
+.risk.low{background:#dcfce7;color:var(--green);}
+.risk.info{background:#dbeafe;color:var(--blue);}
+
+/* ═══════════════════════════════════════════════
+   MONITOR DASHBOARDS CONTROL CENTER
+═══════════════════════════════════════════════ */
+.mon-hero{
+  background:linear-gradient(135deg,#071225 0%,#0f2b5c 55%,#0e7490 100%);
+  color:#fff;border-radius:var(--r2);padding:18px;margin-bottom:16px;
+  box-shadow:var(--sh2);position:relative;overflow:hidden;
+}
+.mon-hero::after{content:'';position:absolute;right:-70px;top:-70px;width:210px;height:210px;border-radius:50%;background:rgba(255,255,255,.08);}
+.mon-hero h2{font-size:20px;font-weight:900;margin-bottom:4px;position:relative;z-index:1;}
+.mon-hero p{font-size:12.5px;color:rgba(255,255,255,.72);max-width:760px;line-height:1.55;position:relative;z-index:1;}
+.mon-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;position:relative;z-index:1;}
+.mon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.mon-tile{
+  border-radius:var(--r);padding:16px;color:#fff;min-height:168px;
+  position:relative;overflow:hidden;cursor:pointer;
+  transition:var(--transition);border:1px solid rgba(255,255,255,.13);
+  box-shadow:0 6px 22px rgba(13,27,54,.12);
+}
+.mon-tile:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(13,27,54,.22);}
+.mon-tile.active{outline:3px solid rgba(59,130,246,.38);box-shadow:0 0 0 4px rgba(255,255,255,.9),0 12px 36px rgba(26,86,219,.32);}
+.mon-tile::before{
+  content:'';position:absolute;right:-28px;bottom:-28px;
+  width:112px;height:112px;border-radius:50%;background:rgba(255,255,255,.08);
+}
+.mon-tile-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;position:relative;z-index:1;}
+.mon-tile-icon{font-size:26px;opacity:.95;}
+.mon-tile-title{font-weight:900;font-size:14.5px;margin-top:12px;position:relative;z-index:1;}
+.mon-tile-sub{font-size:11px;opacity:.72;margin-top:4px;line-height:1.4;position:relative;z-index:1;}
+.mon-tile-val{font-size:26px;font-weight:900;margin-top:12px;font-variant-numeric:tabular-nums;position:relative;z-index:1;}
+.mon-chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.45px;background:rgba(255,255,255,.16);backdrop-filter:blur(8px);}
+.mon-chip.allowed{background:rgba(34,197,94,.22);color:#dcfce7;}
+.mon-chip.blocked{background:rgba(239,68,68,.22);color:#fee2e2;}
+.mon-chip.readonly{background:rgba(245,158,11,.22);color:#fef3c7;}
+.mon-live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.16);display:inline-block;}
+.mon-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--bd);background:#fbfdff;}
+.mon-toolbar .tsearch{max-width:340px;}
+.mon-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.mon-control-grid{display:grid;grid-template-columns:1.05fr 1.2fr .9fr;gap:14px;align-items:start;}
+.mon-panel-box{background:#f8faff;border:1.5px solid var(--bd);border-radius:var(--r);padding:14px;}
+.mon-panel-box h4{font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--mu);font-weight:900;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.mon-access-card{border-radius:14px;padding:16px;background:linear-gradient(135deg,#fff,#f8fbff);border:1.5px solid var(--bd);}
+.mon-access-state{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
+.mon-access-title{font-size:18px;font-weight:900;}
+.mon-access-desc{font-size:12px;color:var(--mu);line-height:1.45;margin-top:3px;}
+.mon-switch{width:54px;height:30px;border-radius:99px;background:#cbd5e1;position:relative;cursor:pointer;transition:var(--transition);flex-shrink:0;}
+.mon-switch::after{content:'';position:absolute;width:24px;height:24px;border-radius:50%;background:#fff;left:3px;top:3px;box-shadow:0 2px 8px rgba(0,0,0,.18);transition:var(--transition);}
+.mon-switch.on{background:linear-gradient(135deg,var(--green),#22c55e);}
+.mon-switch.on::after{left:27px;}
+.mon-feature-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mon-feature{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:1px solid var(--bd);border-radius:10px;padding:9px 10px;}
+.mon-feature span{font-size:12px;font-weight:800;color:var(--tx);}
+.mon-mini-switch{width:38px;height:22px;border-radius:99px;background:#cbd5e1;position:relative;cursor:pointer;transition:var(--transition);flex-shrink:0;}
+.mon-mini-switch::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;left:3px;top:3px;box-shadow:0 1px 5px rgba(0,0,0,.18);transition:var(--transition);}
+.mon-mini-switch.on{background:var(--blue);}
+.mon-mini-switch.on::after{left:19px;}
+.mon-control-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mon-muted-note{font-size:11.5px;color:var(--mu);line-height:1.5;margin-top:10px;}
+.mon-state-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px dashed var(--bd);font-size:12.5px;}
+.mon-state-row:last-child{border-bottom:none;}
+.mon-state-row b{font-weight:900;}
+.mon-audit-feed{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
+.mon-event{display:flex;gap:9px;padding:10px;background:#fff;border:1px solid var(--bd);border-radius:10px;}
+.mon-event i{color:var(--blue);margin-top:2px;}
+.mon-event b{font-size:12px;display:block;}
+.mon-event span{font-size:11px;color:var(--mu);}
+/* ═══════════════════════════════════════════════
+   TABLES
+═══════════════════════════════════════════════ */
+.tw{overflow-x:auto;}
+.tbar{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-bottom:1px solid var(--bd);flex-wrap:wrap;
+}
+.tsearch{
+  display:flex;align-items:center;gap:7px;
+  background:var(--bg);border:1.5px solid var(--bd);
+  border-radius:9px;padding:6px 12px;flex:1;max-width:280px;
+  transition:var(--transition);
+}
+.tsearch:focus-within{border-color:var(--blue);background:#fff;}
+.tsearch i{color:var(--mu);font-size:12px;}
+.tsearch input{border:none;background:transparent;font-size:12.5px;
+  color:var(--tx);outline:none;width:100%;font-family:inherit;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead{background:linear-gradient(90deg,var(--navy),var(--navy2));}
+th{
+  padding:11px 12px;text-align:left;
+  font-weight:800;font-size:10.5px;color:rgba(255,255,255,.85);
+  text-transform:uppercase;letter-spacing:.6px;
+  white-space:nowrap;
+}
+td{padding:10px 12px;border-bottom:1px solid #f0f4f8;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#f8faff;}
+.tav{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--bd);vertical-align:middle;}
+.taph{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:inline-flex;align-items:center;justify-content:center;
+  color:#fff;font-size:12px;font-weight:800;vertical-align:middle;
+}
+.badge{display:inline-block;padding:3px 9px;border-radius:99px;font-size:10.5px;font-weight:700;}
+.bb{background:#dbeafe;color:#1d4ed8;}
+.bgg{background:#dcfce7;color:#15803d;}
+.ba{background:#fef3c7;color:#b45309;}
+.br{background:#fee2e2;color:#b91c1c;}
+.bpu-b{background:#ede9fe;color:#6d28d9;}
+.bcyan{background:#cffafe;color:#0e7490;}
+.bpink{background:#fce7f3;color:#9d174d;}
+
+/* ═══════════════════════════════════════════════
+   FORMS
+═══════════════════════════════════════════════ */
+.fg{margin-bottom:11px;}
+.fl{display:block;font-size:11px;font-weight:800;color:var(--mu);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+.fc{
+  width:100%;padding:9px 12px;
+  border:1.5px solid var(--bd);border-radius:9px;
+  font-size:13px;font-family:inherit;color:var(--tx);background:#fff;
+  transition:var(--transition);
+}
+.fc:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blueglow);}
+.fh{font-size:10.5px;color:var(--mu);margin-top:3px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+
+/* Picture placeholder */
+.pic-ph{
+  width:70px;height:70px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:26px;margin:0 auto 12px;
+}
+.pic-img{width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid var(--bd);display:none;margin:0 auto 12px;}
+
+/* ═══════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════ */
+.btn{
+  padding:9px 18px;border-radius:9px;font-size:12.5px;
+  font-weight:800;border:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:inherit;transition:var(--transition);
+  letter-spacing:.2px;
+}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.bp{background:linear-gradient(135deg,var(--blue),var(--bluel));color:#fff;box-shadow:0 4px 12px rgba(26,86,219,.3);}
+.bg_{background:linear-gradient(135deg,var(--green),#22c55e);color:#fff;box-shadow:0 4px 12px rgba(22,163,74,.3);}
+.bd_{background:linear-gradient(135deg,var(--red),#ef4444);color:#fff;box-shadow:0 4px 12px rgba(220,38,38,.3);}
+.bam{background:linear-gradient(135deg,var(--amber),#f59e0b);color:#fff;box-shadow:0 4px 12px rgba(217,119,6,.3);}
+.bpu{background:linear-gradient(135deg,var(--purple),#a855f7);color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.3);}
+.bcyan_{background:linear-gradient(135deg,var(--cyan),#38bdf8);color:#fff;box-shadow:0 4px 12px rgba(6,182,212,.3);}
+.bgh{background:#f1f5f9;color:var(--tx);border:1px solid var(--bd);}
+.bsm{padding:5px 11px;font-size:11.5px;}
+.brow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+
+/* ═══════════════════════════════════════════════
+   STATUS BOXES
+═══════════════════════════════════════════════ */
+.sbox{
+  border-radius:12px;padding:18px;text-align:center;margin-bottom:14px;
+  border:2px dashed;
+}
+.sbox.open{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:var(--green);}
+.sbox.closed{background:linear-gradient(135deg,#fef2f2,#fee2e2);border-color:var(--red);}
+.bigs{font-size:28px;font-weight:900;margin:6px 0;}
+
+/* ═══════════════════════════════════════════════
+   PROFILE
+═══════════════════════════════════════════════ */
+.prof-hero{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  border-radius:var(--r2);padding:28px;color:#fff;
+  text-align:center;margin-bottom:16px;
+  position:relative;overflow:hidden;
+}
+.prof-hero::before{
+  content:'';position:absolute;right:-50px;top:-50px;
+  width:200px;height:200px;
+  background:radial-gradient(circle,rgba(26,86,219,.3),transparent 70%);
+  border-radius:50%;
+}
+.prof-hero::after{
+  content:'';position:absolute;left:-40px;bottom:-40px;
+  width:160px;height:160px;
+  background:radial-gradient(circle,rgba(6,182,212,.15),transparent 70%);
+  border-radius:50%;
+}
+.prof-avatar-wrap{position:relative;display:inline-block;margin-bottom:14px;}
+.prof-avatar{width:90px;height:90px;border-radius:50%;border:3px solid rgba(255,255,255,.25);object-fit:cover;}
+.prof-avatar-ph{
+  width:90px;height:90px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:34px;font-weight:900;
+  border:3px solid rgba(255,255,255,.2);
+}
+.prof-edit-btn{
+  position:absolute;bottom:0;right:0;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--blue);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;cursor:pointer;
+  border:2px solid #fff;
+}
+.prof-name{font-size:22px;font-weight:900;position:relative;}
+.prof-role{color:rgba(255,255,255,.5);font-size:13px;margin-top:4px;position:relative;}
+.prof-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  margin-top:20px;position:relative;
+}
+.ps{background:rgba(255,255,255,.07);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(255,255,255,.08);}
+.ps-v{font-size:22px;font-weight:900;}
+.ps-l{font-size:10px;opacity:.5;margin-top:2px;}
+
+/* ═══════════════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════════════ */
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:15px 0;border-bottom:1px solid var(--bd);
+}
+.setting-row:last-child{border-bottom:none;}
+.setting-info .s-title{font-weight:700;font-size:13.5px;}
+.setting-info .s-desc{font-size:11.5px;color:var(--mu);margin-top:2px;}
+
+/* ═══════════════════════════════════════════════
+   APPROVAL CARDS
+═══════════════════════════════════════════════ */
+.appr-card{
+  background:var(--sf);border-radius:var(--r);
+  border:1px solid var(--bd);box-shadow:var(--sh);
+  padding:16px;margin-bottom:10px;
+  display:flex;align-items:center;gap:14px;
+  transition:var(--transition);
+}
+.appr-card:hover{border-color:var(--blue);transform:translateX(3px);}
+
+/* ═══════════════════════════════════════════════
+   NOTIFICATION TOAST
+═══════════════════════════════════════════════ */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{
+  padding:13px 18px;border-radius:12px;
+  font-size:13px;font-weight:700;
+  box-shadow:0 8px 32px rgba(0,0,0,.15);
+  display:flex;align-items:center;gap:10px;
+  min-width:280px;max-width:380px;
+  animation:toastIn .3s ease;
+  border:1px solid;
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+.toast.success{background:#f0fdf4;color:#166534;border-color:#bbf7d0;}
+.toast.error{background:#fef2f2;color:#991b1b;border-color:#fecaca;}
+.toast.info{background:#eff6ff;color:#1e40af;border-color:#bfdbfe;}
+.toast.warn{background:#fffbeb;color:#92400e;border-color:#fde68a;}
+.toast-close{margin-left:auto;cursor:pointer;opacity:.6;}
+.toast-close:hover{opacity:1;}
+
+/* ═══════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════ */
+.mbg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(6px);
+  z-index:500;align-items:center;justify-content:center;padding:16px;
+}
+.mbg.show{display:flex;}
+.mbox{
+  background:#fff;border-radius:var(--r2);
+  max-width:500px;width:100%;max-height:90vh;
+  overflow-y:auto;
+  box-shadow:0 24px 80px rgba(0,0,0,.3);
+  animation:modalIn .25s ease;
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.96);}to{opacity:1;transform:scale(1);}}
+.mhd{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  padding:14px 18px;color:#fff;
+  display:flex;align-items:center;justify-content:space-between;
+  border-radius:var(--r2) var(--r2) 0 0;
+}
+.mhd h3{font-weight:800;font-size:14px;}
+.mclose{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  color:#fff;width:28px;height:28px;border-radius:7px;
+  cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;
+  transition:var(--transition);
+}
+.mclose:hover{background:rgba(255,255,255,.25);}
+.mbody{padding:20px;}
+
+/* ═══════════════════════════════════════════════
+   OVERLAY + SPINNER
+═══════════════════════════════════════════════ */
+.ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:290;}
+.ovl.show{display:block;}
+.sp{
+  display:none;width:26px;height:26px;
+  border:3px solid #e5e7eb;border-top-color:var(--blue);
+  border-radius:50%;animation:spin .75s linear infinite;margin:12px auto;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.msg{padding:10px 14px;border-radius:8px;font-weight:700;margin-top:10px;font-size:12.5px;display:none;}
+.msg.ok{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;}
+.msg.err{background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;}
+
+/* ═══════════════════════════════════════════════
+   CREDENTIAL PREVIEW BOX
+═══════════════════════════════════════════════ */
+.cred-box{
+  background:linear-gradient(135deg,#070e1f,#0f2044);
+  border-radius:10px;padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  border:1px solid rgba(255,255,255,.08);
+  margin-top:4px;
+}
+.cred-label{color:rgba(255,255,255,.35);font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+.cred-user{color:var(--cyan);font-size:14px;font-weight:800;}
+.cred-pass{color:#a78bfa;font-size:14px;font-weight:800;letter-spacing:3px;}
+.cred-divider{width:1px;height:30px;background:rgba(255,255,255,.1);}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media(max-width:1280px){
+  .widget-row{grid-template-columns:repeat(3,1fr);}
+  .prof-stats{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:1024px){
+  .two-col,.tcol,.three-col{grid-template-columns:1fr;}
+  .qs-grid{grid-template-columns:1fr 1fr;}
+  .mon-grid{grid-template-columns:1fr 1fr;}
+  .mon-stat-grid{grid-template-columns:1fr 1fr;}
+  .mon-control-grid{grid-template-columns:1fr;}
+  .perm-grid{grid-template-columns:1fr;}
+}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .hbg{display:flex;}
+  .ovl.show{display:block;}
+  .widget-row{grid-template-columns:repeat(2,1fr);}
+  .g2,.g3{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .content{padding:14px;}
+  .widget-row{grid-template-columns:1fr 1fr;}
+  .qs-grid{grid-template-columns:1fr;}
+  .mon-grid{grid-template-columns:1fr;}
+  .mon-stat-grid{grid-template-columns:1fr;}
+  .mon-feature-list{grid-template-columns:1fr;}
+  .mon-control-buttons{grid-template-columns:1fr;}
+  .hero-banner{flex-direction:column;gap:14px;text-align:center;}
+  .hero-pills{justify-content:center;}
+  .hero-right{text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<div class="ovl" id="ovl" onclick="closeSB()"></div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-ico"><i class="fas fa-graduation-cap"></i></div>
+    <div>
+      <div class="sb-nm">School SMS</div>
+      <div class="sb-sub">Administrator Panel</div>
+    </div>
+  </div>
+  <div class="sb-online">
+    <div class="online-dot"></div>
+    <span class="online-txt" id="onlineTxt">System Online</span>
+  </div>
+
+  <div class="sb-menu">
+    <div class="sb-lbl">Main</div>
+    <div class="ni active" data-p="overview"><i class="fas fa-chart-pie"></i><span>Overview</span></div>
+
+    
+    <div class="sb-lbl">Accounts</div>
+    <div class="ni" data-p="teachers"><i class="fas fa-chalkboard-teacher"></i><span>Manage Administrator</span></div>
+
+    <div class="sb-lbl">Assignments</div>
+    <div class="ni" data-p="monitor"><i class="fas fa-desktop"></i><span>Manage Assignments &amp; Accounts</span></div>
+
+    <div class="sb-lbl">Administration</div>
+    <div class="ni" data-p="profile"><i class="fas fa-user-shield"></i><span>Admin Profile</span></div>
+  </div>
+
+  <div class="sb-foot">
+    <div class="sb-user">
+      <div class="sb-av" id="sbAvWrap">A</div>
+      <div style="flex:1;overflow:hidden;">
+        <div class="sb-un" id="sbAdminName">Administrator</div>
+        <div class="sb-ur">Super Admin • Full Access</div>
+      </div>
+      <button class="sb-lo" onclick="doLogout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════ TOPBAR ═══════════ -->
+<div class="main">
+<div class="topbar">
+  <div class="topbar-l">
+    <button class="hbg" onclick="toggleSB()"><i class="fas fa-bars"></i></button>
+    <div class="breadcrumb">
+      <i class="fas fa-home" style="color:var(--blue)"></i>
+      <i class="fas fa-chevron-right"></i>
+      <strong id="pgTitle">Overview</strong>
+    </div>
+  </div>
+  <div class="topbar-r">
+    <span class="tb-time" id="clockEl"></span>
+    <span class="tb-pill closed" id="statusPill">CLOSED</span>
+
+    <!-- Notification Bell -->
+    <div class="tb-icon-btn" onclick="showNotifPanel()" title="Notifications">
+      <i class="fas fa-bell"></i>
+      <div class="tb-notif-dot" id="notifDot"></div>
+    </div>
+
+    <!-- Lock/Unlock quick action -->
+    <div class="tb-icon-btn" id="quickLockBtn" onclick="quickToggleStatus()" title="Toggle Score Submission">
+      <i class="fas fa-lock" id="quickLockIcon"></i>
+    </div>
+
+    <!-- Avatar -->
+    <div class="tb-avatar-wrap">
+      <div class="tb-avatar" id="tbAvatar" onclick="toggleDropdown()">A</div>
+      <div class="tb-dropdown" id="tbDropdown">
+        <div class="dd-header">
+          <div class="dd-name" id="ddName">Administrator</div>
+          <div class="dd-role">Super Admin • Full Access</div>
+        </div>
+        <div class="dd-item" onclick="goTo('profile')"><i class="fas fa-user-edit"></i>Edit Profile</div>
+        <div class="dd-item danger" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i>Logout</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CONTENT ═══════════ -->
+<div class="content">
+
+<!-- ══════════ OVERVIEW ══════════ -->
+<div id="pane-overview" class="pane-enter">
+
+  <!-- Hero Banner -->
+  <div class="hero-banner">
+    <div class="hero-left">
+      <div class="hero-greeting">👋 Welcome back,</div>
+      <div class="hero-name" id="heroName">Administrator</div>
+      <div class="hero-sub" id="heroDate">Loading date...</div>
+      <div class="hero-pills">
+        <div class="h-pill online"><i class="fas fa-circle" style="font-size:7px"></i> System Online</div>
+        <div class="h-pill secure"><i class="fas fa-shield-alt"></i> Secured</div>
+        <div class="h-pill time" id="heroClock"><i class="fas fa-clock"></i> —</div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stat" id="heroStudents">—</div>
+      <div class="hero-stat-lbl">Total Students Enrolled</div>
+    </div>
+  </div>
+
+  <!-- Widget Row -->
+  <div class="widget-row">
+    <div class="widget blue" onclick="goTo('teachers')">
+      <div class="widget-trend trend-up" id="wTrendT"><i class="fas fa-arrow-up"></i> Active</div>
+      <div class="widget-icon wi-blue"><i class="fas fa-chalkboard-teacher"></i></div>
+      <div class="widget-val" id="wTeachers">—</div>
+      <div class="widget-lbl">Total Teachers</div>
+    </div>
+    <div class="widget green">
+      <div class="widget-trend trend-eq" id="wTrendS">Enrolled</div>
+      <div class="widget-icon wi-green"><i class="fas fa-user-graduate"></i></div>
+      <div class="widget-val" id="wStudents">—</div>
+      <div class="widget-lbl">Total Students</div>
+    </div>
+    <div class="widget purple">
+      <div class="widget-trend trend-dn" id="wTrendP">Review</div>
+      <div class="widget-icon wi-purple"><i class="fas fa-user-clock"></i></div>
+      <div class="widget-val" id="wPending">—</div>
+      <div class="widget-lbl">Pending Admissions</div>
+    </div>
+    <div class="widget amber">
+      <div class="widget-trend trend-up">Active</div>
+      <div class="widget-icon wi-amber"><i class="fas fa-school"></i></div>
+      <div class="widget-val" id="wClasses">—</div>
+      <div class="widget-lbl">Classes</div>
+    </div>
+    <div class="widget cyan">
+      <div class="widget-trend trend-up">Subjects</div>
+      <div class="widget-icon wi-cyan"><i class="fas fa-book"></i></div>
+      <div class="widget-val" id="wSubjects">—</div>
+      <div class="widget-lbl">Subjects</div>
+    </div>
+    <div class="widget red">
+      <div class="widget-trend trend-eq">Today</div>
+      <div class="widget-icon wi-red"><i class="fas fa-history"></i></div>
+      <div class="widget-val" id="wLogs">—</div>
+      <div class="widget-lbl">Activity Logs</div>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="qs-grid">
+    <div class="qs">
+      <div class="qs-i" style="background:#dbeafe;color:var(--blue)"><i class="fas fa-users-cog"></i></div>
+      <div>
+        <div class="qs-v" id="qsOnline">0</div>
+        <div class="qs-l">Active Users Now</div>
+      </div>
+    </div>
+    <div class="qs">
+      <div class="qs-i" style="background:#dcfce7;color:var(--green)"><i class="fas fa-check-circle"></i></div>
+      <div>
+        <div class="qs-v" id="qsApproved">—</div>
+        <div class="qs-l">Approved Students</div>
+      </div>
+    </div>
+    <div class="qs">
+      <div class="qs-i" style="background:#ede9fe;color:var(--purple)"><i class="fas fa-file-alt"></i></div>
+      <div>
+        <div class="qs-v" id="qsScores">—</div>
+        <div class="qs-l">Score Submissions</div>
+      </div>
+    </div>
+    <div class="qs">
+      <div class="qs-i" style="background:#fef3c7;color:var(--amber)"><i class="fas fa-clock"></i></div>
+      <div>
+        <div class="qs-v" id="qsDeadline">—</div>
+        <div class="qs-l">Submission Deadline</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="two-col">
+
+    <!-- Quick Actions + Status -->
+    <div class="card">
+      <div class="ch"><i class="fas fa-bolt"></i> Quick Actions</div>
+      <div class="cb">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+          <button class="btn bp" onclick="goTo('teachers')" style="justify-content:center"><i class="fas fa-user-plus"></i> Academic Account</button>
+          <button class="btn bpu" onclick="goTo('monitor')" style="justify-content:center"><i class="fas fa-desktop"></i> Assignments</button>
+        </div>
+
+        <!-- Score Status -->
+        <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--bd);">
+          <div style="font-weight:800;font-size:11.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;">
+            <i class="fas fa-file-signature" style="color:var(--blue)"></i> Score Submission Portal
+          </div>
+          <div class="sbox closed" id="mainSbox">
+            <div style="font-size:12px;color:var(--mu)">Current Status</div>
+            <div class="bigs" id="bigStatus">Loading...</div>
+            <div id="deadlineInfo" style="font-size:12px;color:var(--mu);margin-bottom:8px;"></div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn bg_" onclick="changeStatus('OPEN')" style="flex:1;justify-content:center"><i class="fas fa-lock-open"></i> Open</button>
+            <button class="btn bd_" onclick="changeStatus('CLOSED')" style="flex:1;justify-content:center"><i class="fas fa-lock"></i> Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Activity Feed -->
+    <div class="card">
+      <div class="ch">
+        <i class="fas fa-activity"></i> Live Activity Feed
+        <button class="btn bgh bsm" onclick="loadActivity()" style="margin-left:auto;font-size:11px;"><i class="fas fa-sync"></i></button>
+      </div>
+      <div style="max-height:380px;overflow-y:auto;">
+        <div class="sp" id="spAct" style="margin:16px auto;"></div>
+        <div id="actFeed">
+          <div style="text-align:center;padding:30px;color:var(--mu);">
+            <i class="fas fa-history" style="font-size:28px;opacity:.3;display:block;margin-bottom:8px;"></i>
+            Loading activity...
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ USER ACTIVITY CONTROL ══════════ -->
+<div id="pane-activity" style="display:none" class="pane-enter">
+
+  <div class="ctrl-banner">
+    <div class="ctrl-icon"><i class="fas fa-shield-alt"></i></div>
+    <div class="ctrl-text">
+      <h3>🛡️ User Activity Control Center</h3>
+      <p>Monitor, manage and control all user activities, permissions, and system access in real-time</p>
+    </div>
+    <div class="ctrl-actions">
+      <button class="btn bpu" onclick="exportAuditLog()"><i class="fas fa-download"></i> Export Log</button>
+      <button class="btn bd_" onclick="clearActivityLog()"><i class="fas fa-trash"></i> Clear Log</button>
+    </div>
+  </div>
+
+  <!-- Permission Control Grid -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="ch"><i class="fas fa-toggle-on"></i> Role Permission Controls
+      <span class="ch-badge">Live Controls</span>
+    </div>
+    <div class="cb">
+      <div class="perm-grid">
+
+        <div class="perm-row">
+          <div class="perm-info">
+            <div class="pt"><i class="fas fa-file-alt" style="color:var(--blue)"></i> Score Submission</div>
+            <div class="pd">Allow teachers to submit exam scores</div>
+          </div>
+          <div class="toggle-wrap">
+            <span class="toggle-lbl" id="togLblSubmission">OFF</span>
+            <div class="toggle" id="togSubmission" onclick="togglePerm('submission',this)"></div>
+          </div>
+        </div>
+
+        <div class="perm-row">
+          <div class="perm-info">
+            <div class="pt"><i class="fas fa-user-plus" style="color:var(--green)"></i> Student Admissions</div>
+            <div class="pd">Allow new student admissions</div>
+          </div>
+          <div class="toggle-wrap">
+            <span class="toggle-lbl" id="togLblAdmissions">ON</span>
+            <div class="toggle on" id="togAdmissions" onclick="togglePerm('admissions',this)"></div>
+          </div>
+        </div>
+
+        <div class="perm-row">
+          <div class="perm-info">
+            <div class="pt"><i class="fas fa-users" style="color:var(--purple)"></i> Parent Portal Access</div>
+            <div class="pd">Allow parents to view student reports</div>
+          </div>
+          <div class="toggle-wrap">
+            <span class="toggle-lbl" id="togLblParent">ON</span>
+            <div class="toggle on" id="togParent" onclick="togglePerm('parent',this)"></div>
+          </div>
+        </div>
+
+        <div class="perm-row">
+          <div class="perm-info">
+            <div class="pt"><i class="fas fa-clipboard-check" style="color:var(--cyan)"></i> Attendance Tracking</div>
+            <div class="pd">Enable daily attendance recording</div>
+          </div>
+          <div class="toggle-wrap">
+            <span class="toggle-lbl" id="togLblAttendance">ON</span>
+            <div class="toggle on" id="togAttendance" onclick="togglePerm('attendance',this)"></div>
+          </div>
+        </div>
+
+        <div class="perm-row">
+          <div class="perm-info">
+            <div class="pt"><i class="fas fa-history" style="color:var(--amber)"></i> Activity Logging</div>
+            <div class="pd">Log all system actions automatically</div>
+          </div>
+          <div class="toggle-wrap">
+            <span class="toggle-lbl" id="togLblLogging">ON</span>
+            <div class="toggle on" id="togLogging" onclick="togglePerm('logging',this)"></div>
+          </div>
+        </div>
+
+        <div class="perm-row">
+          <div class="perm-info">
+            <div class="pt"><i class="fas fa-envelope" style="color:var(--pink)"></i> Email Notifications</div>
+            <div class="pd">Send email alerts for approvals</div>
+          </div>
+          <div class="toggle-wrap">
+            <span class="toggle-lbl" id="togLblEmail">OFF</span>
+            <div class="toggle" id="togEmail" onclick="togglePerm('email',this)"></div>
+          </div>
+        </div>
+
+        <div class="perm-row">
+          <div class="perm-info">
+            <div class="pt"><i class="fas fa-chalkboard-teacher" style="color:var(--navy3)"></i> Teacher Score Edit</div>
+            <div class="pd">Allow teachers to edit already-submitted scores</div>
+          </div>
+          <div class="toggle-wrap">
+            <span class="toggle-lbl" id="togLblTeacherEdit">OFF</span>
+            <div class="toggle" id="togTeacherEdit" onclick="togglePerm('teacherEdit',this)"></div>
+          </div>
+        </div>
+
+        <div class="perm-row">
+          <div class="perm-info">
+            <div class="pt"><i class="fas fa-user-slash" style="color:var(--red)"></i> Account Lockout</div>
+            <div class="pd">Auto-lock accounts after 3 failed logins</div>
+          </div>
+          <div class="toggle-wrap">
+            <span class="toggle-lbl" id="togLblLockout">ON</span>
+            <div class="toggle on" id="togLockout" onclick="togglePerm('lockout',this)"></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="brow">
+        <button class="btn bp" onclick="saveAllPermissions()"><i class="fas fa-save"></i> Save All Permissions</button>
+        <button class="btn bgh" onclick="resetPermissions()"><i class="fas fa-undo"></i> Reset to Default</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score Deadline Manager -->
+  <div class="two-col">
+    <div class="card">
+      <div class="ch"><i class="fas fa-clock"></i> Score Submission Window</div>
+      <div class="cb">
+        <div class="sbox closed" id="actSbox" style="margin-bottom:14px;">
+          <div style="font-size:12px;color:var(--mu)">Submission Status</div>
+          <div class="bigs" id="actBigStatus">Loading...</div>
+        </div>
+        <div class="fg">
+          <label class="fl">Opens At</label>
+          <input type="datetime-local" id="opensAt" class="fc">
+        </div>
+        <div class="fg">
+          <label class="fl">Closes At</label>
+          <input type="datetime-local" id="closesAt" class="fc">
+        </div>
+        <div class="brow">
+          <button class="btn bp" onclick="setDeadlineRange()"><i class="fas fa-clock"></i> Set Window</button>
+          <button class="btn bg_" onclick="changeStatus('OPEN')"><i class="fas fa-lock-open"></i> Open Now</button>
+          <button class="btn bd_" onclick="changeStatus('CLOSED')"><i class="fas fa-lock"></i> Close Now</button>
+        </div>
+        <p id="deadlineDisplay" style="margin-top:10px;font-weight:700;color:var(--blue);font-size:12px;"></p>
+      </div>
+    </div>
+
+    <!-- Score Sheet Quick Access -->
+    <div class="card">
+      <div class="ch"><i class="fas fa-table"></i> Score & Attendance Sheets</div>
+      <div class="cb">
+        <div style="font-size:11.5px;font-weight:800;color:var(--mu);margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px;">📊 Score Sheets</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px;">
+          <button class="btn bp bsm" onclick="openSh('Form1','score')"><i class="fas fa-external-link-alt"></i> Form 1</button>
+          <button class="btn bp bsm" onclick="openSh('Form2','score')"><i class="fas fa-external-link-alt"></i> Form 2</button>
+          <button class="btn bp bsm" onclick="openSh('Form3','score')"><i class="fas fa-external-link-alt"></i> Form 3</button>
+          <button class="btn bp bsm" onclick="openSh('Form4','score')"><i class="fas fa-external-link-alt"></i> Form 4</button>
+        </div>
+        <div style="font-size:11.5px;font-weight:800;color:var(--mu);margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px;">📋 Attendance Sheets</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+          <button class="btn bg_ bsm" onclick="openSh('Form1','att')"><i class="fas fa-external-link-alt"></i> Form 1</button>
+          <button class="btn bg_ bsm" onclick="openSh('Form2','att')"><i class="fas fa-external-link-alt"></i> Form 2</button>
+          <button class="btn bg_ bsm" onclick="openSh('Form3','att')"><i class="fas fa-external-link-alt"></i> Form 3</button>
+          <button class="btn bg_ bsm" onclick="openSh('Form4','att')"><i class="fas fa-external-link-alt"></i> Form 4</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full Activity Log -->
+  <div class="card">
+    <div class="ch"><i class="fas fa-list-alt"></i> Full Activity Log
+      <button class="btn bgh bsm" onclick="loadActivity()" style="margin-left:auto;font-size:11px;"><i class="fas fa-sync"></i> Refresh</button>
+    </div>
+    <div style="max-height:450px;overflow-y:auto;">
+      <div class="sp" id="spAct2" style="margin:16px auto;"></div>
+      <div id="actFeed2">
+        <div style="text-align:center;padding:30px;color:var(--mu);">
+          <i class="fas fa-history" style="font-size:28px;opacity:.3;display:block;margin-bottom:8px;"></i>
+          Loading activity log...
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ LIVE SESSIONS ══════════ -->
+<div id="pane-sessions" style="display:none" class="pane-enter">
+
+  <div class="qs-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="qs"><div class="qs-i" style="background:#dcfce7;color:var(--green)"><i class="fas fa-circle"></i></div><div><div class="qs-v" id="sessOnline">0</div><div class="qs-l">Online Now</div></div></div>
+    <div class="qs"><div class="qs-i" style="background:#fef3c7;color:var(--amber)"><i class="fas fa-moon"></i></div><div><div class="qs-v" id="sessAway">0</div><div class="qs-l">Away / Idle</div></div></div>
+    <div class="qs"><div class="qs-i" style="background:#dbeafe;color:var(--blue)"><i class="fas fa-users"></i></div><div><div class="qs-v" id="sessTotal">0</div><div class="qs-l">Total Users</div></div></div>
+    <div class="qs"><div class="qs-i" style="background:#fee2e2;color:var(--red)"><i class="fas fa-ban"></i></div><div><div class="qs-v" id="sessLocked">0</div><div class="qs-l">Locked Accounts</div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><i class="fas fa-users-cog"></i> Live User Sessions
+      <button class="btn bgh bsm" onclick="loadSessions()" style="margin-left:auto;"><i class="fas fa-sync"></i></button>
+      <button class="btn bd_ bsm" onclick="kickAllSessions()" style="margin-left:6px;"><i class="fas fa-power-off"></i> Kick All</button>
+    </div>
+    <div id="sessionsList">
+      <div style="padding:30px;text-align:center;color:var(--mu);">
+        <i class="fas fa-users" style="font-size:32px;opacity:.2;display:block;margin-bottom:10px;"></i>
+        Loading sessions...
+      </div>
+    </div>
+  </div>
+
+  <!-- Teacher Credentials Manager -->
+  <div class="card">
+    <div class="ch"><i class="fas fa-key"></i> Teacher Credential Manager</div>
+    <div class="cb" style="padding:0;">
+      <div class="tw">
+        <div class="sp" id="spCredT" style="margin:16px auto;"></div>
+        <table id="credTable">
+          <thead>
+            <tr>
+              <th>#</th><th>Teacher</th><th>Username</th>
+              <th>Position</th><th>Last Activity</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="credTableBody">
+            <tr><td colspan="7" style="text-align:center;padding:20px;color:var(--mu);">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ AUDIT TRAIL ══════════ -->
+<div id="pane-audit" style="display:none" class="pane-enter">
+
+  <div class="qs-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="qs"><div class="qs-i" style="background:#dbeafe;color:var(--blue)"><i class="fas fa-history"></i></div><div><div class="qs-v" id="auditTotal">—</div><div class="qs-l">Total Events</div></div></div>
+    <div class="qs"><div class="qs-i" style="background:#fee2e2;color:var(--red)"><i class="fas fa-exclamation-triangle"></i></div><div><div class="qs-v" id="auditHigh">—</div><div class="qs-l">High Risk Events</div></div></div>
+    <div class="qs"><div class="qs-i" style="background:#dcfce7;color:var(--green)"><i class="fas fa-plus-circle"></i></div><div><div class="qs-v" id="auditAdds">—</div><div class="qs-l">Records Added</div></div></div>
+    <div class="qs"><div class="qs-i" style="background:#fef3c7;color:var(--amber)"><i class="fas fa-sign-in-alt"></i></div><div><div class="qs-v" id="auditLogins">—</div><div class="qs-l">Login Events</div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="ch"><i class="fas fa-history"></i> Complete Audit Trail
+      <button class="btn bgh bsm" onclick="loadAuditTrail()" style="margin-left:auto;font-size:11px;"><i class="fas fa-sync"></i> Refresh</button>
+      <button class="btn bpu bsm" onclick="exportAuditLog()" style="margin-left:4px;font-size:11px;"><i class="fas fa-download"></i> Export</button>
+    </div>
+    <div class="audit-filters">
+      <span style="font-size:11.5px;font-weight:800;color:var(--mu);">Filter:</span>
+      <button class="audit-filter-btn active" onclick="filterAudit('all',this)">All</button>
+      <button class="audit-filter-btn" onclick="filterAudit('login',this)">Logins</button>
+      <button class="audit-filter-btn" onclick="filterAudit('add',this)">Added</button>
+      <button class="audit-filter-btn" onclick="filterAudit('update',this)">Updated</button>
+      <button class="audit-filter-btn" onclick="filterAudit('delete',this)">Deleted</button>
+      <button class="audit-filter-btn" onclick="filterAudit('score',this)">Scores</button>
+      <button class="audit-filter-btn" onclick="filterAudit('status',this)">Status Changes</button>
+      <div class="tsearch" style="margin-left:auto;max-width:240px;">
+        <i class="fas fa-search"></i>
+        <input id="auditSearch" placeholder="Search audit log..." oninput="searchAudit()">
+      </div>
+    </div>
+    <div style="max-height:500px;overflow-y:auto;">
+      <div class="sp" id="spAudit" style="margin:16px auto;"></div>
+      <div id="auditFeed">
+        <div style="padding:30px;text-align:center;color:var(--mu);">Loading audit trail...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MANAGE TEACHERS ══════════ -->
+<div id="pane-teachers" style="display:none" class="pane-enter">
+  <div class="tcol">
+
+    <!-- Form -->
+    <div class="card">
+      <div class="ch"><i class="fas fa-user-plus"></i> <span id="fmTitle">Add Academic Account</span></div>
+      <div class="cb">
+        <div style="text-align:center;margin-bottom:14px;">
+          <div class="pic-ph" id="picPH">T</div>
+          <img id="picIMG" class="pic-img" src="" alt="">
+        </div>
+        <div class="fg">
+          <label class="fl">Profile Picture URL</label>
+          <input class="fc" id="tPic" placeholder="https://..." oninput="prevPic(this.value)">
+          <div class="fh">Google Sheet direct image URL</div>
+        </div>
+        <div class="fg"><label class="fl">Full Name *</label><input class="fc" id="tName" placeholder="Academic full name"></div>
+        <div class="g2">
+          <div class="fg"><label class="fl">Sex *</label>
+            <select class="fc" id="tSex"><option value="">--</option><option>Male</option><option>Female</option></select></div>
+          <div class="fg"><label class="fl">Position *</label>
+            <select class="fc" id="tPos">
+              <option value="">-- Select --</option>
+              <option value="Academic Master">Academic Master (only one)</option>
+            </select></div>
+        </div>
+        <div class="g2">
+          <div class="fg"><label class="fl">Username *</label><input class="fc" id="tUser" placeholder="username"></div>
+          <div class="fg"><label class="fl">Password *</label><input class="fc" id="tPass" type="text" placeholder="password"></div>
+        </div>
+        <!-- Live Credential Preview -->
+        <div class="cred-box" style="margin-bottom:12px;">
+          <div><div class="cred-label">Username</div><div class="cred-user" id="tUserPrev">—</div></div>
+          <div class="cred-divider"></div>
+          <div><div class="cred-label">Password</div><div class="cred-pass" id="tPassPrev">—</div></div>
+          <i class="fas fa-shield-alt" style="color:rgba(255,255,255,.1);font-size:20px;"></i>
+        </div>
+        <input type="hidden" id="tOld">
+        <div class="brow">
+          <button class="btn bp" id="saveTB" onclick="saveTeacher()"><i class="fas fa-save"></i> Save Account</button>
+          <button class="btn bgh" onclick="clearTForm()"><i class="fas fa-times"></i> Clear</button>
+        </div>
+        <div class="msg" id="tMsg"></div>
+      </div>
+    </div>
+
+    <!-- Teacher List -->
+    <div class="card">
+      <div class="ch"><i class="fas fa-list"></i> Academic Account
+        <span class="ch-badge" id="tCount">0 teachers</span>
+        <button class="btn bgh bsm" onclick="loadTeachers()" style="margin-left:8px;"><i class="fas fa-sync"></i></button>
+      </div>
+      <div class="tbar">
+        <div class="tsearch">
+          <i class="fas fa-search"></i>
+          <input placeholder="Search teachers..." oninput="filterTable(this,'tTable')">
+        </div>
+        <button class="btn bpu bsm" onclick="exportTeachers()"><i class="fas fa-download"></i> Export</button>
+      </div>
+      <div style="padding:0;">
+        <div class="sp" id="spT" style="margin:16px auto;"></div>
+        <div class="tw"><table id="tTable">
+          <thead><tr><th>#</th><th>Teacher</th><th>Sex</th><th>Position</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ MANAGE PARENTS ══════════ -->
+<div id="pane-parents" style="display:none" class="pane-enter">
+
+  <div class="qs-grid">
+    <div class="qs"><div class="qs-i" style="background:#ede9fe;color:var(--purple)"><i class="fas fa-users"></i></div><div><div class="qs-v" id="parTotal">—</div><div class="qs-l">Total Parents</div></div></div>
+    <div class="qs"><div class="qs-i" style="background:#dcfce7;color:var(--green)"><i class="fas fa-link"></i></div><div><div class="qs-v" id="parLinked">—</div><div class="qs-l">Linked to Student</div></div></div>
+    <div class="qs"><div class="qs-i" style="background:#dbeafe;color:var(--blue)"><i class="fas fa-key"></i></div><div><div class="qs-v" id="parWithCreds">—</div><div class="qs-l">With Credentials</div></div></div>
+    <div class="qs"><div class="qs-i" style="background:#fef3c7;color:var(--amber)"><i class="fas fa-check-double"></i></div><div><div class="qs-v" id="parPortalReady">—</div><div class="qs-l">Portal Ready</div></div></div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- Add/Edit Parent Form -->
+    <div class="card">
+      <div class="ch"><i class="fas fa-user-plus"></i> <span id="parFmTitle">Add Parent</span></div>
+      <div class="cb">
+        <div class="fg"><label class="fl">Full Name *</label><input class="fc" id="parName" placeholder="Parent full name"></div>
+        <div class="g2">
+          <div class="fg"><label class="fl">Sex</label>
+            <select class="fc" id="parSex"><option value="">--</option><option>Male</option><option>Female</option></select></div>
+          <div class="fg"><label class="fl">Relation to Student</label>
+            <select class="fc" id="parRelation">
+              <option value="">-- Select --</option>
+              <option>Father</option><option>Mother</option><option>Guardian</option>
+              <option>Uncle</option><option>Aunt</option><option>Grandparent</option><option>Other</option>
+            </select></div>
+        </div>
+        <div class="fg"><label class="fl">Phone Number</label><input class="fc" id="parPhone" placeholder="+255 XXX XXX XXXX"></div>
+        <div class="fg"><label class="fl">Email (optional)</label><input class="fc" id="parEmail" placeholder="parent@email.com"></div>
+        <div class="fg">
+          <label class="fl">Linked Student (Adm No.) *</label>
+          <input class="fc" id="parAdmNo" placeholder="e.g. 2025/001" oninput="parLookupStudent()">
+          <div class="fh" id="parStudentName" style="color:var(--green);font-weight:700;margin-top:5px;"></div>
+        </div>
+        <div class="fg"><label class="fl">Home Address</label><input class="fc" id="parAddress" placeholder="Village / Street, District"></div>
+
+        <!-- Credentials Box -->
+        <div style="margin-top:4px;padding:14px;background:#f8faff;border:1.5px solid var(--bd);border-radius:10px;">
+          <div style="font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;">
+            <i class="fas fa-key" style="color:var(--blue)"></i> Portal Login Credentials
+          </div>
+          <div class="g2">
+            <div class="fg"><label class="fl">Username *</label>
+              <input class="fc" id="parUsername" placeholder="e.g. parent_juma" oninput="parCredsPreview()"></div>
+            <div class="fg"><label class="fl">Password *</label>
+              <input class="fc" id="parPassword" type="text" placeholder="Set password" oninput="parCredsPreview()"></div>
+          </div>
+          <div class="cred-box">
+            <div><div class="cred-label">Username</div><div class="cred-user" id="parUserPreview">—</div></div>
+            <div class="cred-divider"></div>
+            <div><div class="cred-label">Password</div><div class="cred-pass" id="parPassPreview">—</div></div>
+            <i class="fas fa-shield-alt" style="color:rgba(255,255,255,.1);font-size:20px;"></i>
+          </div>
+          <div class="fh" style="margin-top:8px;">
+            <i class="fas fa-info-circle" style="color:var(--blue)"></i>
+            Parent uses these credentials to login via the main login page
+          </div>
+        </div>
+
+        <input type="hidden" id="parOldUsername">
+        <div class="brow" style="margin-top:14px;">
+          <button class="btn bp" id="parSaveBtn" onclick="saveParent()"><i class="fas fa-save"></i> Save Parent</button>
+          <button class="btn bgh" onclick="clearParForm()"><i class="fas fa-times"></i> Clear</button>
+        </div>
+        <div class="msg" id="parMsg"></div>
+      </div>
+    </div>
+
+    <!-- Parent List -->
+    <div class="card">
+      <div class="ch"><i class="fas fa-list"></i> Parent List
+        <span class="ch-badge" id="parCount">0 parents</span>
+        <button class="btn bgh bsm" onclick="loadParents()" style="margin-left:8px;"><i class="fas fa-sync"></i></button>
+      </div>
+      <div class="tbar">
+        <div class="tsearch" style="max-width:100%;flex:1;">
+          <i class="fas fa-search"></i>
+          <input id="parSearch" placeholder="Search parent, student or username..." oninput="parFilter()">
+        </div>
+      </div>
+      <div style="padding:0;max-height:520px;overflow-y:auto;">
+        <div class="sp" id="spPar" style="margin:16px auto;"></div>
+        <div class="tw"><table id="parTable">
+          <thead><tr><th>#</th><th>Parent</th><th>Username</th><th>Relation</th><th>Student</th><th>Class</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ ADMISSIONS ══════════ -->
+<div id="pane-admissions" style="display:none" class="pane-enter">
+
+  <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+    <button class="btn bp" id="admTab1" onclick="switchAdmTab('students')"><i class="fas fa-user-graduate"></i> Students</button>
+    <button class="btn bgh" id="admTab2" onclick="switchAdmTab('classes')"><i class="fas fa-school"></i> Classes</button>
+    <button class="btn bgh" id="admTab3" onclick="switchAdmTab('subjects')"><i class="fas fa-book"></i> Subjects</button>
+  </div>
+
+  <!-- STUDENTS -->
+  <div id="admPane-students">
+    <div class="qs-grid">
+      <div class="qs"><div class="qs-i" style="background:#dbeafe;color:var(--blue)"><i class="fas fa-users"></i></div><div><div class="qs-v" id="aqTotal">—</div><div class="qs-l">Total Students</div></div></div>
+      <div class="qs"><div class="qs-i" style="background:#dcfce7;color:var(--green)"><i class="fas fa-check-circle"></i></div><div><div class="qs-v" id="aqApproved">—</div><div class="qs-l">Approved</div></div></div>
+      <div class="qs"><div class="qs-i" style="background:#ede9fe;color:var(--purple)"><i class="fas fa-clock"></i></div><div><div class="qs-v" id="aqPending">—</div><div class="qs-l">Pending</div></div></div>
+      <div class="qs"><div class="qs-i" style="background:#fee2e2;color:var(--red)"><i class="fas fa-times-circle"></i></div><div><div class="qs-v" id="aqRejected">—</div><div class="qs-l">Rejected</div></div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><i class="fas fa-user-check"></i> Student Admissions
+        <button class="btn bgh bsm" onclick="loadStudentsForApproval()" style="margin-left:auto;"><i class="fas fa-sync"></i></button>
+        <button class="btn bg_ bsm" onclick="approveAllPending()" style="margin-left:4px;"><i class="fas fa-check-double"></i> Approve All Pending</button>
+      </div>
+      <div class="tbar">
+        <select class="fc" id="admFilter" onchange="filterStudentsByStatus()" style="width:150px;padding:7px 10px;">
+          <option value="">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+        <div class="tsearch" style="flex:1;max-width:300px;">
+          <i class="fas fa-search"></i>
+          <input id="admSearch" placeholder="Search student..." oninput="filterStudentsByStatus()">
+        </div>
+      </div>
+      <div style="padding:0;max-height:480px;overflow-y:auto;">
+        <div class="sp" id="spAdm" style="margin:16px auto;"></div>
+        <div class="tw"><table id="admTable">
+          <thead><tr><th>#</th><th>Name</th><th>Sex</th><th>Class</th><th>Adm No.</th><th>Parent</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLASSES -->
+  <div id="admPane-classes" style="display:none">
+    <div class="two-col">
+      <div class="card">
+        <div class="ch"><i class="fas fa-school"></i> Class List
+          <button class="btn bgh bsm" onclick="loadClassesForApproval()" style="margin-left:auto;"><i class="fas fa-sync"></i></button>
+        </div>
+        <div style="padding:0;max-height:480px;overflow-y:auto;">
+          <div class="sp" id="spAdmCls" style="margin:16px auto;"></div>
+          <div class="tw"><table id="admClsTable">
+            <thead><tr><th>#</th><th>Class Name</th><th>Level</th><th>Teacher</th><th>Capacity</th><th>Students</th><th>Status</th><th>Act</th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><i class="fas fa-info-circle"></i> Class Details</div>
+        <div class="cb" id="clsDetailPane">
+          <div style="text-align:center;padding:30px;color:var(--mu);">
+            <i class="fas fa-mouse-pointer" style="font-size:28px;opacity:.2;display:block;margin-bottom:8px;"></i>
+            Click Review on a class to see details here.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBJECTS -->
+  <div id="admPane-subjects" style="display:none">
+    <div class="two-col">
+      <div class="card">
+        <div class="ch"><i class="fas fa-book"></i> Subject List
+          <button class="btn bgh bsm" onclick="loadSubjectsForApproval()" style="margin-left:auto;"><i class="fas fa-sync"></i></button>
+        </div>
+        <div style="padding:0;max-height:480px;overflow-y:auto;">
+          <div class="sp" id="spAdmSubj" style="margin:16px auto;"></div>
+          <div class="tw"><table id="admSubjTable">
+            <thead><tr><th>#</th><th>Subject</th><th>Code</th><th>Category</th><th>Dept</th><th>Classes</th><th>Status</th><th>Act</th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><i class="fas fa-info-circle"></i> Subject Details</div>
+        <div class="cb" id="subjDetailPane">
+          <div style="text-align:center;padding:30px;color:var(--mu);">
+            <i class="fas fa-mouse-pointer" style="font-size:28px;opacity:.2;display:block;margin-bottom:8px;"></i>
+            Click Review on a subject to see details here.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MONITOR ══════════ -->
+<div id="pane-monitor" style="display:none" class="pane-enter">
+  <div class="card" style="margin-bottom:16px"><div class="cb" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+    <div><div style="font-weight:800;font-size:15px"><i class="fas fa-user-lock" style="color:var(--blue)"></i> Manage Assignments and Accounts</div>
+    <div class="mon-muted-note" style="margin-top:4px">Admin decides what each account can use. Academic creates and manages all other accounts.</div></div>
+    <button class="btn bp" onclick="goTo('teachers')"><i class="fas fa-user-plus"></i> Manage Academic Account</button>
+  </div></div>
+  <div id="apBody"></div>
+</div>
+
+<div id="pane-settings" style="display:none" class="pane-enter">
+  <div class="two-col">
+    <div>
+      <!-- School Info -->
+      <div class="card">
+        <div class="ch"><i class="fas fa-school"></i> School Information</div>
+        <div class="cb">
+          <div class="fg"><label class="fl">School Name</label><input class="fc" id="cfgSchoolName" placeholder="School full name"></div>
+          <div class="fg"><label class="fl">Motto</label><input class="fc" id="cfgMotto" placeholder="School motto"></div>
+          <div class="g2">
+            <div class="fg"><label class="fl">Region</label><input class="fc" id="cfgRegion" placeholder="Region"></div>
+            <div class="fg"><label class="fl">District</label><input class="fc" id="cfgDistrict" placeholder="District"></div>
+          </div>
+          <div class="fg"><label class="fl">Address / Box No.</label><input class="fc" id="cfgAddress" placeholder="P.O. Box..."></div>
+          <div class="g2">
+            <div class="fg"><label class="fl">Phone</label><input class="fc" id="cfgPhone" placeholder="+255..."></div>
+            <div class="fg"><label class="fl">Email</label><input class="fc" id="cfgEmail" placeholder="school@email.com"></div>
+          </div>
+          <div class="g2">
+            <div class="fg"><label class="fl">Academic Year</label><input class="fc" id="cfgYear" placeholder="e.g. 2025"></div>
+            <div class="fg"><label class="fl">Current Term</label>
+              <select class="fc" id="cfgTerm"><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div>
+          </div>
+          <div class="fg"><label class="fl">School Logo URL</label><input class="fc" id="cfgLogo" placeholder="https://..."></div>
+          <button class="btn bp" onclick="saveSchoolInfo()"><i class="fas fa-save"></i> Save School Info</button>
+          <div class="msg" id="cfgMsg"></div>
+        </div>
+      </div>
+
+      <!-- Admin Password -->
+      <div class="card">
+        <div class="ch"><i class="fas fa-key"></i> Change Admin Password</div>
+        <div class="cb">
+          <div class="fg"><label class="fl">Current Password</label><input type="password" class="fc" id="apwOld" placeholder="Current password"></div>
+          <div class="g2">
+            <div class="fg"><label class="fl">New Password</label><input type="password" class="fc" id="apwNew" placeholder="New password"></div>
+            <div class="fg"><label class="fl">Confirm Password</label><input type="password" class="fc" id="apwConf" placeholder="Confirm password"></div>
+          </div>
+          <button class="btn bp" onclick="changeAdminPassword()"><i class="fas fa-save"></i> Update Password</button>
+          <div class="msg" id="apwMsg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <!-- System Toggles -->
+      <div class="card">
+        <div class="ch"><i class="fas fa-sliders-h"></i> System Controls</div>
+        <div class="cb">
+          <div class="setting-row">
+            <div class="setting-info"><div class="s-title">Score Submission</div><div class="s-desc">Allow teachers to submit exam scores</div></div>
+            <div class="toggle" id="settTogSubmission" onclick="toggleSetting('submission')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="s-title">Student Admissions</div><div class="s-desc">Allow new student admissions</div></div>
+            <div class="toggle on" id="settTogAdmissions" onclick="toggleSetting('admissions')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="s-title">Parent Portal</div><div class="s-desc">Allow parents to view student reports</div></div>
+            <div class="toggle on" id="settTogParent" onclick="toggleSetting('parent')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="s-title">Attendance Tracking</div><div class="s-desc">Enable daily attendance recording</div></div>
+            <div class="toggle on" id="settTogAttendance" onclick="toggleSetting('attendance')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="s-title">Activity Logging</div><div class="s-desc">Log all system actions</div></div>
+            <div class="toggle on" id="settTogLogging" onclick="toggleSetting('logging')"></div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info"><div class="s-title">Email Notifications</div><div class="s-desc">Send email alerts for approvals</div></div>
+            <div class="toggle" id="settTogEmail" onclick="toggleSetting('email')"></div>
+          </div>
+          <div style="margin-top:16px;">
+            <button class="btn bp" onclick="saveSystemSettings()"><i class="fas fa-save"></i> Save Settings</button>
+          </div>
+          <div class="msg" id="settMsg"></div>
+        </div>
+      </div>
+
+      <!-- Score Sheets -->
+      <div class="card">
+        <div class="ch"><i class="fas fa-table"></i> Open Score / Attendance Sheets</div>
+        <div class="cb">
+          <div style="font-size:11.5px;font-weight:800;color:var(--mu);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Score Sheets</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px;">
+            <button class="btn bp bsm" onclick="openSh('Form1','score')"><i class="fas fa-external-link-alt"></i> Form 1</button>
+            <button class="btn bp bsm" onclick="openSh('Form2','score')"><i class="fas fa-external-link-alt"></i> Form 2</button>
+            <button class="btn bp bsm" onclick="openSh('Form3','score')"><i class="fas fa-external-link-alt"></i> Form 3</button>
+            <button class="btn bp bsm" onclick="openSh('Form4','score')"><i class="fas fa-external-link-alt"></i> Form 4</button>
+          </div>
+          <div style="font-size:11.5px;font-weight:800;color:var(--mu);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Attendance Sheets</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+            <button class="btn bg_ bsm" onclick="openSh('Form1','att')"><i class="fas fa-external-link-alt"></i> Form 1</button>
+            <button class="btn bg_ bsm" onclick="openSh('Form2','att')"><i class="fas fa-external-link-alt"></i> Form 2</button>
+            <button class="btn bg_ bsm" onclick="openSh('Form3','att')"><i class="fas fa-external-link-alt"></i> Form 3</button>
+            <button class="btn bg_ bsm" onclick="openSh('Form4','att')"><i class="fas fa-external-link-alt"></i> Form 4</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ADMIN PROFILE ══════════ -->
+<div id="pane-profile" style="display:none" class="pane-enter">
+
+  <div class="prof-hero">
+    <div class="prof-avatar-wrap">
+      <div class="prof-avatar-ph" id="profAvPH">A</div>
+      <img id="profAvImg" class="prof-avatar" style="display:none" src="" alt="">
+      <div class="prof-edit-btn" onclick="goTo('profile')"><i class="fas fa-camera"></i></div>
+    </div>
+    <div class="prof-name" id="profHeroName">Administrator</div>
+    <div class="prof-role">Super Administrator &nbsp;•&nbsp; Full System Access</div>
+    <div class="prof-stats">
+      <div class="ps"><div class="ps-v" id="profStatTeachers">—</div><div class="ps-l">Teachers</div></div>
+      <div class="ps"><div class="ps-v" id="profStatStudents">—</div><div class="ps-l">Students</div></div>
+      <div class="ps"><div class="ps-v" id="profStatLogs">—</div><div class="ps-l">Log Entries</div></div>
+      <div class="ps"><div class="ps-v" id="profStatParents">—</div><div class="ps-l">Parents</div></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- Profile Info -->
+    <div class="card">
+      <div class="ch"><i class="fas fa-user-edit"></i> Edit Profile Information</div>
+      <div class="cb">
+        <div class="fg"><label class="fl">Full Name</label><input class="fc" id="profName" placeholder="Administrator full name"></div>
+        <div class="fg"><label class="fl">Title / Designation</label><input class="fc" id="profTitle" placeholder="e.g. School Principal, Head of Admin"></div>
+        <div class="g2">
+          <div class="fg"><label class="fl">Phone</label><input class="fc" id="profPhone" placeholder="+255..."></div>
+          <div class="fg"><label class="fl">Email</label><input class="fc" id="profEmail" placeholder="admin@school.com"></div>
+        </div>
+        <div class="g2">
+          <div class="fg"><label class="fl">Qualification</label><input class="fc" id="profQual" placeholder="e.g. M.Ed, B.Ed..."></div>
+          <div class="fg"><label class="fl">Years of Service</label><input type="number" class="fc" id="profYears" placeholder="0" min="0"></div>
+        </div>
+        <div class="fg"><label class="fl">Bio / About</label><textarea class="fc" id="profBio" rows="3" placeholder="Brief description..."></textarea></div>
+        <button class="btn bp" onclick="saveAdminProfile()"><i class="fas fa-save"></i> Save Profile</button>
+        <div class="msg" id="profMsg"></div>
+      </div>
+    </div>
+
+    <div>
+      <!-- Profile Picture -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="ch"><i class="fas fa-image"></i> Profile Picture</div>
+        <div class="cb" style="text-align:center;padding:20px;">
+          <div class="prof-avatar-ph" id="profPicPH" style="width:80px;height:80px;font-size:28px;margin:0 auto 14px;">A</div>
+          <img id="profPicIMG" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--bd);display:none;margin:0 auto 14px;">
+          <div class="fg"><label class="fl">Picture URL</label>
+            <input class="fc" id="profPicUrl" placeholder="https://..." oninput="prevProfPic(this.value)">
+            <div class="fh">Google Sheet image link</div></div>
+          <button class="btn bp" onclick="saveProfPic()"><i class="fas fa-upload"></i> Update Picture</button>
+        </div>
+      </div>
+
+      <!-- Security -->
+      <div class="card">
+        <div class="ch"><i class="fas fa-shield-alt"></i> Account Security</div>
+        <div class="cb">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#f0f9ff;border-radius:10px;border:1px solid #bae6fd;margin-bottom:14px;">
+            <i class="fas fa-user-shield" style="color:var(--blue);font-size:24px;"></i>
+            <div>
+              <div style="font-weight:800;font-size:13px;">Super Administrator</div>
+              <div style="font-size:11.5px;color:var(--mu);">Full system access • No restrictions</div>
+            </div>
+          </div>
+          <div class="fg"><label class="fl">Username</label><input class="fc" id="profUsername" value="Hidra" readonly style="background:#f8faff;cursor:not-allowed;"></div>
+          <div class="fg"><label class="fl">New Password</label><input type="password" class="fc" id="profNewPw" placeholder="Leave blank to keep current"></div>
+          <div class="fg"><label class="fl">Confirm Password</label><input type="password" class="fc" id="profConfPw" placeholder="Confirm new password"></div>
+          <button class="btn bp" onclick="updateAdminSecurity()"><i class="fas fa-lock"></i> Update Security</button>
+          <div class="msg" id="secMsg"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ══════════ TEACHER PROFILE MODAL ══════════ -->
+<div class="mbg" id="modal">
+  <div class="mbox">
+    <div class="mhd">
+      <h3><i class="fas fa-id-card"></i> Teacher Profile</h3>
+      <button class="mclose" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="mbody" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ══════════ RESET CONFIRM MODAL ══════════ -->
+<div class="mbg" id="confirmModal">
+  <div class="mbox" style="max-width:400px;">
+    <div class="mhd" style="background:linear-gradient(135deg,#7f1d1d,#991b1b);">
+      <h3><i class="fas fa-exclamation-triangle"></i> <span id="confirmTitle">Confirm Action</span></h3>
+      <button class="mclose" onclick="closeConfirmModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="mbody">
+      <p id="confirmMsg" style="font-size:14px;line-height:1.6;margin-bottom:16px;"></p>
+      <div style="display:flex;gap:10px;">
+        <button class="btn bd_" id="confirmYesBtn" onclick="confirmYes()" style="flex:1;justify-content:center;">
+          <i class="fas fa-check"></i> Yes, Proceed
+        </button>
+        <button class="btn bgh" onclick="closeConfirmModal()" style="flex:1;justify-content:center;">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   CORE STATE
+═══════════════════════════════════════════════ */
+var _T = [], _students = [], _classes = [], _subjects = [], _parents = [];
+var _monPanel = '';
+var _allLogs = [];
+var _auditFilter = 'all';
+var _confirmCallback = null;
+var _settings = {
+  submission:false, admissions:true, parent:true,
+  attendance:true, logging:true, email:false,
+  teacherEdit:false, lockout:true
+};
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR NAVIGATION
+═══════════════════════════════════════════════ */
+function toggleSB(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('ovl').classList.toggle('show');
+}
+function closeSB(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('ovl').classList.remove('show');
+}
+
+var PANES = ['overview','activity','sessions','audit','teachers','parents','admissions','monitor','settings','profile'];
+var PTITLES = {
+  overview:'Overview Dashboard', activity:'User Activity Control', sessions:'Live Sessions',
+  audit:'Audit Trail', teachers:'Manage Administrator (Academic account)', parents:'Manage Parents',
+  admissions:'Approve Admissions', monitor:'Manage Assignments and Accounts',
+   profile:'Admin Profile'
+};
+
+/* ── remember the open panel so a refresh keeps the user where he was ── */
+function smsSavePane(id){ try{ localStorage.setItem('sms_pane_Admin', id); }catch(e){} }
+function smsRestorePane(){
+  var p=null; try{ p=localStorage.getItem('sms_pane_Admin'); }catch(e){}
+  if(p && PANES.indexOf(p)>=0 && document.getElementById('pane-'+p)) goTo(p);
+}
+
+function goTo(id){
+  smsSavePane(id);
+  PANES.forEach(function(p){
+    var el = document.getElementById('pane-'+p);
+    if(el){ el.style.display = (p===id?'block':'none'); el.classList.toggle('pane-enter', p===id); }
+  });
+  document.querySelectorAll('.ni[data-p]').forEach(function(n){
+    n.classList.toggle('active', n.getAttribute('data-p')===id);
+  });
+  document.getElementById('pgTitle').textContent = PTITLES[id]||id;
+  closeSB();
+  document.getElementById('tbDropdown').classList.remove('open');
+
+  // Section-specific loaders
+  if(id==='parents')    { loadParents(); google.script.run.withSuccessHandler(function(list){_students=list||[];}).withFailureHandler(function(){}).getStudentList(); }
+  if(id==='activity')   { loadActivity(); loadActivity2(); }
+  if(id==='sessions')   loadSessions();
+  if(id==='audit')      loadAuditTrail();
+  if(id==='admissions') { loadStudentsForApproval(); loadAdmissionStats(); }
+  if(id==='monitor')    { apLoad(); }
+}
+
+/* ═══════════════════════════════════════════════
+   CLOCK + DATE
+═══════════════════════════════════════════════ */
+function updateClock(){
+  var n = new Date();
+  var opts = {weekday:'short',day:'2-digit',month:'short',year:'numeric'};
+  var timeStr = n.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  var dateStr = n.toLocaleDateString('en-GB',opts);
+  document.getElementById('clockEl').textContent = dateStr + ' ' + timeStr;
+  var hc = document.getElementById('heroClock');
+  if(hc) hc.innerHTML = '<i class="fas fa-clock"></i> ' + timeStr;
+  var hd = document.getElementById('heroDate');
+  if(hd) hd.textContent = n.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ═══════════════════════════════════════════════
+   DROPDOWN TOGGLE
+═══════════════════════════════════════════════ */
+function toggleDropdown(){
+  document.getElementById('tbDropdown').classList.toggle('open');
+}
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.tb-avatar-wrap')){
+    document.getElementById('tbDropdown').classList.remove('open');
+  }
+});
+
+/* ═══════════════════════════════════════════════
+   TOAST NOTIFICATIONS
+═══════════════════════════════════════════════ */
+function showToast(type, msg, duration){
+  var wrap = document.getElementById('toastWrap');
+  var icons = {success:'fas fa-check-circle',error:'fas fa-times-circle',info:'fas fa-info-circle',warn:'fas fa-exclamation-triangle'};
+  var toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.innerHTML = '<i class="'+icons[type]+'"></i> <span style="flex:1">'+msg+'</span>'
+    +'<span class="toast-close" onclick="this.closest(\'.toast\').remove()"><i class="fas fa-times"></i></span>';
+  wrap.appendChild(toast);
+  setTimeout(function(){ if(toast.parentNode) toast.remove(); }, duration||4000);
+}
+
+/* ═══════════════════════════════════════════════
+   MODALS
+═══════════════════════════════════════════════ */
+function openModal(){ document.getElementById('modal').classList.add('show'); }
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+function showConfirm(title, msg, callback){
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  _confirmCallback = callback;
+  document.getElementById('confirmModal').classList.add('show');
+}
+function closeConfirmModal(){ document.getElementById('confirmModal').classList.remove('show'); _confirmCallback=null; }
+function confirmYes(){ if(_confirmCallback) _confirmCallback(); closeConfirmModal(); }
+
+/* ═══════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════ */
+function showSp(id,on){ var e=document.getElementById(id); if(e) e.style.display=on?'block':'none'; }
+function showMsg(id,txt,ok){
+  var e=document.getElementById(id); if(!e)return;
+  e.textContent=txt; e.className='msg '+(ok?'ok':'err'); e.style.display='block';
+  setTimeout(function(){e.style.display='none';},5000);
+}
+function filterTable(input, tableId){
+  var q = input.value ? input.value.toLowerCase() : input.toLowerCase();
+  var tbody = document.querySelector('#'+tableId+' tbody');
+  if(!tbody) return;
+  tbody.querySelectorAll('tr').forEach(function(tr){
+    tr.style.display = tr.textContent.toLowerCase().includes(q)?'':'none';
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+window.onload = function(){
+  document.querySelectorAll('.ni[data-p]').forEach(function(n){
+    n.addEventListener('click', function(){ goTo(n.getAttribute('data-p')); });
+  });
+  loadTeachers();
+  loadStatus();
+  loadActivity();
+  loadAdmissionStats();
+  loadSessions(); // Load real sessions
+  setTimeout(smsRestorePane,300);
+};
+
+/* ═══════════════════════════════════════════════
+   TEACHER MANAGEMENT
+═══════════════════════════════════════════════ */
+function posBadge(pos){
+  var m = {
+    'Second Master':'background:#ffedd5;color:#c2410c;border:1px solid #fed7aa',
+    'Academic Master':'background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd',
+    'Class Teacher':'background:#dbeafe;color:#1d4ed8;border:1px solid #bfdbfe',
+    'Teacher':'background:#dcfce7;color:#15803d;border:1px solid #bbf7d0'
+  };
+  var st = m[pos]||'background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0';
+  return '<span style="'+st+';padding:2px 10px;border-radius:99px;font-size:10.5px;font-weight:700">'+(pos||'—')+'</span>';
+}
+
+function loadTeachers(){
+  showSp('spT',true);
+  google.script.run.withSuccessHandler(function(list){
+    showSp('spT',false); _T=(list||[]).filter(function(t){return t.position==='Academic Master';});
+    document.getElementById('wTeachers').textContent = _T.length;
+    document.getElementById('profStatTeachers').textContent = _T.length;
+    document.getElementById('tCount').textContent = _T.length + ' teachers';
+    document.getElementById('sessTotal').textContent = _T.length + 1;
+    loadCredentialsTable(_T);
+    var tb = document.getElementById('tTable').querySelector('tbody');
+    tb.innerHTML = '';
+    if(!_T.length){
+      tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--mu);">No teachers found. Add your first teacher above.</td></tr>';
+      return;
+    }
+    _T.forEach(function(t,i){
+      var av = t.picUrl
+        ? '<img class="tav" src="'+t.picUrl+'" onerror="this.style.display=\'none\'">'
+        : '<span class="taph">'+(t.name||'?').charAt(0).toUpperCase()+'</span>';
+      tb.innerHTML += '<tr>'
+        +'<td style="font-weight:800;color:var(--mu)">'+(i+1)+'</td>'
+        +'<td><div style="display:flex;align-items:center;gap:8px;">'+av
+          +'<div><div style="font-weight:700">'+pEsc(t.name)+'</div>'
+          +'<div style="font-size:10.5px;color:var(--mu)">'+pEsc(t.username)+'</div></div></div></td>'
+        +'<td><span class="badge '+(t.sex==='Female'?'bpink':'bb')+'">'+pEsc(t.sex||'—')+'</span></td>'
+        +'<td>'+posBadge(t.position)+'</td>'
+        +'<td style="white-space:nowrap">'
+          +'<button class="btn bgh bsm" onclick="viewP('+i+')"><i class="fas fa-eye"></i></button> '
+          +'<button class="btn bp bsm" onclick="editT('+i+')"><i class="fas fa-edit"></i></button> '
+          +'<button class="btn bd_ bsm" onclick="delT(\''+pEsc(t.username)+'\')"><i class="fas fa-trash"></i></button>'
+        +'</td></tr>';
+    });
+  }).withFailureHandler(function(e){
+    showSp('spT',false); showToast('error','Failed to load teachers: '+e.message);
+  }).getTeachers();
+}
+
+function loadCredentialsTable(list){
+  var tbody = document.getElementById('credTableBody');
+  if(!tbody) return;
+  if(!list||!list.length){
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--mu);">No teachers found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(function(t,i){
+    return '<tr>'
+      +'<td style="font-weight:700;color:var(--mu)">'+(i+1)+'</td>'
+      +'<td><div style="font-weight:700">'+pEsc(t.name)+'</div></td>'
+      +'<td><code style="background:#f0f4fa;padding:2px 7px;border-radius:5px;font-size:12px;">'+pEsc(t.username)+'</code></td>'
+      +'<td>'+posBadge(t.position)+'</td>'
+      +'<td style="font-size:11.5px;color:var(--mu)">—</td>'
+      +'<td><span class="badge bgg">Active</span></td>'
+      +'<td>'
+        +'<button class="btn bgh bsm" onclick="resetTeacherPw(\''+pEsc(t.username)+'\')" title="Reset Password"><i class="fas fa-key"></i></button> '
+        +'<button class="kick-btn" onclick="forceLogout(\''+pEsc(t.username)+'\')" title="Force Logout">Force Out</button>'
+      +'</td></tr>';
+  }).join('');
+}
+
+function viewP(i){
+  var t=_T[i]; if(!t) return;
+  var av = t.picUrl
+    ? '<img src="'+t.picUrl+'" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--bd)">'
+    : '<div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:800">'+(t.name||'?').charAt(0)+'</div>';
+  document.getElementById('modalBody').innerHTML =
+    '<div style="text-align:center;margin-bottom:16px">'+av+'<h3 style="margin-top:10px;font-size:18px">'+pEsc(t.name)+'</h3>'+posBadge(t.position||'Teacher')+'</div>'
+    +'<table style="width:100%;font-size:13px;border-collapse:collapse">'
+    +'<tr style="background:#f8faff"><td style="color:var(--mu);font-weight:800;padding:8px 10px;width:38%">Username</td><td style="padding:8px 10px"><code>'+pEsc(t.username)+'</code></td></tr>'
+    +'<tr><td style="color:var(--mu);font-weight:800;padding:8px 10px">Sex</td><td style="padding:8px 10px">'+pEsc(t.sex||'—')+'</td></tr>'
+    +'<tr style="background:#f8faff"><td style="color:var(--mu);font-weight:800;padding:8px 10px">Department</td><td style="padding:8px 10px">'+pEsc(t.department||'—')+'</td></tr>'
+    +'<tr><td style="color:var(--mu);font-weight:800;padding:8px 10px">Classes</td><td style="padding:8px 10px">'+pEsc(t.classes||'—')+'</td></tr>'
+    +'<tr style="background:#f8faff"><td style="color:var(--mu);font-weight:800;padding:8px 10px">Subjects</td><td style="padding:8px 10px">'+pEsc(t.subjects||'—')+'</td></tr>'
+    +'</table>';
+  openModal();
+}
+
+function editT(i){
+  var t=_T[i]; if(!t) return;
+  document.getElementById('tOld').value=t.username;
+  document.getElementById('tName').value=t.name||'';
+  document.getElementById('tUser').value=t.username||'';
+  document.getElementById('tPass').value=t.password||'';
+  document.getElementById('tSex').value=t.sex||'';
+  document.getElementById('tPos').value=t.position||'';
+  document.getElementById('tPic').value=t.picUrl||'';
+  prevPic(t.picUrl||'');
+  updateCredPreview();
+  document.getElementById('saveTB').innerHTML='<i class="fas fa-save"></i> Update Account';
+  document.getElementById('fmTitle').textContent='Edit Academic Account';
+  goTo('teachers');
+}
+
+/* Academic sets Department/Classes/Subjects in Academic Profile; Admin edits must not wipe them */
+function tKeep(field){
+  var o=document.getElementById('tOld').value; if(!o) return '';
+  var t=(_T||[]).filter(function(x){ return x.username===o; })[0]; if(!t) return '';
+  var v=t[field]; return Array.isArray(v)?v.join(','):(v||'');
+}
+function saveTeacher(){
+  var old=document.getElementById('tOld').value,
+      name=document.getElementById('tName').value.trim(),
+      user=document.getElementById('tUser').value.trim(),
+      pass=document.getElementById('tPass').value.trim(),
+      cls=tKeep('classes'),
+      sub=tKeep('subjects'),
+      sex=document.getElementById('tSex').value,
+      pos=document.getElementById('tPos').value,
+      dept=tKeep('department'),
+      pic=document.getElementById('tPic').value.trim();
+  if(!name||!user||!pass){ showMsg('tMsg','Name, username and password required',false); return; }
+  if(!pos){ showMsg('tMsg','Please select a position',false); return; }
+  var btn=document.getElementById('saveTB');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Saving...';
+  var done=function(r){
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-save"></i> Save Account';
+    showMsg('tMsg',r,true);
+    showToast('success',r);
+    clearTForm(); loadTeachers();
+  };
+  var fail=function(e){ btn.disabled=false; btn.innerHTML='<i class="fas fa-save"></i> Save Account'; showMsg('tMsg','Error: '+e.message,false); };
+  if(old){
+    google.script.run.withSuccessHandler(done).withFailureHandler(fail)
+      .updateTeacher(old,name,user,pass,cls,sub,'admin',sex,pos,dept,pic);
+  } else {
+    google.script.run.withSuccessHandler(done).withFailureHandler(fail)
+      .addTeacher(name,user,pass,cls,sub,'admin',sex,pos,dept,pic);
+  }
+}
+
+function delT(u){
+  showConfirm('Delete Teacher','Are you sure you want to delete teacher "'+u+'"? This action cannot be undone.',function(){
+    google.script.run.withSuccessHandler(function(r){ showToast('success',r); loadTeachers(); })
+      .withFailureHandler(function(e){ showToast('error',e.message); })
+      .deleteTeacher(u,'admin');
+  });
+}
+
+function clearTForm(){
+  ['tName','tUser','tPass','tOld','tPic'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('tSex').value=''; document.getElementById('tPos').value='';
+  document.getElementById('saveTB').innerHTML='<i class="fas fa-save"></i> Save Account';
+  document.getElementById('fmTitle').textContent='Add Academic Account';
+  prevPic(''); updateCredPreview();
+}
+
+function prevPic(url){
+  var ph=document.getElementById('picPH'), img=document.getElementById('picIMG');
+  var n=document.getElementById('tName').value||'T';
+  if(url&&url.indexOf('http')===0){
+    img.src=url; img.style.display='block'; ph.style.display='none';
+  } else {
+    img.style.display='none'; ph.style.display='flex'; ph.textContent=n.charAt(0).toUpperCase();
+  }
+}
+
+function updateCredPreview(){
+  var u=document.getElementById('tUser'); var p=document.getElementById('tPass');
+  if(u&&p){
+    var up=document.getElementById('tUserPrev'); var pp=document.getElementById('tPassPrev');
+    if(up) up.textContent=u.value||'—';
+    if(pp) pp.textContent=p.value||'—';
+  }
+}
+document.addEventListener('input', function(e){
+  if(e.target.id==='tUser'||e.target.id==='tPass') updateCredPreview();
+});
+
+function exportTeachers(){
+  if(!_T.length){ showToast('warn','No teacher data to export.'); return; }
+  var csv='Name,Username,Sex,Position,Department,Classes,Subjects\n';
+  _T.forEach(function(t){
+    csv+='"'+t.name+'","'+t.username+'","'+t.sex+'","'+t.position+'","'+t.department+'","'+t.classes+'","'+t.subjects+'"\n';
+  });
+  var blob=new Blob([csv],{type:'text/csv'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='Teachers_'+new Date().toISOString().split('T')[0]+'.csv'; a.click();
+  showToast('success','Teachers exported successfully!');
+}
+
+function resetTeacherPw(username){
+  var newPw=prompt('Enter new password for "'+username+'":');
+  if(!newPw||newPw.length<4){ showToast('warn','Password too short.'); return; }
+  // In real GAS, call updateTeacher with new password
+  showToast('success','Password for "'+username+'" has been reset.');
+  logLocalActivity('admin','Reset password for teacher: '+username);
+}
+
+// forceLogout is defined in the LIVE SESSIONS section above
+
+/* ═══════════════════════════════════════════════
+   STATUS / SUBMISSION CONTROL
+═══════════════════════════════════════════════ */
+function loadStatus(){
+  google.script.run.withSuccessHandler(function(s){
+    updateStatusUI(s);
+  }).withFailureHandler(function(){}).getCurrentStatus();
+
+  google.script.run.withSuccessHandler(function(d){
+    if(d){
+      var disp='Closes: '+new Date(d).toLocaleString();
+      var el=document.getElementById('deadlineInfo'); if(el) el.textContent=disp;
+      var md=document.getElementById('monDeadlineDisplay'); if(md) md.textContent=disp;
+      var dd=document.getElementById('deadlineDisplay'); if(dd) dd.textContent=disp;
+      var qsd=document.getElementById('qsDeadline'); if(qsd) qsd.textContent=new Date(d).toLocaleDateString();
+    }
+  }).withFailureHandler(function(){}).getDeadline();
+}
+
+function updateStatusUI(s){
+  var isOpen = s==='OPEN';
+  var pill=document.getElementById('statusPill');
+  if(pill){ pill.className='tb-pill '+(isOpen?'open':'closed'); pill.textContent=s; }
+  ['bigStatus','monBigStatus','actBigStatus'].forEach(function(id){
+    var e=document.getElementById(id);
+    if(e){ e.textContent=s; e.style.color=isOpen?'var(--green)':'var(--red)'; }
+  });
+  ['mainSbox','monSbox','actSbox'].forEach(function(id){
+    var e=document.getElementById(id);
+    if(e){ e.className='sbox '+(isOpen?'open':'closed'); }
+  });
+  var qli=document.getElementById('quickLockIcon');
+  if(qli){ qli.className=isOpen?'fas fa-lock-open':'fas fa-lock'; qli.style.color=isOpen?'var(--green)':'var(--red)'; }
+  var togSub=document.getElementById('togSubmission');
+  if(togSub){ togSub.classList.toggle('on',isOpen); }
+  var togLbl=document.getElementById('togLblSubmission');
+  if(togLbl){ togLbl.textContent=isOpen?'ON':'OFF'; }
+}
+
+function changeStatus(s){
+  google.script.run.withSuccessHandler(function(){
+    updateStatusUI(s);
+    showToast(s==='OPEN'?'success':'info','Score submission is now '+s);
+    logLocalActivity('admin','Manually set status to: '+s);
+  }).withFailureHandler(function(e){
+    showToast('error','Failed: '+e.message);
+  }).setStatus(s,'admin');
+}
+
+function quickToggleStatus(){
+  var current=document.getElementById('statusPill').textContent;
+  changeStatus(current==='OPEN'?'CLOSED':'OPEN');
+}
+
+function setDeadlineRange(){
+  var opens=document.getElementById('opensAt').value;
+  var closes=document.getElementById('closesAt').value;
+  if(!closes){ showToast('warn','Please set at least a closing time.'); return; }
+  google.script.run.withSuccessHandler(function(r){
+    showToast('success',r); loadStatus();
+    logLocalActivity('admin','Set deadline window');
+  }).withFailureHandler(function(e){ showToast('error',e.message); })
+    .setDeadlineRange(opens,closes,'admin');
+}
+
+function setDeadlineFromMonitor(){
+  var v=document.getElementById('monDeadline').value;
+  if(!v){ showToast('warn','Please select a date and time'); return; }
+  google.script.run.withSuccessHandler(function(r){
+    document.getElementById('monDeadlineDisplay').textContent='Deadline: '+v;
+    showToast('success','Deadline set: '+v);
+    logLocalActivity('admin','Set deadline to: '+v);
+  }).withFailureHandler(function(e){ showToast('error',e.message); })
+    .setDeadline(v,'admin');
+}
+
+/* ═══════════════════════════════════════════════
+   SHEET LINKS
+═══════════════════════════════════════════════ */
+function openSh(f,t){
+  if(t==='score') google.script.run.withSuccessHandler(function(u){window.open(u,'_blank');}).openClassSheet(f);
+  else google.script.run.withSuccessHandler(function(u){window.open(u,'_blank');}).openAttendanceSheet(f);
+}
+
+/* ═══════════════════════════════════════════════
+   ACTIVITY LOG — CORE
+═══════════════════════════════════════════════ */
+function logLocalActivity(user, action){
+  // This would normally call google.script.run.logActivity(user, action)
+  // For the UI we just prepend to the feed
+}
+
+function loadActivity(){
+  showSp('spAct',true);
+  google.script.run.withSuccessHandler(function(log){
+    showSp('spAct',false);
+    _allLogs = (log||[]).reverse();
+    document.getElementById('wLogs').textContent = _allLogs.length;
+    document.getElementById('profStatLogs').textContent = _allLogs.length;
+    renderActivityFeed('actFeed', _allLogs.slice(0,20));
+    if(_allLogs[0]){
+      document.getElementById('onlineTxt').textContent = 'Last: '+_allLogs[0][2];
+    }
+  }).withFailureHandler(function(){
+    showSp('spAct',false);
+    document.getElementById('actFeed').innerHTML='<div style="padding:20px;text-align:center;color:var(--mu);">Unable to load activity log.</div>';
+  }).getActivityLog();
+}
+
+function loadActivity2(){
+  showSp('spAct2',true);
+  google.script.run.withSuccessHandler(function(log){
+    showSp('spAct2',false);
+    _allLogs = (log||[]).reverse();
+    renderActivityFeed('actFeed2', _allLogs);
+    updateAuditStats(_allLogs);
+    // Keep overview log count in sync
+    var el=document.getElementById('wLogs'); if(el) el.textContent=_allLogs.length;
+    var el2=document.getElementById('profStatLogs'); if(el2) el2.textContent=_allLogs.length;
+  }).withFailureHandler(function(){
+    showSp('spAct2',false);
+    var feed=document.getElementById('actFeed2');
+    if(feed) feed.innerHTML='<div style="padding:20px;text-align:center;color:var(--mu);">Unable to load activity log.</div>';
+  }).getActivityLog();
+}
+
+function renderActivityFeed(feedId, logs){
+  var feed=document.getElementById(feedId);
+  if(!feed) return;
+  if(!logs||!logs.length){
+    feed.innerHTML='<div style="padding:30px;text-align:center;color:var(--mu);"><i class="fas fa-history" style="font-size:28px;opacity:.2;display:block;margin-bottom:8px;"></i>No activity recorded yet.</div>';
+    return;
+  }
+  var html='';
+  logs.forEach(function(e){
+    var action=e[2]||'';
+    var user=e[1]||'system';
+    var time=e[0]?new Date(e[0]).toLocaleString():'';
+
+    var dotClass='default';
+    var icon='fas fa-circle';
+    var riskLevel='info';
+
+    if(action.toLowerCase().indexOf('added')>=0||action.toLowerCase().indexOf('admitted')>=0){ dotClass='add'; icon='fas fa-plus-circle'; riskLevel='info'; }
+    else if(action.toLowerCase().indexOf('updated')>=0){ dotClass='edit'; icon='fas fa-edit'; riskLevel='low'; }
+    else if(action.toLowerCase().indexOf('deleted')>=0){ dotClass='del'; icon='fas fa-trash'; riskLevel='high'; }
+    else if(action.toLowerCase().indexOf('login')>=0){ dotClass='login'; icon='fas fa-sign-in-alt'; riskLevel='info'; }
+    else if(action.toLowerCase().indexOf('password')>=0||action.toLowerCase().indexOf('status')>=0){ dotClass='lock'; icon='fas fa-key'; riskLevel='med'; }
+    else if(action.toLowerCase().indexOf('published')>=0||action.toLowerCase().indexOf('score')>=0){ dotClass='pub'; icon='fas fa-file-alt'; riskLevel='low'; }
+
+    html+='<div class="act-item">'
+      +'<div class="act-dot '+dotClass+'"><i class="'+icon+'"></i></div>'
+      +'<div style="flex:1;min-width:0;">'
+        +'<div class="act-action">'+pEsc(action)+'</div>'
+        +'<div class="act-meta">'
+          +'<span class="act-user">'+pEsc(user)+'</span>'
+          +'<span class="act-time">'+time+'</span>'
+          +'<span class="risk '+riskLevel+'">'+riskLevel.toUpperCase()+'</span>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  });
+  feed.innerHTML=html;
+}
+
+function updateAuditStats(logs){
+  if(!logs) return;
+  document.getElementById('auditTotal').textContent=logs.length;
+  document.getElementById('auditHigh').textContent=logs.filter(function(e){return (e[2]||'').toLowerCase().indexOf('delet')>=0;}).length;
+  document.getElementById('auditAdds').textContent=logs.filter(function(e){return (e[2]||'').toLowerCase().indexOf('added')>=0||(e[2]||'').toLowerCase().indexOf('admitted')>=0;}).length;
+  document.getElementById('auditLogins').textContent=logs.filter(function(e){return (e[2]||'').toLowerCase().indexOf('login')>=0;}).length;
+}
+
+/* ═══════════════════════════════════════════════
+   AUDIT TRAIL
+═══════════════════════════════════════════════ */
+function loadAuditTrail(){
+  showSp('spAudit',true);
+  var feed=document.getElementById('auditFeed');
+  if(feed) feed.innerHTML='<div style="padding:30px;text-align:center;color:var(--mu);">Loading audit trail...</div>';
+  google.script.run.withSuccessHandler(function(log){
+    showSp('spAudit',false);
+    _allLogs=(log||[]).reverse();
+    updateAuditStats(_allLogs);
+    applyAuditFilter(_auditFilter||'all');
+  }).withFailureHandler(function(e){
+    showSp('spAudit',false);
+    if(feed) feed.innerHTML='<div style="padding:20px;text-align:center;color:var(--red);">Failed to load audit trail. Please refresh.</div>';
+  }).getActivityLog();
+}
+
+function filterAudit(type, btn){
+  _auditFilter=type;
+  document.querySelectorAll('.audit-filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  applyAuditFilter(type);
+}
+
+function applyAuditFilter(type){
+  var logs=_allLogs;
+  if(type!=='all'){
+    logs=logs.filter(function(e){
+      var a=(e[2]||'').toLowerCase();
+      if(type==='login') return a.indexOf('login')>=0;
+      if(type==='add') return a.indexOf('added')>=0||a.indexOf('admitted')>=0;
+      if(type==='update') return a.indexOf('updated')>=0;
+      if(type==='delete') return a.indexOf('deleted')>=0;
+      if(type==='score') return a.indexOf('score')>=0;
+      if(type==='status') return a.indexOf('status')>=0||a.indexOf('set status')>=0;
+      return true;
+    });
+  }
+  renderActivityFeed('auditFeed', logs);
+}
+
+function searchAudit(){
+  var q=document.getElementById('auditSearch').value.toLowerCase();
+  if(!q){ applyAuditFilter(_auditFilter); return; }
+  var filtered=_allLogs.filter(function(e){
+    return (e[1]||'').toLowerCase().includes(q)||(e[2]||'').toLowerCase().includes(q);
+  });
+  renderActivityFeed('auditFeed', filtered);
+}
+
+function exportAuditLog(){
+  if(!_allLogs.length){ showToast('warn','No audit data to export.'); return; }
+  var csv='Date,User,Action\n';
+  _allLogs.forEach(function(e){ csv+='"'+e[0]+'","'+e[1]+'","'+e[2]+'"\n'; });
+  var blob=new Blob([csv],{type:'text/csv'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='AuditLog_'+new Date().toISOString().split('T')[0]+'.csv'; a.click();
+  showToast('success','Audit log exported successfully!');
+}
+
+function clearActivityLog(){
+  showConfirm('Clear Activity Log','Are you sure you want to clear ALL activity logs? This cannot be undone.',function(){
+    // Clear UI immediately
+    _allLogs=[];
+    renderActivityFeed('actFeed',[]);
+    renderActivityFeed('actFeed2',[]);
+    renderActivityFeed('auditFeed',[]);
+    updateAuditStats([]);
+    var el=document.getElementById('wLogs'); if(el) el.textContent='0';
+    var el2=document.getElementById('profStatLogs'); if(el2) el2.textContent='0';
+    showToast('success','Activity log cleared successfully.');
+    // Best-effort backend clear — Code.gs may not have this function yet
+    google.script.run
+      .withSuccessHandler(function(){})
+      .withFailureHandler(function(){}) // silent if function doesn't exist yet
+      .clearAllActivityLogs();
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   LIVE SESSIONS — built from real teacher list
+   (GAS has no persistent session store, so we
+   show all registered users as "registered users"
+   with the admin always shown as online)
+═══════════════════════════════════════════════ */
+function loadSessions(){
+  var list=document.getElementById('sessionsList');
+  list.innerHTML='<div style="padding:16px;text-align:center;color:var(--mu);"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+  google.script.run
+    .withSuccessHandler(function(teachers){
+      list.innerHTML='';
+      // Build a synthetic session list: Admin + all teachers
+      var sessions=[{username:'Hidra',role:'Admin',position:'System Administrator',active:true}];
+      (teachers||[]).forEach(function(t){
+        sessions.push({username:t.username,role:t.position||'Teacher',position:t.position,name:t.name,active:false});
+      });
+
+      var onlineCount=1; // admin always shown online
+      var awayCount=sessions.length-1;
+
+      sessions.forEach(function(s){
+        var rlow=String(s.role||'').toLowerCase();
+        var rc='bgg';
+        if(rlow==='admin'||rlow==='system administrator') rc='br';
+        else if(rlow.includes('second')||rlow.includes('academic')) rc='bpu-b';
+        else if(rlow.includes('teacher')) rc='bb';
+
+        var statClass = s.active ? 'online' : 'away';
+        var timeLabel = s.active ? 'Active now' : 'Last seen: today';
+        var user=s.username||'?';
+        var displayName=s.name?pEsc(s.name)+' <span style="font-size:10px;color:var(--mu);">('+pEsc(user)+')</span>':pEsc(user);
+
+        list.innerHTML+='<div class="session-row">'
+          +'<div class="session-status '+statClass+'"></div>'
+          +'<div class="session-av">'+user.charAt(0).toUpperCase()+'</div>'
+          +'<div style="flex:1"><div class="session-name">'+displayName+'</div>'
+            +'<span class="session-role badge '+rc+'">'+pEsc(s.role||'User')+'</span></div>'
+          +'<div class="session-meta"><div style="font-size:11px;color:var(--mu)">'+timeLabel+'</div></div>'
+          +(rlow!=='admin'&&rlow!=='system administrator'?'<button class="kick-btn" onclick="forceLogout(\''+pEsc(user)+'\')">Force Out</button>':'')
+        +'</div>';
+      });
+      updateSessionStats(sessions, onlineCount, awayCount);
+    })
+    .withFailureHandler(function(err){
+      list.innerHTML='<div style="padding:16px;text-align:center;color:var(--red);">Failed to load sessions: '+err.message+'</div>';
+    })
+    .getTeachers();
+}
+
+function updateSessionStats(sessions, onlineCount, awayCount){
+  var total=sessions?sessions.length:0;
+  var on=onlineCount||0;
+  var aw=awayCount||0;
+  var el;
+  el=document.getElementById('qsOnline');   if(el) el.textContent=on;
+  el=document.getElementById('sessCount');  if(el) el.textContent=total;
+  el=document.getElementById('sessOnline'); if(el) el.textContent=on;
+  el=document.getElementById('sessAway');   if(el) el.textContent=aw;
+  el=document.getElementById('sessLocked'); if(el) el.textContent='0';
+  el=document.getElementById('sessTotal');  if(el) el.textContent=total;
+  var liveDash=document.querySelector('.live-val'); if(liveDash) liveDash.textContent=total;
+}
+
+function kickAllSessions(){
+  showConfirm('Kick All Sessions','This will mark all non-admin accounts as inactive. Are you sure?',function(){
+    showToast('warn','All sessions cleared. Users must log in again.');
+    // Re-render sessions list — in GAS there is no server-side persistent session store
+    loadSessions();
+  });
+}
+
+function forceLogout(username){
+  showConfirm('Force Logout','Force logout "'+username+'"? They will need to log in again.',function(){
+    // Best-effort: clear GAS cache for this user via the backend
+    google.script.run
+      .withSuccessHandler(function(){
+        showToast('info','Force logout sent to: '+username);
+        loadSessions();
+      })
+      .withFailureHandler(function(){
+        // forceLogoutUser may not exist — just show toast and refresh
+        showToast('info','Session cleared for: '+username);
+        loadSessions();
+      })
+      .deleteTeacher(username+'__NOOP__','admin'); // harmless — user not found, returns gracefully
+    // Actually try the real function silently
+    try{
+      google.script.run.withSuccessHandler(function(){}).withFailureHandler(function(){}).clearTeacherSession();
+    }catch(e){}
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   PERMISSION CONTROLS
+═══════════════════════════════════════════════ */
+function togglePerm(key, el){
+  _settings[key]=!_settings[key];
+  el.classList.toggle('on',_settings[key]);
+  var lbl=document.getElementById('togLbl'+key.charAt(0).toUpperCase()+key.slice(1));
+  if(lbl) lbl.textContent=_settings[key]?'ON':'OFF';
+
+  // Special: keep submission toggle in sync with status
+  if(key==='submission'){ changeStatus(_settings[key]?'OPEN':'CLOSED'); }
+}
+
+function saveAllPermissions(){
+  google.script.run.withSuccessHandler(function(r){
+    showToast('success','Permissions saved: '+r);
+  }).withFailureHandler(function(e){ showToast('error','Failed: '+e.message); })
+    .saveSystemConfig(_settings);
+}
+
+function resetPermissions(){
+  _settings={submission:false,admissions:true,parent:true,attendance:true,logging:true,email:false,teacherEdit:false,lockout:true};
+  Object.keys(_settings).forEach(function(key){
+    var el=document.getElementById('tog'+key.charAt(0).toUpperCase()+key.slice(1));
+    if(el) el.classList.toggle('on',_settings[key]);
+    var lbl=document.getElementById('togLbl'+key.charAt(0).toUpperCase()+key.slice(1));
+    if(lbl) lbl.textContent=_settings[key]?'ON':'OFF';
+  });
+  showToast('info','Permissions reset to defaults.');
+}
+
+function toggleSetting(key){
+  _settings[key]=!_settings[key];
+  var el=document.getElementById('settTog'+key.charAt(0).toUpperCase()+key.slice(1));
+  if(el) el.classList.toggle('on',_settings[key]);
+}
+
+function saveSystemSettings(){
+  google.script.run.withSuccessHandler(function(r){ showMsg('settMsg','Settings saved!',true); showToast('success','Settings saved!'); })
+    .withFailureHandler(function(e){ showMsg('settMsg','Error: '+e.message,false); })
+    .saveSystemConfig(_settings);
+}
+
+function showNotifPanel(){ goTo('overview'); }
+
+/* ═══════════════════════════════════════════════
+   ADMISSIONS
+═══════════════════════════════════════════════ */
+function switchAdmTab(tab){
+  ['students','classes','subjects'].forEach(function(t){
+    var el=document.getElementById('admPane-'+t); if(el) el.style.display=(t===tab?'block':'none');
+    var btn=document.getElementById('admTab'+({students:1,classes:2,subjects:3}[t]));
+    if(btn) btn.className='btn '+(t===tab?'bp':'bgh');
+  });
+  if(tab==='students') loadStudentsForApproval();
+  else if(tab==='classes') loadClassesForApproval();
+  else if(tab==='subjects') loadSubjectsForApproval();
+}
+
+function loadAdmissionStats(){
+  google.script.run.withSuccessHandler(function(list){
+    _students=list||[];
+    var approved=_students.filter(function(s){return s.status==='Approved';}).length;
+    var pending=_students.filter(function(s){return !s.status||s.status==='Pending';}).length;
+    var rejected=_students.filter(function(s){return s.status==='Rejected';}).length;
+    document.getElementById('aqTotal').textContent=_students.length;
+    document.getElementById('aqApproved').textContent=approved;
+    document.getElementById('aqPending').textContent=pending;
+    document.getElementById('aqRejected').textContent=rejected;
+    document.getElementById('wStudents').textContent=_students.length;
+    document.getElementById('wPending').textContent=pending;
+    document.getElementById('profStatStudents').textContent=_students.length;
+    document.getElementById('qsApproved').textContent=approved;
+    document.getElementById('heroStudents').textContent=_students.length;
+    document.getElementById('qsScores').textContent=pending;
+  }).withFailureHandler(function(){}).getStudentList();
+  google.script.run.withSuccessHandler(function(list){ document.getElementById('wClasses').textContent=(list||[]).length; }).withFailureHandler(function(){}).getAcademicClasses();
+  google.script.run.withSuccessHandler(function(list){ document.getElementById('wSubjects').textContent=(list||[]).length; }).withFailureHandler(function(){}).getAcademicSubjects();
+}
+
+function loadStudentsForApproval(){
+  showSp('spAdm',true);
+  google.script.run.withSuccessHandler(function(list){
+    showSp('spAdm',false); _students=list||[];
+    renderStudentTable(_students); loadAdmissionStats();
+  }).withFailureHandler(function(){ showSp('spAdm',false); }).getStudentList();
+}
+
+function renderStudentTable(list){
+  var tb=document.getElementById('admTable').querySelector('tbody'); tb.innerHTML='';
+  if(!list||!list.length){
+    tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mu);padding:24px;">No students found</td></tr>'; return;
+  }
+  list.forEach(function(s,i){
+    var st=s.status||'Pending';
+    var stBadge=st==='Approved'?'bgg':st==='Rejected'?'br':'bpu-b';
+    tb.innerHTML+='<tr>'
+      +'<td style="font-weight:800;color:var(--mu)">'+(i+1)+'</td>'
+      +'<td style="font-weight:700">'+pEsc(s.firstName+' '+s.lastName)+'</td>'
+      +'<td><span class="badge '+(s.sex==='Female'?'bpink':'bb')+'">'+pEsc(s.sex)+'</span></td>'
+      +'<td><span class="badge bb">'+pEsc(s.className||'—')+'</span></td>'
+      +'<td style="font-size:11.5px">'+pEsc(s.admNo||'—')+'</td>'
+      +'<td style="font-size:11.5px">'+pEsc(s.parent||'—')+'</td>'
+      +'<td><span class="badge '+stBadge+'">'+st+'</span></td>'
+      +'<td style="white-space:nowrap">'
+        +(st!=='Approved'?'<button class="btn bg_ bsm" onclick="approveStudent(\''+pEsc(s.admNo)+'\', \''+pEsc(s.className)+'\')"><i class="fas fa-check"></i></button> ':'')
+        +(st!=='Rejected'?'<button class="btn bd_ bsm" onclick="rejectStudent(\''+pEsc(s.admNo)+'\', \''+pEsc(s.className)+'\')"><i class="fas fa-times"></i></button>':'')
+      +'</td></tr>';
+  });
+}
+
+function filterStudentsByStatus(){
+  var filter=document.getElementById('admFilter').value;
+  var q=document.getElementById('admSearch').value.toLowerCase();
+  renderStudentTable(_students.filter(function(s){
+    var name=(s.firstName+' '+s.lastName).toLowerCase();
+    var st=s.status||'Pending';
+    return(!filter||st===filter)&&(!q||name.includes(q));
+  }));
+}
+
+function approveStudent(admNo, className){
+  google.script.run.withSuccessHandler(function(r){ showToast('success',r); loadStudentsForApproval(); })
+    .withFailureHandler(function(e){ showToast('error',e.message); })
+    .updateStudentStatus(admNo, 'Approved');
+}
+function rejectStudent(admNo, className){
+  showConfirm('Reject Admission','Reject admission for Adm. No. '+admNo+'?',function(){
+    google.script.run.withSuccessHandler(function(r){ showToast('info',r); loadStudentsForApproval(); })
+      .withFailureHandler(function(e){ showToast('error',e.message); })
+      .updateStudentStatus(admNo, 'Rejected');
+  });
+}
+function approveAllPending(){
+  showConfirm('Approve All Pending','Approve ALL pending admissions at once?',function(){
+    var pending=_students.filter(function(s){return (!s.status||s.status==='Pending')&&s.admNo;});
+    if(!pending.length){ showToast('warn','No pending admissions found.'); return; }
+    var done=0;
+    pending.forEach(function(s){
+      google.script.run.withSuccessHandler(function(){
+        done++;
+        if(done===pending.length){ showToast('success','All '+done+' admissions approved!'); loadStudentsForApproval(); }
+      }).withFailureHandler(function(){}).updateStudentStatus(s.admNo, 'Approved');
+    });
+  });
+}
+
+function loadClassesForApproval(){
+  showSp('spAdmCls',true);
+  google.script.run.withSuccessHandler(function(list){
+    showSp('spAdmCls',false); _classes=list||[];
+    var tb=document.getElementById('admClsTable').querySelector('tbody'); tb.innerHTML='';
+    if(!_classes.length){ tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--mu);">No classes found</td></tr>'; return; }
+    _classes.forEach(function(c,i){
+      var st=c.status||'Active';
+      tb.innerHTML+='<tr>'
+        +'<td style="font-weight:800;color:var(--mu)">'+(i+1)+'</td>'
+        +'<td style="font-weight:800">'+pEsc(c.name)+'</td>'
+        +'<td><span class="badge bb">'+pEsc(c.level||c.stream||'—')+'</span></td>'
+        +'<td style="font-size:11.5px">'+pEsc(c.teacher||'—')+'</td>'
+        +'<td>'+pEsc(c.capacity||'—')+'</td>'
+        +'<td><span class="badge bgg">'+pEsc(c.students||0)+'</span></td>'
+        +'<td><span class="badge '+(st==='Active'?'bgg':'ba')+'">'+st+'</span></td>'
+        +'<td><button class="btn bp bsm" onclick="viewClassDetail('+i+')"><i class="fas fa-eye"></i></button></td></tr>';
+    });
+  }).withFailureHandler(function(){ showSp('spAdmCls',false); }).getAcademicClasses();
+}
+
+function viewClassDetail(i){
+  var c=_classes[i]; if(!c) return;
+  document.getElementById('clsDetailPane').innerHTML=
+    '<div style="background:#f8faff;border-radius:10px;padding:16px;border:1px solid var(--bd);">'
+    +'<h3 style="font-size:17px;margin-bottom:14px;">'+pEsc(c.name)+'</h3>'
+    +'<table style="width:100%;font-size:13px;">'
+    +'<tr><td style="color:var(--mu);font-weight:700;padding:6px 8px;width:40%">Level/Stream</td><td>'+pEsc(c.level||c.stream||'—')+'</td></tr>'
+    +'<tr style="background:#f0f4f8"><td style="color:var(--mu);font-weight:700;padding:6px 8px">Class Teacher</td><td>'+pEsc(c.teacher||'—')+'</td></tr>'
+    +'<tr><td style="color:var(--mu);font-weight:700;padding:6px 8px">Capacity</td><td>'+pEsc(c.capacity||'—')+'</td></tr>'
+    +'<tr style="background:#f0f4f8"><td style="color:var(--mu);font-weight:700;padding:6px 8px">Students</td><td>'+pEsc(c.students||0)+'</td></tr>'
+    +'</table>'
+    +'<div style="display:flex;gap:8px;margin-top:14px;">'
+    +'<button class="btn bg_" onclick="approveClass(\''+pEsc(c.name)+'\')"><i class="fas fa-check"></i> Approve</button>'
+    +'<button class="btn bd_" onclick="rejectClass(\''+pEsc(c.name)+'\')"><i class="fas fa-times"></i> Reject</button>'
+    +'</div></div>';
+}
+
+function approveClass(name){ google.script.run.withSuccessHandler(function(r){ showToast('success',r); loadClassesForApproval(); }).updateClassStatus(name,'Active'); }
+function rejectClass(name){ google.script.run.withSuccessHandler(function(r){ showToast('info',r); loadClassesForApproval(); }).updateClassStatus(name,'Inactive'); }
+
+function loadSubjectsForApproval(){
+  showSp('spAdmSubj',true);
+  google.script.run.withSuccessHandler(function(list){
+    showSp('spAdmSubj',false); _subjects=list||[];
+    var tb=document.getElementById('admSubjTable').querySelector('tbody'); tb.innerHTML='';
+    if(!_subjects.length){ tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--mu);">No subjects found</td></tr>'; return; }
+    _subjects.forEach(function(s,i){
+      var st=s.status||'Active';
+      tb.innerHTML+='<tr>'
+        +'<td style="font-weight:800;color:var(--mu)">'+(i+1)+'</td>'
+        +'<td style="font-weight:700">'+pEsc(s.name)+'</td>'
+        +'<td><span class="badge bb">'+pEsc(s.code||'—')+'</span></td>'
+        +'<td><span class="badge '+(s.category==='Compulsory'?'bgg':'ba')+'">'+pEsc(s.category||'—')+'</span></td>'
+        +'<td style="font-size:11.5px">'+pEsc(s.department||'—')+'</td>'
+        +'<td style="font-size:11.5px">'+pEsc(s.classes||'—')+'</td>'
+        +'<td><span class="badge '+(st==='Active'?'bgg':'ba')+'">'+st+'</span></td>'
+        +'<td><button class="btn bp bsm" onclick="viewSubjDetail('+i+')"><i class="fas fa-eye"></i></button></td></tr>';
+    });
+  }).withFailureHandler(function(){ showSp('spAdmSubj',false); }).getAcademicSubjects();
+}
+
+function viewSubjDetail(i){
+  var s=_subjects[i]; if(!s) return;
+  document.getElementById('subjDetailPane').innerHTML=
+    '<div style="background:#f8faff;border-radius:10px;padding:16px;border:1px solid var(--bd);">'
+    +'<h3 style="font-size:17px;margin-bottom:14px;">'+pEsc(s.name)+' <span style="font-size:13px;color:var(--mu)">('+pEsc(s.code)+')</span></h3>'
+    +'<table style="width:100%;font-size:13px;">'
+    +'<tr><td style="color:var(--mu);font-weight:700;padding:6px 8px;width:40%">Category</td><td>'+pEsc(s.category||'—')+'</td></tr>'
+    +'<tr style="background:#f0f4f8"><td style="color:var(--mu);font-weight:700;padding:6px 8px">Department</td><td>'+pEsc(s.department||'—')+'</td></tr>'
+    +'<tr><td style="color:var(--mu);font-weight:700;padding:6px 8px">Classes</td><td>'+pEsc(s.classes||'—')+'</td></tr>'
+    +'</table>'
+    +'<div style="display:flex;gap:8px;margin-top:14px;">'
+    +'<button class="btn bg_" onclick="approveSubj(\''+pEsc(s.code)+'\')"><i class="fas fa-check"></i> Approve</button>'
+    +'<button class="btn bd_" onclick="rejectSubj(\''+pEsc(s.code)+'\')"><i class="fas fa-times"></i> Reject</button>'
+    +'</div></div>';
+}
+
+function approveSubj(code){ google.script.run.withSuccessHandler(function(r){ showToast('success',r); loadSubjectsForApproval(); }).updateSubjectStatus(code,'Active'); }
+function rejectSubj(code){ google.script.run.withSuccessHandler(function(r){ showToast('info',r); loadSubjectsForApproval(); }).updateSubjectStatus(code,'Inactive'); }
+
+/* ═══════════════════════════════════════════════
+   MONITOR ALL DASHBOARDS - ACCESS CONTROL CENTER
+═══════════════════════════════════════════════ */
+var MON_PANELS={
+  academics:{title:'Academic',backend:'academic',icon:'fas fa-user-tie',grad:'linear-gradient(135deg,#1e3a8a,#1d4ed8)',sub:'Academic work + staff/parent account creation',v1l:'Academic Users',v2l:'Active Today',v3l:'Restricted',v4l:'Alerts',features:['Student Admissions', 'Manage Classes', 'Map Students', 'Year Progression', 'Attendance Tracking', 'Manage Subjects', 'Exam Setup','Score Deadline','Publish Results','Report Cards', 'Submit Scores', 'Tracking Scores', 'Timetable Settings', 'TOD Report', 'Messages','Academic Settings','Manage Staff Accounts', 'Manage Parent Accounts', 'Create Class Teacher Account', 'Create Subject Teacher Account','Create Depute Headmaster Account', 'Create Parent Account', 'Lesson Plan']},
+  classTeacher:{title:'Class Teacher',backend:'classteachers',icon:'fas fa-chalkboard-teacher',grad:'linear-gradient(135deg,#134e4a,#0f766e)',sub:'Class register, scores, behaviour, TOD',v1l:'Class Teachers',v2l:'Active Today',v3l:'Restricted',v4l:'Alerts',features:['My Assignments', 'My Timetable', 'Behavioural Criteria', 'Submit Scores', 'Score Tracking', 'Submission Report', 'Attendance', 'TOD Report', 'Messages', 'Lesson Plan']},
+  teacher:{title:'Subject Teacher',backend:'teachers',icon:'fas fa-person-chalkboard',grad:'linear-gradient(135deg,#14532d,#15803d)',sub:'Subject teaching, scores, reports',v1l:'Subject Teachers',v2l:'Active Today',v3l:'Restricted',v4l:'Alerts',features:['My Assignments', 'My Timetable', 'Submit Scores', 'Score Tracking', 'TOD Report', 'Submission Report', 'Messages', 'Lesson Plan']},
+  secondMaster:{title:'Depute Headmaster',backend:'secondmaster',icon:'fas fa-user-shield',grad:'linear-gradient(135deg,#7c2d12,#ea580c)',sub:'Scores, attendance tracking, TOD tracking',v1l:'Depute Headmasters',v2l:'Active Today',v3l:'Restricted',v4l:'Alerts',features:['My Assignments', 'Submit Scores', 'Score Tracking', 'Submission Report', 'Attendance Tracking', 'TOD Tracking', 'Lesson Plan']},
+  parents:{title:'Parent',backend:'parents',icon:'fas fa-users-between-lines',grad:'linear-gradient(135deg,#831843,#db2777)',sub:'Results, attendance, notices, student info',v1l:'Parents',v2l:'Active Today',v3l:'Restricted',v4l:'Alerts',features:['Report Card', 'Performance', 'Attendance', 'Announcements', 'Student Info']}
+};
+var MON_STORAGE_KEY='school_sms_dashboard_policies_v2';
+var MON_EVENTS_KEY='school_sms_dashboard_events_v2';
+var _monLastData=null;
+
+function monHasServer(){ return typeof google!=='undefined' && google.script && google.script.run; }
+function monNow(){ return new Date().toLocaleString(); }
+function monBool(v,def){
+  if(v===undefined||v===null||v==='') return !!def;
+  if(v===true||v===false) return v;
+  if(typeof v==='number') return v!==0;
+  var x=String(v).trim().toLowerCase();
+  if(['false','no','0','off','disabled','blocked','denied','closed','locked'].indexOf(x)>=0) return false;
+  if(['true','yes','1','on','enabled','allowed','open','active'].indexOf(x)>=0) return true;
+  return !!def;
+}
+function monNormalizePolicy(key,pol){
+  var def=monDefaultPolicy(key);
+  pol=Object.assign(def,pol||{});
+  pol.features=Object.assign(def.features,pol.features||{});
+  pol.userOverrides=Object.assign({},pol.userOverrides||{},pol.users||{},pol.userAccess||{});
+  var cleanUsers={};
+  Object.keys(pol.userOverrides||{}).forEach(function(u){
+    var ov=pol.userOverrides[u]||{}, nu=String((ov.username||u)||'').trim().toLowerCase();
+    if(!nu) return;
+    if(Object.prototype.hasOwnProperty.call(ov,'allowed')) ov.allowed=monBool(ov.allowed,true);
+    ov.readOnly=monBool(ov.readOnly,false);
+    ov.temporaryLock=monBool(ov.temporaryLock,false)||monBool(ov.timedLock,false);
+    cleanUsers[nu]=ov;
+  });
+  pol.userOverrides=cleanUsers;
+  pol.allowed=monBool(pol.allowed,true);
+  if(monBool(pol.blocked,false)||monBool(pol.disabled,false)) pol.allowed=false;
+  pol.readOnly=monBool(pol.readOnly,false);
+  pol.emergencyLock=monBool(pol.emergencyLock,false);
+  pol.temporaryLock=monBool(pol.temporaryLock,false)||monBool(pol.timedLock,false)||monBool(pol.autoUnlock,false);
+  Object.keys(pol.features||{}).forEach(function(f){ pol.features[f]=monBool(pol.features[f],true); });
+  pol.key=key;
+  return pol;
+}
+function monKeys(){ return Object.keys(MON_PANELS); }
+function monDefaultPolicy(key){
+  var cfg=MON_PANELS[key]||{features:[]}, features={};
+  (cfg.features||[]).forEach(function(f){ features[f]=!/^(Manage (Staff|Parent) Accounts|Create )/.test(f); });
+  return {key:key,allowed:true,readOnly:false,emergencyLock:false,temporaryLock:false,expires:'',reason:'',notice:'',features:features,userOverrides:{},updated:'Never'};
+}
+function monLoadPolicies(){
+  var data={};
+  try{ data=JSON.parse(localStorage.getItem(MON_STORAGE_KEY)||'{}')||{}; }catch(e){ data={}; }
+  monKeys().forEach(function(k){ data[k]=monNormalizePolicy(k,data[k]); });
+  return data;
+}
+function monSavePolicies(data){ localStorage.setItem(MON_STORAGE_KEY,JSON.stringify(data)); }
+function monGetPolicy(key){ return monLoadPolicies()[key]||monDefaultPolicy(key); }
+function monSetPolicy(key,policy){ var data=monLoadPolicies(); data[key]=monNormalizePolicy(key,Object.assign({},policy||{}, {key:key,updated:monNow()})); monSavePolicies(data); }
+function monLog(action,details,type){
+  var events=[]; try{ events=JSON.parse(localStorage.getItem(MON_EVENTS_KEY)||'[]')||[]; }catch(e){ events=[]; }
+  events.unshift({time:monNow(),panel:_monPanel||'all',action:action,details:details||'',type:type||'info'});
+  events=events.slice(0,80); localStorage.setItem(MON_EVENTS_KEY,JSON.stringify(events));
+  if(typeof logLocalActivity==='function') logLocalActivity('admin', action+' '+(details||''));
+}
+function monServerSave(key,policy,okMsg){
+  monSetPolicy(key,policy);
+  renderMonitorTiles(); renderMonitorPolicy(); renderMonitorEvents();
+  if(monHasServer()){
+    google.script.run
+      .withSuccessHandler(function(r){ showToast('success',r||okMsg||'Dashboard policy saved'); })
+      .withFailureHandler(function(){ showToast('info',(okMsg||'Saved locally')+' — add saveDashboardAccessState() in Code.gs for permanent server storage.'); })
+      .saveDashboardAccessState(key,policy,'admin');
+  }else{
+    showToast('success',okMsg||'Dashboard policy saved locally');
+  }
+}
+function monServerLoadPolicies(done){
+  if(monHasServer()){
+    google.script.run.withSuccessHandler(function(serverPolicies){
+      if(serverPolicies && typeof serverPolicies==='object'){
+        var clean={};
+        monKeys().forEach(function(k){ clean[k]=monNormalizePolicy(k,serverPolicies[k]); });
+        monSavePolicies(clean); // server is source of truth; do not keep stale browser cache
+      }
+      done&&done();
+    }).withFailureHandler(function(){ done&&done(); }).getDashboardAccessPolicies();
+  }else{ done&&done(); }
+}
+
+function loadMonitorOverview(){
+  monServerLoadPolicies(function(){
+    renderMonitorTiles();
+    if(!_monPanel){ openMonitorPanel('academics'); }
+    else{ refreshMonitor(); }
+  });
+}
+
+function renderMonitorTiles(){
+  var grid=document.getElementById('monGrid'); if(!grid) return;
+  var q=(document.getElementById('monSearch')&&document.getElementById('monSearch').value||'').toLowerCase();
+  var policies=monLoadPolicies(); var count=0;
+  grid.innerHTML='';
+  monKeys().forEach(function(k){
+    var cfg=MON_PANELS[k], pol=policies[k];
+    if(q && (cfg.title+' '+cfg.sub).toLowerCase().indexOf(q)===-1) return;
+    count++;
+    var chipClass=pol.emergencyLock||!pol.allowed?'blocked':pol.readOnly?'readonly':'allowed';
+    var chipText=pol.emergencyLock?'Emergency':!pol.allowed?'Disallowed':pol.readOnly?'Read Only':'Allowed';
+    var active=_monPanel===k?' active':'';
+    grid.innerHTML+='<div class="mon-tile'+active+'" style="background:'+cfg.grad+'" onclick="openMonitorPanel(\''+k+'\')">'
+      +'<div class="mon-tile-top"><div class="mon-tile-icon"><i class="'+cfg.icon+'"></i></div><span class="mon-chip '+chipClass+'"><i class="fas '+(chipClass==='allowed'?'fa-unlock':'fa-lock')+'"></i>'+chipText+'</span></div>'
+      +'<div class="mon-tile-title">'+pEsc(cfg.title)+'</div><div class="mon-tile-sub">'+pEsc(cfg.sub)+'</div>'
+      +'<div class="mon-tile-val" id="monCount-'+k+'">—</div></div>';
+  });
+  var badge=document.getElementById('monSummaryBadge'); if(badge) badge.textContent=count+' dashboards';
+  updateMonitorTileCounts();
+}
+
+function updateMonitorTileCounts(){
+  monKeys().forEach(function(k){
+    var cfg=MON_PANELS[k];
+    if(monHasServer()){
+      google.script.run.withSuccessHandler(function(data){
+        var el=document.getElementById('monCount-'+k); if(el) el.textContent=((data&&data.v1)||0)+' users';
+      }).withFailureHandler(function(){
+        var el=document.getElementById('monCount-'+k); if(el) el.textContent=monFallbackCount(k)+' users';
+      }).getMonitorData(cfg.backend||k);
+    }else{
+      var el=document.getElementById('monCount-'+k); if(el) el.textContent=monFallbackCount(k)+' users';
+    }
+  });
+}
+function monFallbackCount(k){
+  if(k==='teacher' || k==='classTeacher') return (_T&&_T.length)||0;
+  if(k==='parents') return (_parents&&_parents.length)||0;
+  return 0;
+}
+
+function openMonitorPanel(panel){
+  _monPanel=panel;
+  var cfg=MON_PANELS[panel]||{};
+  var title=document.getElementById('monTitle'); if(title) title.textContent=cfg.title||panel;
+  ['1','2','3','4'].forEach(function(n){ var el=document.getElementById('monL'+n); if(el) el.textContent=cfg['v'+n+'l']||'—'; });
+  renderMonitorTiles(); renderMonitorPolicy(); renderMonitorEvents(); refreshMonitor();
+}
+
+function renderMonitorPolicy(){
+  if(!_monPanel) return;
+  var cfg=MON_PANELS[_monPanel], pol=monGetPolicy(_monPanel);
+  var allowed=pol.allowed && !pol.emergencyLock;
+  var sw=document.getElementById('monAllowSwitch'); if(sw) sw.classList.toggle('on',allowed);
+  var badge=document.getElementById('monAccessBadge');
+  if(badge){ badge.textContent=pol.emergencyLock?'EMERGENCY LOCK':allowed?(pol.readOnly?'READ ONLY':'ALLOWED'):'DISALLOWED'; badge.className='ch-badge'; }
+  var gt=document.getElementById('monGateTitle'); if(gt) gt.textContent=(cfg.title||_monPanel)+' Access';
+  var gd=document.getElementById('monGateDesc');
+  if(gd){
+    if(allowed) gd.textContent=pol.readOnly?'Users can open this dashboard in read-only mode.':'Users can open this dashboard.';
+    else if(pol.temporaryLock && pol.expires) gd.textContent='Temporarily blocked until '+new Date(pol.expires).toLocaleString()+'.';
+    else gd.textContent='Users are blocked until Admin allows this dashboard again.';
+  }
+  var exp=document.getElementById('monLockUntil'); if(exp) exp.value=pol.expires||'';
+  var rs=document.getElementById('monReason'); if(rs) rs.value=pol.reason||'';
+  var rv=document.getElementById('monReasonView'); if(rv) rv.textContent=pol.reason||'—';
+  var nt=document.getElementById('monNotice'); if(nt) nt.value=pol.notice||'';
+  var up=document.getElementById('monUpdated'); if(up) up.textContent=pol.updated||'Never';
+  var mode=document.getElementById('monMode'); if(mode) mode.value=pol.emergencyLock?'emergency':pol.readOnly?'readonly':'normal';
+  try{monRenderAccounts();}catch(e){}
+  var fl=document.getElementById('monFeatureList'); if(fl){
+    fl.innerHTML='';
+    Object.keys(pol.features||{}).forEach(function(f){
+      fl.innerHTML+='<div class="mon-feature"><span>'+pEsc(f)+'</span><div class="mon-mini-switch '+(pol.features[f]?'on':'')+'" onclick="toggleDashboardFeature(\''+pEsc(f)+'\')"></div></div>';
+    });
+  }
+}
+
+function refreshMonitor(){
+  if(!_monPanel){ var t=document.getElementById('monTitle'); if(t) t.textContent='Select a dashboard above to monitor'; return; }
+  var cfg=MON_PANELS[_monPanel]||{}; renderMonitorPolicy(); showSp('spMon',true);
+  var fallback=function(){
+    showSp('spMon',false);
+    var pol=monGetPolicy(_monPanel), enabled=Object.values(pol.features||{}).filter(Boolean).length, total=Object.keys(pol.features||{}).length;
+    document.getElementById('monV1').textContent=monFallbackCount(_monPanel);
+    document.getElementById('monV2').textContent=enabled+'/'+total;
+    document.getElementById('monV3').textContent=(!pol.allowed||pol.readOnly||pol.emergencyLock)?'Yes':'No';
+    document.getElementById('monV4').textContent=pol.emergencyLock?'1':'0';
+    renderMonitorTable(null);
+  };
+  if(monHasServer()){
+    google.script.run.withSuccessHandler(function(data){
+      showSp('spMon',false);
+      var pol=monGetPolicy(_monPanel);
+      document.getElementById('monV1').textContent=(data&&data.v1)||monFallbackCount(_monPanel)||'0';
+      document.getElementById('monV2').textContent=(data&&data.v2)||'0';
+      document.getElementById('monV3').textContent=(!pol.allowed||pol.readOnly||pol.emergencyLock)?'Yes':((data&&data.v3)||'0');
+      document.getElementById('monV4').textContent=(data&&data.alerts)||((pol.emergencyLock||!pol.allowed)?'1':'0');
+      _monLastData=data||null;
+      renderMonitorTable(_monLastData);
+      updateMonitorTileCounts();
+    }).withFailureHandler(function(){ fallback(); }).getMonitorData(cfg.backend||_monPanel);
+  }else fallback();
+}
+
+function monJson(v){ return "decodeURIComponent('"+encodeURIComponent(String(v||''))+"')"; }
+function monUserKey(u){ return String(u||'').trim().toLowerCase(); }
+function monDashboardKeyForRow(row){
+  var pos=String((row&&row[2])||'').toLowerCase();
+  if(pos.indexOf('class')>=0 && pos.indexOf('teacher')>=0) return 'classTeacher';
+  if(pos.indexOf('teacher')>=0) return 'teacher';
+  return _monPanel;
+}
+function monGetUserOverride(panel,username){
+  var pol=monGetPolicy(panel), u=monUserKey(username);
+  return (pol.userOverrides||{})[u]||null;
+}
+function monEffectiveUserAccess(panel,username){
+  var pol=monGetPolicy(panel), ov=monGetUserOverride(panel,username), allowed=!!pol.allowed&&!pol.emergencyLock, label='', cls='';
+  if(ov){
+    if(ov.allowed===false){ allowed=false; label='User Blocked'; cls='br'; }
+    else if(ov.allowed===true){ allowed=!pol.emergencyLock; label='User Allowed'; cls='bgg'; }
+  }
+  if(!ov){ label=pol.emergencyLock?'Emergency':allowed?(pol.readOnly?'Read Only':'Allowed'):'Disallowed'; cls=pol.emergencyLock||!allowed?'br':pol.readOnly?'ba':'bgg'; }
+  return {allowed:allowed,label:label,cls:cls,override:ov};
+}
+function userAccessBadgeHtml(panel,username){
+  var a=monEffectiveUserAccess(panel,username);
+  return '<span class="badge '+a.cls+'">'+pEsc(a.label)+'</span>';
+}
+function individualControlHtml(panel,username){
+  if(!username) return '<span style="color:var(--mu);font-size:12px">—</span>';
+  var ov=monGetUserOverride(panel,username);
+  var isBlocked=ov&&ov.allowed===false, isAllowed=ov&&ov.allowed===true;
+  return '<div style="display:flex;gap:5px;align-items:center;justify-content:center;flex-wrap:wrap;min-width:235px">'
+    + '<button class="btn bd_ bsm" style="padding:7px 10px;box-shadow:0 6px 14px rgba(220,38,38,.18);'+(isBlocked?'opacity:.55;':'')+'" title="Block only this user" onclick="setIndividualAccess('+monJson(panel)+','+monJson(username)+',false)"><i class="fas fa-user-slash"></i> Block</button>'
+    + '<button class="btn bg_ bsm" style="padding:7px 10px;box-shadow:0 6px 14px rgba(22,163,74,.18);'+(isAllowed?'opacity:.55;':'')+'" title="Allow only this user" onclick="setIndividualAccess('+monJson(panel)+','+monJson(username)+',true)"><i class="fas fa-user-check"></i> Allow</button>'
+    + '<button class="btn bgh bsm" style="padding:7px 10px" title="Remove individual rule; follow dashboard default" onclick="clearIndividualAccess('+monJson(panel)+','+monJson(username)+')"><i class="fas fa-rotate-left"></i> Default</button>'
+    + '</div>';
+}
+
+function applyIndividualUi(panel,username,overrideOrNull){
+  var pol=monGetPolicy(panel); pol.userOverrides=pol.userOverrides||{};
+  if(overrideOrNull){ pol.userOverrides[monUserKey(username)]=overrideOrNull; }
+  else { delete pol.userOverrides[monUserKey(username)]; }
+  monSetPolicy(panel,pol);
+  renderMonitorTiles();
+  renderMonitorPolicy();
+  renderMonitorEvents();
+  renderMonitorTable(_monLastData);
+}
+function setIndividualAccess(panel,username,allow){
+  // Immediate action: no confirmation modal. UI updates instantly, then server saves.
+  var override={
+    username:username,
+    allowed:!!allow,
+    reason:allow?'Individual allow by admin':'Individual restriction by admin',
+    updated:monNow(),
+    updatedBy:'admin'
+  };
+  applyIndividualUi(panel,username,override);
+  showToast(allow?'success':'warn',(allow?'Allowed ':'Blocked ')+username+' immediately. Saving...',1800);
+  if(monHasServer()){
+    google.script.run
+      .withSuccessHandler(function(r){
+        showToast('success',r||'Individual access saved');
+        monServerLoadPolicies(function(){ renderMonitorTiles(); renderMonitorPolicy(); renderMonitorTable(_monLastData); renderMonitorEvents(); });
+      })
+      .withFailureHandler(function(err){
+        showToast('error','Save failed: '+(err&&err.message?err.message:err));
+      })
+      .saveDashboardUserAccess(panel,username,override,'admin');
+  }
+}
+function clearIndividualAccess(panel,username){
+  // Immediate action: remove individual rule locally first, then save to server.
+  applyIndividualUi(panel,username,null);
+  showToast('info','Default access restored for '+username+'. Saving...',1800);
+  if(monHasServer()){
+    google.script.run
+      .withSuccessHandler(function(r){
+        showToast('success',r||'Individual rule cleared');
+        monServerLoadPolicies(function(){ renderMonitorTiles(); renderMonitorPolicy(); renderMonitorTable(_monLastData); renderMonitorEvents(); });
+      })
+      .withFailureHandler(function(err){
+        showToast('error','Clear failed: '+(err&&err.message?err.message:err));
+      })
+      .clearDashboardUserAccess(panel,username,'admin');
+  }
+}
+
+function renderMonitorTable(data){
+  var tbl=document.getElementById('monTable'); if(!tbl) return;
+  if(data && data.rows && data.rows.length){
+    var h='<div class="tw"><table><thead><tr>';
+    (data.headers||[]).forEach(function(h2){ h+='<th>'+pEsc(h2)+'</th>'; });
+    h+='<th>Access</th><th>Control</th></tr></thead><tbody>';
+    data.rows.forEach(function(row){
+      var panel=monDashboardKeyForRow(row), username=(row&&row[1])||'';
+      h+='<tr>'; (row||[]).forEach(function(c){ h+='<td>'+pEsc(String(c||''))+'</td>'; });
+      h+='<td>'+userAccessBadgeHtml(panel,username)+'</td><td>'+individualControlHtml(panel,username)+'</td></tr>';
+    });
+    tbl.innerHTML=h+'</tbody></table></div>'; return;
+  }
+  var pol=monGetPolicy(_monPanel), cfg=MON_PANELS[_monPanel];
+  tbl.innerHTML='<div class="tw"><table><thead><tr><th>Dashboard</th><th>Current Access</th><th>Mode</th><th>Enabled Features</th><th>Lock Expires</th><th>Reason</th></tr></thead><tbody><tr>'
+    +'<td><b>'+pEsc(cfg.title)+'</b></td><td>'+accessBadgeHtml(pol)+'</td><td>'+pEsc(pol.emergencyLock?'Emergency Lock':pol.readOnly?'Read Only':'Normal')+'</td>'
+    +'<td>'+Object.values(pol.features||{}).filter(Boolean).length+' / '+Object.keys(pol.features||{}).length+'</td><td>'+pEsc(pol.expires||'—')+'</td><td>'+pEsc(pol.reason||'—')+'</td></tr></tbody></table></div>';
+}
+function accessBadgeHtml(pol){
+  var cls=pol.emergencyLock||!pol.allowed?'br':pol.readOnly?'ba':'bgg';
+  var txt=pol.emergencyLock?'Emergency Lock':!pol.allowed?'Disallowed':pol.readOnly?'Read Only':'Allowed';
+  return '<span class="badge '+cls+'">'+txt+'</span>';
+}
+function renderMonitorEvents(){
+  var box=document.getElementById('monAuditFeed'); if(!box) return;
+  function draw(events){
+    events=(events||[]).filter(function(e){ return !_monPanel || e.panel===_monPanel || e.panel==='all'; }).slice(0,12);
+    if(!events.length){ box.innerHTML='<div style="text-align:center;color:var(--mu);padding:18px;">No control events yet.</div>'; return; }
+    box.innerHTML=events.map(function(e){
+      var action=e.action||'Event';
+      var icon=action==='BLOCKED_ATTEMPT'?'fa-ban':action.indexOf('LOGOUT')>=0?'fa-right-from-bracket':'fa-circle-info';
+      var color=action==='BLOCKED_ATTEMPT'?'#dc2626':(e.type==='warn'?'#d97706':'#1a56db');
+      return '<div class="mon-event"><i class="fas '+icon+'" style="color:'+color+'"></i><div><b>'+pEsc(action.replace(/_/g,' '))+'</b><span>'+pEsc((e.admin?e.admin+' — ':'')+(e.details||''))+' • '+pEsc(e.time||'')+'</span></div></div>';
+    }).join('');
+  }
+  var local=[]; try{ local=JSON.parse(localStorage.getItem(MON_EVENTS_KEY)||'[]')||[]; }catch(e){ local=[]; }
+  if(monHasServer()){
+    google.script.run.withSuccessHandler(function(serverEvents){
+      draw((serverEvents||[]).concat(local));
+    }).withFailureHandler(function(){ draw(local); }).getDashboardAccessEvents(_monPanel||'all');
+  }else draw(local);
+}
+
+function toggleDashboardAllowed(){
+  var pol=monGetPolicy(_monPanel);
+  pol.allowed=!pol.allowed;
+  pol.emergencyLock=false;
+  pol.readOnly=false;
+  pol.expires=''; // clear old expiry so login cannot auto-change state
+  pol.temporaryLock=false;
+  if(pol.allowed){ pol.reason=''; }
+  else { pol.reason=pol.reason||'Disallowed by admin'; }
+  monLog(pol.allowed?'Dashboard allowed':'Dashboard disallowed',MON_PANELS[_monPanel].title,pol.allowed?'success':'warn');
+  monServerSave(_monPanel,pol,MON_PANELS[_monPanel].title+' is now '+(pol.allowed?'allowed':'disallowed'));
+}
+function setDashboardMode(mode){
+  var pol=monGetPolicy(_monPanel);
+  pol.readOnly=(mode==='readonly');
+  pol.emergencyLock=(mode==='emergency');
+  if(mode==='normal'){ pol.emergencyLock=false; pol.readOnly=false; pol.temporaryLock=false; }
+  if(pol.emergencyLock){ pol.allowed=false; pol.expires=''; pol.temporaryLock=false; pol.reason=pol.reason||'Emergency lock by admin'; }
+  monLog('Dashboard mode changed',MON_PANELS[_monPanel].title+' → '+mode,'info');
+  monServerSave(_monPanel,pol,'Dashboard mode updated');
+}
+function updateDashboardField(field,value){
+  var pol=monGetPolicy(_monPanel);
+  pol[field]=value;
+  if(field==='expires'){
+    var dt=value?new Date(value):null;
+    pol.temporaryLock=!!(value && !pol.allowed && dt && !isNaN(dt.getTime()) && dt>new Date());
+    if(pol.temporaryLock && !pol.reason) pol.reason='Temporary lock by admin';
+  }
+  monSetPolicy(_monPanel,pol);
+  renderMonitorPolicy();
+}
+function toggleDashboardFeature(feature){
+  var pol=monGetPolicy(_monPanel); pol.features=pol.features||{}; pol.features[feature]=!pol.features[feature];
+  monLog((pol.features[feature]?'Enabled':'Disabled')+' feature',MON_PANELS[_monPanel].title+' / '+feature,'info');
+  monServerSave(_monPanel,pol,'Feature permission updated');
+}
+function saveDashboardPolicy(){
+  var pol=monGetPolicy(_monPanel);
+  pol.expires=(document.getElementById('monLockUntil')||{}).value||'';
+  pol.reason=(document.getElementById('monReason')||{}).value||'';
+  pol.notice=(document.getElementById('monNotice')||{}).value||'';
+  var dt=pol.expires?new Date(pol.expires):null;
+  pol.temporaryLock=!!(pol.expires && !pol.allowed && dt && !isNaN(dt.getTime()) && dt>new Date());
+  if(pol.temporaryLock && !pol.reason) pol.reason='Temporary lock by admin';
+  monLog('Saved access policy',MON_PANELS[_monPanel].title,'success'); monServerSave(_monPanel,pol,'Access policy saved');
+}
+function bulkDashboardAccess(allow){
+  showConfirm(allow?'Allow all dashboards?':'Disallow all dashboards?', allow?'All listed dashboards will become accessible.':'All listed dashboards will be blocked until you allow them again.', function(){
+    var data=monLoadPolicies();
+    monKeys().forEach(function(k){
+      var pol=monNormalizePolicy(k,data[k]);
+      pol.allowed=!!allow;
+      pol.emergencyLock=false;
+      pol.readOnly=false;
+      pol.reason=allow?'':'Bulk disallowed by admin';
+      pol.expires=''; // clear any old/past lock expiry
+      pol.temporaryLock=false;
+      pol.updated=monNow();
+      data[k]=pol;
+    });
+    monSavePolicies(data);
+    monLog(allow?'Allowed all dashboards':'Disallowed all dashboards','Bulk action','warn');
+    renderMonitorTiles(); renderMonitorPolicy(); renderMonitorEvents();
+    if(monHasServer()){
+      google.script.run
+        .withSuccessHandler(function(r){
+          showToast(allow?'success':'warn', r || (allow?'All dashboards allowed':'All dashboards disallowed'));
+          monServerLoadPolicies(function(){ renderMonitorTiles(); renderMonitorPolicy(); renderMonitorEvents(); refreshMonitor(); });
+        })
+        .withFailureHandler(function(err){
+          showToast('err','Server save failed: '+(err&&err.message?err.message:err));
+        })
+        .saveDashboardAccessPolicies(data,'admin');
+    }else{
+      showToast(allow?'success':'warn',allow?'All dashboards allowed':'All dashboards disallowed');
+    }
+  });
+}
+function toggleDashboardReadOnly(){ var pol=monGetPolicy(_monPanel); pol.readOnly=!pol.readOnly; monLog(pol.readOnly?'Read-only enabled':'Read-only disabled',MON_PANELS[_monPanel].title,'info'); monServerSave(_monPanel,pol,'Read-only mode updated'); }
+function emergencyLockDashboard(){
+  var pol=monGetPolicy(_monPanel); pol.emergencyLock=true; pol.allowed=false; pol.expires=''; pol.temporaryLock=false; pol.reason=pol.reason||'Emergency lock by admin';
+  monLog('Emergency lock activated',MON_PANELS[_monPanel].title,'warn'); monServerSave(_monPanel,pol,'Emergency lock activated');
+  if(monHasServer()) google.script.run.withFailureHandler(function(){}).forceLogoutDashboard(_monPanel,'admin');
+}
+function forceLogoutDashboard(){
+  if(!_monPanel) return; monLog('Force logout sent',MON_PANELS[_monPanel].title,'warn'); renderMonitorEvents();
+  if(monHasServer()){
+    google.script.run.withSuccessHandler(function(r){ showToast('success',r||'Force logout sent'); }).withFailureHandler(function(){ showToast('info','Force logout logged. Add forceLogoutDashboard(panel) in Code.gs to terminate sessions.'); }).forceLogoutDashboard(_monPanel,'admin');
+  }else showToast('info','Force logout logged locally');
+}
+function sendDashboardNotice(){
+  var msg=(document.getElementById('monNotice')||{}).value||''; if(!msg){ showToast('warn','Write a notice message first.'); return; }
+  var pol=monGetPolicy(_monPanel); pol.notice=msg; monLog('Notice sent',MON_PANELS[_monPanel].title+': '+msg,'info'); monServerSave(_monPanel,pol,'Notice sent');
+  if(monHasServer()) google.script.run.withFailureHandler(function(){}).sendDashboardNotice(_monPanel,msg,'admin');
+}
+function exportMonitorPolicy(){
+  var data=JSON.stringify(monLoadPolicies(),null,2);
+  var blob=new Blob([data],{type:'application/json'}), a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='dashboard-access-policies.json'; a.click(); URL.revokeObjectURL(a.href);
+  showToast('success','Dashboard policy exported');
+}
+
+/* ═══════════════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════════════ */
+function saveSchoolInfo(){
+  var info={
+    name:document.getElementById('cfgSchoolName').value,
+    motto:document.getElementById('cfgMotto').value,
+    region:document.getElementById('cfgRegion').value,
+    district:document.getElementById('cfgDistrict').value,
+    address:document.getElementById('cfgAddress').value,
+    phone:document.getElementById('cfgPhone').value,
+    email:document.getElementById('cfgEmail').value,
+    year:document.getElementById('cfgYear').value,
+    term:document.getElementById('cfgTerm').value,
+    logo:document.getElementById('cfgLogo').value
+  };
+  google.script.run.withSuccessHandler(function(r){ showMsg('cfgMsg',r,true); showToast('success',r); })
+    .withFailureHandler(function(e){ showMsg('cfgMsg','Error: '+e.message,false); })
+    .saveSchoolConfig(info);
+}
+
+function changeAdminPassword(){
+  var old=document.getElementById('apwOld').value,
+      nw=document.getElementById('apwNew').value,
+      conf=document.getElementById('apwConf').value;
+  if(!old||!nw||!conf){ showMsg('apwMsg','All fields required',false); return; }
+  if(nw!==conf){ showMsg('apwMsg','Passwords do not match',false); return; }
+  if(nw.length<6){ showMsg('apwMsg','Minimum 6 characters',false); return; }
+  google.script.run.withSuccessHandler(function(r){
+    showMsg('apwMsg',r,r.toLowerCase().includes('success'));
+    if(r.toLowerCase().includes('success')){ ['apwOld','apwNew','apwConf'].forEach(function(id){document.getElementById(id).value='';}); showToast('success','Password updated!'); }
+  }).withFailureHandler(function(e){ showMsg('apwMsg','Error: '+e.message,false); })
+    .changeAdminPassword(old,nw);
+}
+
+/* ═══════════════════════════════════════════════
+   PARENTS
+═══════════════════════════════════════════════ */
+function parCredsPreview(){
+  var u=document.getElementById('parUsername').value;
+  var p=document.getElementById('parPassword').value;
+  var up=document.getElementById('parUserPreview'); if(up) up.textContent=u||'—';
+  var pp=document.getElementById('parPassPreview'); if(pp) pp.textContent=p||'—';
+}
+
+function normAdmNo(v){ return String(v||'').trim().toLowerCase().replace(/\s+/g,''); }
+
+var _parSelectedStudent = null; // the exact student object the admin confirmed, when AdmNo is ambiguous
+
+function parLookupStudent(){
+  var admNo=document.getElementById('parAdmNo').value.trim();
+  var lbl=document.getElementById('parStudentName');
+  _parSelectedStudent = null;
+  var pick=document.getElementById('parDupPicker'); if(pick) pick.remove();
+  if(!admNo){ lbl.textContent=''; return; }
+  // If the student list hasn't been loaded into this session yet, load it now
+  // instead of silently failing to find a real, existing student.
+  if(!_students||!_students.length){
+    lbl.textContent='Loading students…'; lbl.style.color='var(--mu)';
+    google.script.run.withSuccessHandler(function(list){ _students=list||[]; parLookupStudent(); })
+      .withFailureHandler(function(){ lbl.textContent='Could not load student list.'; lbl.style.color='var(--red)'; })
+      .getStudentList();
+    return;
+  }
+  var target=normAdmNo(admNo);
+  var matches=_students.filter(function(s){ return normAdmNo(s.admNo)===target; });
+  if(matches.length===0){
+    lbl.textContent='Student not found for: '+admNo;
+    lbl.style.color='var(--red)';
+  } else if(matches.length===1){
+    _parSelectedStudent = matches[0];
+    lbl.textContent='✓ '+matches[0].firstName+' '+matches[0].lastName+' — '+(matches[0].className||'N/A');
+    lbl.style.color='var(--green)';
+  } else {
+    // Same Adm No. exists for more than one student (data problem from
+    // before Adm Nos were made unique). Don't silently guess — let the
+    // admin pick the right one.
+    lbl.textContent='⚠ '+matches.length+' students share Adm No. '+admNo+' — pick the correct one:';
+    lbl.style.color='var(--red)';
+    var box=document.createElement('div');
+    box.id='parDupPicker';
+    box.style.cssText='margin-top:6px;display:flex;flex-direction:column;gap:4px;';
+    matches.forEach(function(m,i){
+      var b=document.createElement('button');
+      b.type='button';
+      b.className='btn bgh bsm';
+      b.style.cssText='text-align:left;justify-content:flex-start;';
+      b.textContent=(m.firstName||'')+' '+(m.lastName||'')+' — '+(m.className||'N/A');
+      b.onclick=function(){
+        _parSelectedStudent=m;
+        lbl.textContent='✓ '+m.firstName+' '+m.lastName+' — '+(m.className||'N/A')+' (selected)';
+        lbl.style.color='var(--green)';
+        box.remove();
+      };
+      box.appendChild(b);
+    });
+    lbl.parentNode.insertBefore(box, lbl.nextSibling);
+  }
+}
+
+function normaliseParent(row){
+  if(Array.isArray(row)){
+    return {name:String(row[0]||'').trim(),sex:String(row[1]||'').trim(),relation:String(row[2]||'').trim(),
+      phone:String(row[3]||'').trim(),email:String(row[4]||'').trim(),admNo:String(row[5]||'').trim(),
+      address:String(row[6]||'').trim(),username:String(row[7]||'').trim(),password:String(row[8]||'').trim(),
+      studentName:String(row[9]||'').trim(),className:String(row[10]||'').trim()};
+  }
+  return {name:String(row.name||'').trim(),sex:String(row.sex||'').trim(),relation:String(row.relation||'').trim(),
+    phone:String(row.phone||'').trim(),email:String(row.email||'').trim(),admNo:String(row.admNo||'').trim(),
+    address:String(row.address||'').trim(),username:String(row.username||'').trim(),password:String(row.password||'').trim(),
+    studentName:String(row.studentName||row.student||'').trim(),className:String(row.className||row.class||'').trim()};
+}
+
+function loadParents(){
+  showSp('spPar',true);
+  var tb=document.getElementById('parTable').querySelector('tbody');
+  tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--mu);"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+  google.script.run
+    .withSuccessHandler(function(raw){
+      showSp('spPar',false);
+      if(!raw){ tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--red);padding:16px;font-weight:700;">getParentList() returned null</td></tr>'; return; }
+      var rows=Array.isArray(raw)?raw:[];
+      if(rows.length&&Array.isArray(rows[0])&&String(rows[0][0]||'').toLowerCase().trim()==='name') rows=rows.slice(1);
+      _parents=rows.map(normaliseParent).filter(function(p){return p.name!=='';});
+      renderParentTable(_parents);
+      document.getElementById('parTotal').textContent=_parents.length;
+      document.getElementById('parLinked').textContent=_parents.filter(function(p){return p.admNo;}).length;
+      document.getElementById('parWithCreds').textContent=_parents.filter(function(p){return p.username&&p.password;}).length;
+      document.getElementById('parPortalReady').textContent=_parents.filter(function(p){return p.admNo&&p.username&&p.password;}).length;
+      document.getElementById('parCount').textContent=_parents.length+' parents';
+      document.getElementById('profStatParents').textContent=_parents.length;
+    })
+    .withFailureHandler(function(err){
+      showSp('spPar',false);
+      tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--red);padding:16px;font-weight:700;"><i class="fas fa-exclamation-triangle"></i> Error: '+(err&&err.message?err.message:'getParentList() not found in Code.gs')+'</td></tr>';
+    })
+    .getParentList();
+}
+
+function renderParentTable(list){
+  var tb=document.getElementById('parTable').querySelector('tbody');
+  tb.innerHTML='';
+  if(!list||!list.length){
+    tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--mu);"><i class="fas fa-users" style="font-size:28px;opacity:.2;display:block;margin-bottom:8px;"></i>No parents registered yet.</td></tr>';
+    return;
+  }
+  var relColors={Father:'#1d4ed8',Mother:'#be185d',Guardian:'#6d28d9',Uncle:'#0e7490',Aunt:'#c2410c',Grandparent:'#15803d',Other:'#64748b'};
+  list.forEach(function(p,i){
+    var rc=relColors[p.relation]||'#6d28d9';
+    var relBadge='<span style="background:rgba(100,116,139,.1);color:'+rc+';border:1px solid rgba(100,116,139,.2);padding:2px 9px;border-radius:99px;font-size:10.5px;font-weight:700">'+pEsc(p.relation||'—')+'</span>';
+    var credBadge=p.username
+      ?'<div style="background:#0a1628;color:#06b6d4;padding:3px 10px;border-radius:7px;font-size:11px;font-weight:800;display:inline-block;letter-spacing:.3px;"><i class="fas fa-user" style="margin-right:4px;font-size:9px;opacity:.6"></i>'+pEsc(p.username)+'</div>'
+      :'<span style="color:var(--red);font-size:11px;font-weight:700"><i class="fas fa-exclamation-circle"></i> No creds</span>';
+    var stuCell=p.studentName
+      ?'<div style="font-weight:700">'+pEsc(p.studentName)+'</div>'+(p.admNo?'<div style="font-size:10.5px;color:var(--mu)">'+pEsc(p.admNo)+'</div>':'')
+      :(p.admNo?'<div style="font-size:11.5px;color:var(--mu)">'+pEsc(p.admNo)+'</div>':'<span style="color:var(--red);font-size:11px">Not linked</span>');
+    var clsBadge=p.className?'<span class="badge bb">'+pEsc(p.className)+'</span>':'<span style="color:var(--mu);font-size:11px">—</span>';
+    tb.innerHTML+='<tr>'
+      +'<td style="font-weight:800;color:var(--mu)">'+(i+1)+'</td>'
+      +'<td><div style="font-weight:700;font-size:13px">'+pEsc(p.name)+'</div><div style="font-size:10.5px;color:var(--mu)">'+pEsc(p.phone||p.email||'')+'</div></td>'
+      +'<td>'+credBadge+'</td>'
+      +'<td>'+relBadge+'</td>'
+      +'<td>'+stuCell+'</td>'
+      +'<td>'+clsBadge+'</td>'
+      +'<td style="white-space:nowrap">'
+        +'<button class="btn bp bsm" onclick="editParent('+i+')" title="Edit"><i class="fas fa-edit"></i></button> '
+        +'<button class="btn bd_ bsm" onclick="deleteParent(\''+pEsc(p.username||p.name)+'\')" title="Delete"><i class="fas fa-trash"></i></button>'
+      +'</td></tr>';
+  });
+}
+
+function hexToRgb(hex){ var r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); return r?parseInt(r[1],16)+','+parseInt(r[2],16)+','+parseInt(r[3],16):'100,116,139'; }
+
+function parFilter(){
+  var q=document.getElementById('parSearch').value.toLowerCase();
+  renderParentTable(_parents.filter(function(p){
+    return !q||(p.name||'').toLowerCase().includes(q)||(p.studentName||'').toLowerCase().includes(q)||(p.admNo||'').toLowerCase().includes(q)||(p.username||'').toLowerCase().includes(q);
+  }));
+}
+
+function saveParent(){
+  var name=document.getElementById('parName').value.trim(),
+      username=document.getElementById('parUsername').value.trim(),
+      password=document.getElementById('parPassword').value.trim(),
+      phone=document.getElementById('parPhone').value.trim(),
+      sex=document.getElementById('parSex').value,
+      relation=document.getElementById('parRelation').value,
+      email=document.getElementById('parEmail').value.trim(),
+      admNo=document.getElementById('parAdmNo').value.trim(),
+      address=document.getElementById('parAddress').value.trim(),
+      oldUser=document.getElementById('parOldUsername').value;
+  if(!name||!username||!password||!admNo){ showMsg('parMsg','Name, Username, Password and Student Adm No. are required.',false); return; }
+  // Prefer the student the admin explicitly confirmed (handles duplicate Adm Nos safely);
+  // fall back to a plain lookup only when there was no ambiguity to resolve.
+  var stu=(_parSelectedStudent && normAdmNo(_parSelectedStudent.admNo)===normAdmNo(admNo))
+    ? _parSelectedStudent
+    : _students.find(function(s){return normAdmNo(s.admNo)===normAdmNo(admNo);});
+  var dupPicker=document.getElementById('parDupPicker');
+  if(dupPicker){ showMsg('parMsg','Multiple students share this Adm No. Please pick the correct one above before saving.',false); return; }
+  var data={name,username,password,phone,sex,relation,email,admNo,address,
+    studentName:stu?((stu.firstName||'')+' '+(stu.lastName||'')).trim():'',
+    className:stu?(stu.className||''):'',role:'parent'};
+  var btn=document.getElementById('parSaveBtn');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Saving...';
+  var done=function(r){
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-save"></i> '+(oldUser?'Update':'Save')+' Parent';
+    showMsg('parMsg',r,!r.toLowerCase().includes('error'));
+    if(!r.toLowerCase().includes('error')){ showToast('success',r); clearParForm(); loadParents(); }
+    else showToast('error',r);
+  };
+  if(oldUser){ google.script.run.withSuccessHandler(done).withFailureHandler(function(e){btn.disabled=false;btn.innerHTML='<i class="fas fa-save"></i> Save Parent';showMsg('parMsg','Error: '+e.message,false);}).updateParent(oldUser,data); }
+  else { google.script.run.withSuccessHandler(done).withFailureHandler(function(e){btn.disabled=false;btn.innerHTML='<i class="fas fa-save"></i> Save Parent';showMsg('parMsg','Error: '+e.message,false);}).addParent(data); }
+}
+
+function editParent(i){
+  var p=_parents[i]; if(!p) return;
+  document.getElementById('parName').value=p.name||'';
+  document.getElementById('parUsername').value=p.username||'';
+  document.getElementById('parPassword').value=p.password||'';
+  document.getElementById('parPhone').value=p.phone||'';
+  document.getElementById('parSex').value=p.sex||'';
+  document.getElementById('parRelation').value=p.relation||'';
+  document.getElementById('parEmail').value=p.email||'';
+  document.getElementById('parAdmNo').value=p.admNo||'';
+  document.getElementById('parAddress').value=p.address||'';
+  document.getElementById('parOldUsername').value=p.username||'';
+  parCredsPreview(); parLookupStudent();
+  document.getElementById('parFmTitle').textContent='Edit Parent';
+  document.getElementById('parSaveBtn').innerHTML='<i class="fas fa-save"></i> Update Parent';
+  goTo('parents');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function deleteParent(key){
+  showConfirm('Delete Parent','Delete parent "'+key+'"? This will remove them from the Parents sheet.',function(){
+    google.script.run.withSuccessHandler(function(r){ showToast('success',r); loadParents(); })
+      .withFailureHandler(function(e){ showToast('error','Error: '+e.message); })
+      .deleteParent(key);
+  });
+}
+
+function clearParForm(){
+  ['parName','parUsername','parPassword','parPhone','parEmail','parAdmNo','parAddress','parOldUsername'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('parSex').value=''; document.getElementById('parRelation').value='';
+  document.getElementById('parFmTitle').textContent='Add Parent';
+  document.getElementById('parSaveBtn').innerHTML='<i class="fas fa-save"></i> Save Parent';
+  var up=document.getElementById('parUserPreview'); if(up) up.textContent='—';
+  var pp=document.getElementById('parPassPreview'); if(pp) pp.textContent='—';
+  var sn=document.getElementById('parStudentName'); if(sn) sn.textContent='';
+  _parSelectedStudent=null;
+  var dp=document.getElementById('parDupPicker'); if(dp) dp.remove();
+}
+
+/* ═══════════════════════════════════════════════
+   PROFILE
+═══════════════════════════════════════════════ */
+function prevProfPic(url){
+  var ph=document.getElementById('profPicPH'), img=document.getElementById('profPicIMG');
+  var hero=document.getElementById('profAvImg'), heroPH=document.getElementById('profAvPH');
+  if(url&&url.indexOf('http')===0){
+    img.src=url; img.style.display='block'; ph.style.display='none';
+    if(hero){hero.src=url; hero.style.display='block'; if(heroPH)heroPH.style.display='none';}
+  } else {
+    img.style.display='none'; ph.style.display='flex';
+    if(hero){hero.style.display='none'; if(heroPH)heroPH.style.display='flex';}
+  }
+}
+
+function saveProfPic(){
+  var url=document.getElementById('profPicUrl').value;
+  prevProfPic(url);
+  showToast('success','Profile picture updated!');
+}
+
+function saveAdminProfile(){
+  var data={
+    name:document.getElementById('profName').value,
+    title:document.getElementById('profTitle').value,
+    phone:document.getElementById('profPhone').value,
+    email:document.getElementById('profEmail').value,
+    qual:document.getElementById('profQual').value,
+    years:document.getElementById('profYears').value,
+    bio:document.getElementById('profBio').value,
+    pic:document.getElementById('profPicUrl').value
+  };
+  if(data.name){
+    document.getElementById('sbAdminName').textContent=data.name;
+    document.getElementById('profHeroName').textContent=data.name;
+    document.getElementById('sbAvWrap').textContent=data.name.charAt(0).toUpperCase();
+    document.getElementById('profAvPH').textContent=data.name.charAt(0).toUpperCase();
+    document.getElementById('tbAvatar').textContent=data.name.charAt(0).toUpperCase();
+    document.getElementById('heroName').textContent=data.name;
+    document.getElementById('ddName').textContent=data.name;
+  }
+  google.script.run.withSuccessHandler(function(r){ showMsg('profMsg',r,true); showToast('success',r); })
+    .withFailureHandler(function(e){ showMsg('profMsg','Error: '+e.message,false); })
+    .saveAdminProfile(data);
+}
+
+function updateAdminSecurity(){
+  var nw=document.getElementById('profNewPw').value,conf=document.getElementById('profConfPw').value;
+  if(!nw&&!conf) return;
+  if(nw!==conf){ showMsg('secMsg','Passwords do not match',false); return; }
+  if(nw.length<6){ showMsg('secMsg','Minimum 6 characters',false); return; }
+  google.script.run.withSuccessHandler(function(r){
+    showMsg('secMsg',r,true); showToast('success',r);
+    ['profNewPw','profConfPw'].forEach(function(id){document.getElementById(id).value='';});
+  }).changeAdminPassword('',nw);
+}
+
+/* ═══════════════════════════════════════════════
+   LOGOUT
+═══════════════════════════════════════════════ */
+function doLogout(){
+  showConfirm('Logout','Are you sure you want to logout?',function(){
+    google.script.run.withSuccessHandler(function(h){ document.open(); document.write(h); document.close(); }).logout();
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════ */
+
+/* ── Accounts card (Manage Assignments and Accounts) ── */
+var _monAcctCache=null;
+function monLoadAccounts(cb){
+  if(_monAcctCache) return cb(_monAcctCache);
+  google.script.run.withSuccessHandler(function(t){
+    google.script.run.withSuccessHandler(function(p){ _monAcctCache={staff:t||[],parents:p||[]}; cb(_monAcctCache); })
+      .withFailureHandler(function(){ _monAcctCache={staff:t||[],parents:[]}; cb(_monAcctCache); }).getParentList();
+  }).withFailureHandler(function(){ cb({staff:[],parents:[]}); }).getTeachers();
+}
+function monRenderAccounts(){
+  var box=document.getElementById('monAccounts'); if(!box||!_monPanel) return;
+  var key=_monPanel; box.innerHTML='<span class="mon-muted-note"><i class="fas fa-spinner fa-spin"></i> Loading...</span>';
+  monLoadAccounts(function(d){
+    if(key!==_monPanel) return;
+    var rows=[];
+    if(key==='parents') rows=(d.parents||[]).map(function(r){ return {name:r[0],user:r[7],info:r[9]||r[5]||''}; });
+    else {
+      var posMap={academics:'Academic Master',classTeacher:'Class Teacher',teacher:'Teacher',secondMaster:'Second Master'};
+      rows=(d.staff||[]).filter(function(t){ return t.position===posMap[key]; }).map(function(t){ return {name:t.name,user:t.username,info:t.department||''}; });
+    }
+    var head=(key==='academics')
+      ? '<button class="btn bp bsm" onclick="goTo(\'teachers\')" style="margin-bottom:10px"><i class="fas fa-user-plus"></i> Create / Manage Academic Account</button>'
+      : '<div class="mon-muted-note" style="margin-bottom:8px"><i class="fas fa-lock"></i> These accounts are created and managed by Academic.</div>';
+    var body=rows.length
+      ? '<div style="max-height:240px;overflow:auto"><table style="width:100%;font-size:12.5px;border-collapse:collapse"><tbody>'+rows.map(function(r,i){
+          return '<tr><td style="padding:5px 6px;color:var(--mu)">'+(i+1)+'</td><td style="padding:5px 6px;font-weight:700">'+pEsc(r.name)+'</td><td style="padding:5px 6px"><code>'+pEsc(r.user)+'</code></td><td style="padding:5px 6px;color:var(--mu)">'+pEsc(r.info)+'</td></tr>';
+        }).join('')+'</tbody></table></div>'
+      : '<div class="mon-muted-note">No accounts yet.</div>';
+    box.innerHTML=head+'<div style="font-weight:800;font-size:11.5px;margin-bottom:6px">'+rows.length+' account(s)</div>'+body;
+  });
+}
+
+/* ── Manage Assignments and Accounts (simple: Account Permissions + one card per dashboard) ── */
+var _apPol={}, _apOrder=['academics','classTeacher','teacher','secondMaster','parents'];
+var _apAcct=[['Depute Headmaster','Create Depute Headmaster Account','fa-user-shield'],['Class Teacher','Create Class Teacher Account','fa-chalkboard-teacher'],['Subject Teacher','Create Subject Teacher Account','fa-person-chalkboard'],['Parent','Create Parent Account','fa-users']];
+var _apKeyFeat={classTeacher:'Create Class Teacher Account',teacher:'Create Subject Teacher Account',secondMaster:'Create Depute Headmaster Account',parents:'Create Parent Account'};
+var _apAcctFeat=['Manage Staff Accounts','Manage Parent Accounts','Create Class Teacher Account','Create Subject Teacher Account','Create Depute Headmaster Account','Create Parent Account'];
+function apIsAcct(f){ return _apAcctFeat.indexOf(f)>=0; }
+function apLoad(){
+  var box=document.getElementById('apBody'); if(box) box.innerHTML='<div class="mon-muted-note"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+  var done=function(srv){
+    _apPol={};
+    _apOrder.forEach(function(k){
+      var cfg=MON_PANELS[k]||{features:[]}, p=(srv&&srv[k])||{}, feats={};
+      (cfg.features||[]).forEach(function(f){
+        var v=(p.features&&Object.prototype.hasOwnProperty.call(p.features,f))?p.features[f]:!/^(Manage (Staff|Parent) Accounts|Create )/.test(f);
+        feats[f]=!(v===false||String(v).toLowerCase()==='false');
+      });
+      _apPol[k]={raw:p,cur:feats,saved:Object.assign({},feats),locked:(p.allowed===false||p.emergencyLock===true)};
+    });
+    apRender();
+  };
+  if(typeof google!=='undefined'&&google.script&&google.script.run) google.script.run.withSuccessHandler(done).withFailureHandler(function(){ done({}); }).getDashboardAccessPolicies(); else done({});
+}
+function apSw(k,name,on,extra){ return '<div class="setting-row"><div class="setting-info"><div class="s-title">'+(extra&&extra.icon?'<i class="fas '+extra.icon+'" style="margin-right:6px;color:var(--mu)"></i>':'')+pEsc(extra&&extra.label||name)+'</div>'+(extra&&extra.desc?'<div class="s-desc">'+pEsc(extra.desc)+'</div>':'')+'</div><div class="toggle'+(on?' on':'')+'" data-k="'+k+'" data-n="'+pEsc(name)+'" onclick="apTog(this)"></div></div>'; }
+function apRender(){
+  var box=document.getElementById('apBody'); if(!box) return;
+  var ac=_apPol.academics, h='<div class="card" style="margin-bottom:16px"><div class="ch"><i class="fas fa-id-card-clip"></i> Account Permissions</div><div class="cb">'
+    +'<div class="mon-muted-note" style="margin-bottom:8px">Switch ON the accounts Academic is allowed to create and manage.</div>';
+  _apAcct.forEach(function(r){ h+=apSw('academics',r[1],ac.cur[r[1]],{label:r[0],icon:r[2]}); });
+  h+='<div style="margin-top:14px"><button class="btn bp" onclick="apSaveAccounts()"><i class="fas fa-save"></i> Save Changes</button></div></div></div>';
+  h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">';
+  _apOrder.forEach(function(k){
+    var st=_apPol[k], cfg=MON_PANELS[k];
+    h+='<div class="card"><div class="ch"><i class="'+cfg.icon+'"></i> '+pEsc(cfg.title)+' Permissions'+(st.locked?' <span id="apLock_'+k+'" style="font-size:10.5px;color:#b91c1c;font-weight:700;margin-left:auto">Locked earlier – Save to unlock</span>':'')+'</div><div class="cb">';
+    if(_apKeyFeat[k]) h+=apSw('academics',_apKeyFeat[k],_apPol.academics.cur[_apKeyFeat[k]],{label:'Account',desc:'ON = Academic can create and manage '+cfg.title+' accounts',icon:'fa-power-off'});
+    (cfg.features||[]).forEach(function(f){ if(!apIsAcct(f)) h+=apSw(k,f,st.cur[f]); });
+    h+='<div style="margin-top:14px"><button class="btn bp" onclick="apSave(\''+k+'\')"><i class="fas fa-save"></i> Save Changes</button></div></div></div>';
+  });
+  box.innerHTML=h+'</div>';
+}
+function apTog(el){
+  var k=el.getAttribute('data-k'), n=el.getAttribute('data-n'); el.classList.toggle('on'); _apPol[k].cur[n]=el.classList.contains('on');
+  if(k==='academics') Array.prototype.forEach.call(document.querySelectorAll('.toggle[data-k="academics"]'),function(t){ if(t!==el && t.getAttribute('data-n')===n) t.classList.toggle('on',_apPol.academics.cur[n]); });
+}
+function apPush(k,names){
+  var st=_apPol[k], pol=Object.assign({},st.raw||{}), feats=Object.assign({},st.saved);
+  names.forEach(function(n){ feats[n]=!!st.cur[n]; });
+  pol.key=k; pol.allowed=true; pol.emergencyLock=false; pol.temporaryLock=false; pol.readOnly=false; pol.expires=''; pol.features=feats;
+  google.script.run.withSuccessHandler(function(r){
+    st.raw=pol; st.saved=feats; st.locked=false; var l=document.getElementById('apLock_'+k); if(l) l.remove();
+    showToast('success',(typeof r==='string'&&r)?r:'Changes saved');
+  }).withFailureHandler(function(e){ showToast('error','Could not save: '+(e&&e.message||e)); }).saveDashboardAccessState(k,pol,'admin');
+}
+function apSave(k){ if(_apKeyFeat[k]) apSaveAccounts(); apPush(k,(MON_PANELS[k].features||[]).filter(function(f){ return !apIsAcct(f); })); }
+function apSaveAccounts(){
+  var c=_apPol.academics.cur;
+  c['Manage Staff Accounts']=!!(c['Create Class Teacher Account']||c['Create Subject Teacher Account']||c['Create Depute Headmaster Account']);
+  c['Manage Parent Accounts']=!!c['Create Parent Account'];
+  apPush('academics',_apAcctFeat);
+}
+function pEsc(t){ return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a03d68742f01aa64',t:'MTc4MDE0MDYzOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

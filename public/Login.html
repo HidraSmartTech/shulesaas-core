@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en" data-title-suffix="Sign in">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --accent: #2575fc;
+  --accent-2: #06b6d4;
+  --gold: #FFD700;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Roboto',sans-serif;}
+
+body{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: #0a1a2f;
+  background-image: 
+    radial-gradient(at 20% 20%, rgba(37,117,252,0.4) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, rgba(6,182,212,0.3) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, rgba(106,17,203,0.3) 0px, transparent 50%),
+    linear-gradient(135deg,#0a1a2f 0%,#123a6f 50%,#2b6cb0 100%);
+  position:relative;
+  overflow:hidden;
+}
+
+/* Subtle animated light */
+body::before{
+  content:'';
+  position:absolute;
+  width:200%; height:200%;
+  top:-50%; left:-50%;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.06) 0%, transparent 40%);
+  animation: lightMove 20s linear infinite;
+  pointer-events:none;
+}
+@keyframes lightMove{
+  0%{transform: rotate(0deg);}
+  100%{transform: rotate(360deg);}
+}
+
+.login-card{
+  width:440px; max-width:92%;
+  padding:40px 32px 36px;
+  border-radius:24px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(28px) saturate(180%);
+  -webkit-backdrop-filter:blur(28px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow: 
+    0 8px 32px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.15), /* top edge highlight */
+    inset 0 -1px 0 rgba(255,255,255,0.05); /* bottom edge shadow */
+  color:#fff;
+  text-align:center;
+  position:relative;
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+
+/* Noise texture for real glass */
+.login-card::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:24px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+
+.login-card:hover{
+  transform: translateY(-4px);
+  box-shadow: 
+    0 12px 48px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 0 -1px 0 rgba(255,255,255,0.05);
+}
+
+.logo-wrap{
+  width:80px; height:80px;
+  border-radius:20px;
+  margin:0 auto 16px;
+  background:linear-gradient(135deg, var(--accent), var(--accent-2));
+  display:flex; align-items:center; justify-content:center;
+  font-size:32px; color:var(--gold);
+  overflow:hidden;
+  box-shadow: 
+    0 8px 24px rgba(37,117,252,.4),
+    inset 0 2px 4px rgba(255,255,255,0.2);
+  position:relative;
+}
+
+/* Logo glow ring */
+.logo-wrap::before{
+  content:'';
+  position:absolute; inset:-2px;
+  border-radius:22px;
+  background:linear-gradient(135deg, var(--accent), var(--accent-2), var(--gold));
+  z-index:-1;
+  filter:blur(8px);
+  opacity:.6;
+}
+
+.logo-wrap img{width:100%; height:100%; object-fit:contain;}
+
+.login-card h2{
+  font-size:22px; margin-bottom:6px; font-weight:700;
+  letter-spacing:-0.3px;
+}
+.login-card .school{font-size:12px; opacity:.8; margin-bottom:6px; font-weight:500;}
+.login-card .subtitle{font-size:12px; opacity:.6; margin-bottom:24px;}
+
+.lc-div{
+  display:flex; align-items:center; gap:12px; margin:0 0 18px;
+}
+.lc-div::before,.lc-div::after{
+  content:''; flex:1; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+}
+.lc-div span{
+  font-size:10px; font-weight:700; opacity:.6;
+  text-transform:uppercase; letter-spacing:1px; white-space:nowrap;
+}
+
+.role-pills{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-bottom:22px;}
+.rp{
+  display:inline-flex; align-items:center; gap:5px;
+  padding:4px 10px; border-radius:99px;
+  font-size:10px; font-weight:700;
+  border:1px solid transparent;
+  backdrop-filter:blur(10px);
+  transition:.2s;
+}
+.rp:hover{transform: translateY(-1px);}
+.rp-admin{background:rgba(220,38,38,.15); color:#fca5a5; border-color:rgba(220,38,38,.25);}
+.rp-teacher{background:rgba(26,86,219,.15); color:#93c5fd; border-color:rgba(26,86,219,.25);}
+.rp-academic{background:rgba(6,182,212,.15); color:#67e8f9; border-color:rgba(6,182,212,.25);}
+.rp-parent{background:rgba(124,58,237,.15); color:#c4b5fd; border-color:rgba(124,58,237,.25);}
+.rp-staff{background:rgba(22,163,74,.15); color:#86efac; border-color:rgba(22,163,74,.25);}
+
+.input-group{position:relative; margin-bottom:16px; text-align:left;}
+.input-group label{
+  display:block; font-size:10px; font-weight:700; opacity:.7;
+  text-transform:uppercase; letter-spacing:.8px; margin-bottom:6px;
+}
+.ig-wrap{position:relative;}
+.ig-wrap .ig-icon{
+  position:absolute; left:14px; top:50%; transform:translateY(-50%);
+  opacity:.5; font-size:14px; pointer-events:none; transition:.2s;
+}
+.input-group input{
+  width:100%; padding:13px 14px 13px 42px;
+  border-radius:12px;
+  border:1.5px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.06);
+  color:#fff; font-size:14px; font-weight:500;
+  outline:none; transition:.25s; font-family:inherit;
+}
+.input-group input::placeholder{color:rgba(255,255,255,.35); font-weight:400;}
+.input-group input:hover{border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.08);}
+.input-group input:focus{
+  border-color: var(--accent-2);
+  background:rgba(255,255,255,.1);
+  box-shadow: 0 0 0 3px rgba(6,182,212,.15), 0 0 20px rgba(0,240,255,.15);
+}
+.input-group input:focus + .ig-icon,
+.input-group:focus-within .ig-icon{opacity:.9; color:var(--accent-2);}
+
+.pw-input{padding-right:44px!important;}
+.eye-btn{
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  background:none; border:none; cursor:pointer;
+  color:rgba(255,255,255,.45); font-size:14px; padding:4px;
+  border-radius:6px; transition:.2s;
+}
+.eye-btn:hover{color:#fff; background:rgba(255,255,255,.1);}
+
+.login-btn{
+  width:100%; padding:14px; margin-top:8px;
+  border-radius:12px; border:none;
+  background:linear-gradient(90deg, #6a11cb, var(--accent));
+  color:#fff; font-size:15px; font-weight:800; cursor:pointer;
+  transition:.25s; display:flex; align-items:center; justify-content:center; gap:8px;
+  font-family:inherit; position:relative; overflow:hidden;
+  box-shadow: 0 4px 16px rgba(37,117,252,.35);
+}
+/* Shine effect on button */
+.login-btn::before{
+  content:''; position:absolute; top:0; left:-100%;
+  width:100%; height:100%;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+  transition:left .5s;
+}
+.login-btn:hover::before{left:100%;}
+.login-btn:hover{
+  transform:translateY(-2px); 
+  box-shadow:0 8px 28px rgba(37,117,252,.5);
+}
+.login-btn:active{transform:translateY(0);}
+.login-btn:disabled{opacity:.6; cursor:not-allowed; transform:none; box-shadow:none;}
+.login-btn:disabled::before{display:none;}
+
+.lc-msg{
+  border-radius:10px; padding:11px 14px; margin-top:14px;
+  font-size:13px; font-weight:600; display:none; align-items:center; gap:9px;
+  text-align:left; backdrop-filter:blur(10px);
+}
+.lc-msg.err{
+  background:rgba(220,38,38,.18); color:#fca5a5; 
+  border:1px solid rgba(220,38,38,.3);
+}
+.lc-msg.ok{
+  background:rgba(22,163,74,.18); color:#86efac;
+  border:1px solid rgba(22,163,74,.3);
+}
+
+.spinner{
+  display:inline-block; width:18px; height:18px;
+  border:2.5px solid rgba(255,255,255,.3); border-top-color:#fff;
+  border-radius:50%; animation:spin .75s linear infinite; flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{
+  0%,100%{transform:translateX(0)} 
+  20%{transform:translateX(-8px)} 
+  40%{transform:translateX(8px)} 
+  60%{transform:translateX(-5px)} 
+  80%{transform:translateX(5px)}
+}
+
+
+/* ── Login mode tabs + Parent Login Access panel ── */
+.mode-tabs{display:flex; gap:6px; padding:4px; margin:0 0 16px; border-radius:14px;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);}
+.mode-tab{flex:1; padding:9px 8px; border:none; border-radius:10px; background:transparent;
+  color:rgba(255,255,255,.65); font-size:12px; font-weight:700; cursor:pointer; font-family:inherit;
+  display:flex; align-items:center; justify-content:center; gap:6px; transition:.2s;}
+.mode-tab:hover{color:#fff;}
+.mode-tab.active{background:linear-gradient(90deg,#6a11cb,var(--accent)); color:#fff; box-shadow:0 4px 14px rgba(37,117,252,.35);}
+.mode-tab.active.parent{background:linear-gradient(90deg,#7c3aed,#a855f7); box-shadow:0 4px 14px rgba(124,58,237,.4);}
+.pa-panel{display:none; text-align:left; margin:0 0 18px; padding:12px 14px; border-radius:14px;
+  background:rgba(124,58,237,.14); border:1px solid rgba(167,139,250,.35); color:#ddd6fe; font-size:12px; line-height:1.55;}
+.pa-panel.show{display:block;}
+.pa-panel .pa-title{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:800; color:#fff; margin-bottom:4px;}
+.pa-panel .pa-title i{color:#c4b5fd;}
+.pa-panel b{color:#fff;}
+
+/* Mobile tweaks */
+@media (max-width: 480px){
+  .login-card{padding:32px 24px 28px;}
+  .login-card h2{font-size:20px;}
+}
+
+.logo-fb{display:none}
+[data-no-logo] > .logo-fb{display:inline-flex;align-items:center;justify-content:center}
+</style>
+<script src="/gas-compat.js"></script><script src="/school-public.js"></script></head>
+<body>
+
+<div class="login-card" id="loginCard">
+  <div class="logo-wrap">
+    <img data-school-logo alt="Logo" style="display:none"><i class="fas fa-graduation-cap logo-fb"></i></i>'">
+  </div>
+  <h2>School Management System</h2>
+  <div class="school" data-school="name" data-school-fallback="School Management System"></div>
+  <div class="subtitle">Sign in to access your dashboard</div>
+  <div class="lc-div"><span>Enter your credentials</span></div>
+  <div class="mode-tabs" role="tablist">
+    <button type="button" class="mode-tab active" id="tabStaff" onclick="setMode('staff')"><i class="fas fa-chalkboard-teacher"></i> Staff / Teacher</button>
+    <button type="button" class="mode-tab" id="tabParent" onclick="setMode('parent')"><i class="fas fa-users"></i> Parent Login Access</button>
+  </div>
+  <div class="pa-panel" id="parentPanel">
+    <div class="pa-title"><i class="fas fa-user-lock"></i> Parent Login Access</div>
+    Use the <b>Username</b> and <b>Password</b> given to you by your child's <b>Class Teacher</b>.
+    You will be taken straight to the Parent Portal. Forgot them? Contact the Class Teacher.
+  </div>
+  <div class="role-pills" id="rolePills">
+    <span class="rp rp-admin"><i class="fas fa-user-shield"></i> School Manager</span>
+    <span class="rp rp-academic"><i class="fas fa-user-graduate"></i> Head of School</span>
+    <span class="rp rp-staff"><i class="fas fa-calculator"></i> Accountant</span>
+    <span class="rp rp-teacher"><i class="fas fa-chalkboard-teacher"></i> Teacher</span>
+    <span class="rp rp-academic"><i class="fas fa-user-tie"></i> Academic</span>
+    <span class="rp rp-parent"><i class="fas fa-users"></i> Parent</span>
+    <span class="rp rp-staff"><i class="fas fa-briefcase"></i> Staff</span>
+  </div>
+  <div class="input-group">
+    <label>Username</label>
+    <div class="ig-wrap">
+      <i class="ig-icon fas fa-user"></i>
+      <input type="text" id="username" placeholder="Enter your username" autofocus autocomplete="username">
+    </div>
+  </div>
+  <div class="input-group">
+    <label>Password</label>
+    <div class="ig-wrap">
+      <i class="ig-icon fas fa-lock"></i>
+      <input type="password" id="password" placeholder="Enter your password" class="pw-input" autocomplete="current-password">
+      <button class="eye-btn" type="button" onclick="togglePassword()" tabindex="-1">
+        <i class="fas fa-eye" id="eyeIcon"></i>
+      </button>
+    </div>
+  </div>
+  <button class="login-btn" id="loginBtn" onclick="doLogin()">
+    <i class="fas fa-sign-in-alt"></i> Sign In
+  </button>
+  <div class="lc-msg" id="lcMsg">
+    <i class="fas fa-exclamation-circle" id="lcIcon"></i>
+    <span id="lcText"></span>
+  </div>
+</div>
+
+<script>
+var _mode='staff';
+function setMode(m){
+  _mode=(m==='parent')?'parent':'staff';
+  var isP=_mode==='parent';
+  document.getElementById('tabStaff').className='mode-tab'+(isP?'':' active');
+  document.getElementById('tabParent').className='mode-tab parent'+(isP?' active':'');
+  document.getElementById('parentPanel').className='pa-panel'+(isP?' show':'');
+  document.getElementById('rolePills').style.display=isP?'none':'flex';
+  document.querySelector('.subtitle').textContent=isP?'Parent Login Access — sign in to see your child\'s progress':'Sign in to access your dashboard';
+  document.getElementById('username').placeholder=isP?'Parent username (from Class Teacher)':'Enter your username';
+  document.getElementById('password').placeholder=isP?'Parent password (from Class Teacher)':'Enter your password';
+  document.getElementById('lcMsg').style.display='none';
+  document.getElementById('username').focus();
+}
+function togglePassword(){
+  var p=document.getElementById('password'),i=document.getElementById('eyeIcon');
+  p.type=p.type==='password'?'text':'password';
+  i.className=p.type==='password'?'fas fa-eye':'fas fa-eye-slash';
+}
+['username','password'].forEach(function(id){
+  document.getElementById(id).addEventListener('keypress',function(e){if(e.key==='Enter')doLogin();});
+});
+function showMsg(text,type){
+  var box=document.getElementById('lcMsg'),ico=document.getElementById('lcIcon'),txt=document.getElementById('lcText');
+  box.className='lc-msg '+(type==='ok'?'ok':'err');
+  box.style.display='flex';
+  ico.className=type==='ok'?'fas fa-check-circle':'fas fa-exclamation-circle';
+  txt.textContent=text;
+  if(type!=='ok'){
+    var card=document.getElementById('loginCard');
+    card.style.animation='none';card.offsetHeight;
+    card.style.animation='shake .35s ease';
+    setTimeout(function(){card.style.animation='';},400);
+  }
+}
+function resetBtn(){
+  var btn=document.getElementById('loginBtn');
+  btn.disabled=false;
+  btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In';
+}
+function doLogin(){
+  var username=document.getElementById('username').value.trim();
+  var password=document.getElementById('password').value;
+  var btn=document.getElementById('loginBtn');
+  document.getElementById('lcMsg').style.display='none';
+  if(!username||!password){showMsg('Please enter both username and password.','err');return;}
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Signing in...';
+  google.script.run
+    .withSuccessHandler(function(result){
+      resetBtn();
+      if(result && result.blocked && result.html){
+        // Admin restriction: show the Access Disallowed page immediately.
+        document.open();
+        document.write(result.html);
+        document.close();
+        return;
+      }
+      if(!result||result.status!=='success'){
+        showMsg(result&&result.message?result.message:'Invalid username or password.','err');
+        return;
+      }
+      /* ── PARENT → load Parent.html from backend, inject parentData, auto-boot ── */
+      if(result.role==='parent'){
+        try{for(var i=localStorage.length-1;i>=0;i--){var k=localStorage.key(i);if(k&&k.indexOf('sms_pane_')===0)localStorage.removeItem(k);}if(result.sessionToken)localStorage.setItem('sms_token',result.sessionToken);}catch(e){}
+        /* Parent account DETECTED by the server (role = parent) — same login, any tab */
+        showMsg('Parent Login Access detected. Welcome, '+(result.fullName||username)+'! Loading parent portal...','ok');
+        var parentData=result.parentData||{};
+        google.script.run
+          .withSuccessHandler(function(parentHtml){
+            if(!parentHtml){showMsg('Parent portal file not found. Contact admin.','err');return;}
+            /* Inject auto-boot script before </body> */
+            var autoBootScript=[
+              '<script>',
+              '(function(){',
+              '  var _autoData='+JSON.stringify(parentData)+';',
+              '  function tryBoot(){',
+              '    if(typeof bootPortal==="function"){',
+              '      var ls=document.getElementById("loginScreen");',
+              '      if(ls)ls.style.display="none";',
+              '      bootPortal(_autoData);',
+              '    }',
+              '  }',
+              '  if(document.readyState==="complete"||document.readyState==="interactive"){',
+              '    setTimeout(tryBoot,100);',
+              '  } else {',
+              '    window.addEventListener("DOMContentLoaded",function(){setTimeout(tryBoot,100);});',
+              '  }',
+              '})();',
+              '<\/script>'
+            ].join('\n');
+            var injected=parentHtml.replace(/<\/body>/i,autoBootScript+'\n</body>');
+            document.open();
+            document.write(injected);
+            document.close();
+          })
+          .withFailureHandler(function(err){
+            showMsg('Error loading parent portal: '+(err&&err.message?err.message:'Try again.'),'err');
+          })
+          .getParentPortalHtml();
+        return;
+      }
+      /* ── ALL OTHER ROLES → write dashboard HTML (works even if the Parent tab was selected) ── */
+      if(result.html){
+        showMsg('Welcome! Loading your dashboard...','ok');
+        setTimeout(function(){
+          document.open();document.write(result.html);document.close();
+        },400);
+      } else {
+        showMsg('Login successful but no dashboard returned. Contact admin.','err');
+      }
+    })
+    .withFailureHandler(function(err){
+      resetBtn();
+      showMsg('Server error: '+(err&&err.message?err.message:'Please try again.'),'err');
+    })
+    .checkLogin(username,password);
+}
+</script>
+</body>
+</html>
