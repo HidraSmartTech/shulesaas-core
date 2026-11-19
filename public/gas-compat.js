@@ -1,11 +1,6 @@
 /* ============================================================================
  * public/gas-compat.js — Google Apps Script client compatibility layer
  * kwa ajili ya Multi-Tenant SaaS kwenye Cloudflare (Pages + Workers + D1)
- *
- * Inaigiza google.script.run ya GAS, na kila ombi hubeba:
- *   - Subdomain (moja kwa moja kupitia Host header), AU
- *   - ?school=<subdomain> kwa ajili ya majaribio kwenye workers.dev
- * pamoja na session token (localStorage: sms_token).
  * ========================================================================== */
 (function () {
   "use strict";
@@ -21,17 +16,20 @@
     if (schoolParam) return schoolParam;
     if (injectedSchool && injectedSchool.subdomain) return String(injectedSchool.subdomain).toLowerCase();
     var host = window.location.hostname.toLowerCase();
+    if (host.endsWith(".workers.dev") || host.endsWith(".pages.dev") || host === "localhost") return "";
     var parts = host.split(".");
-    if (parts.length >= 3 && parts[0] !== "www") return parts[0];
+    if (parts.length >= 3 && parts !== "www") return parts;
     return "";
   }
 
   var SCHOOL_SUBDOMAIN = detectSubdomain();
 
+  function withSchoolQuery(basePath) {
+    return basePath + (schoolParam ? (basePath.indexOf("?") >= 0 ? "&" : "?") + "school=" + encodeURIComponent(schoolParam) : "");
+  }
+
   function apiUrl() {
-    // Subdomain hutumika moja kwa moja kupitia hostname. Tunaweka ?school=
-    // tu kama ilivyopo kwenye URL ya ukurasa (majaribio ya workers.dev).
-    return "/api/gas" + (schoolParam ? "?school=" + encodeURIComponent(schoolParam) : "");
+    return withSchoolQuery("/api/gas");
   }
 
   // --------------------------------------------------------------------------
@@ -48,7 +46,6 @@
   function clearToken() {
     try {
       localStorage.removeItem(TOKEN_KEY);
-      // Futa pia pane-state za zamani (kama ilivyokuwa kwenye old_primary)
       for (var i = localStorage.length - 1; i >= 0; i--) {
         var k = localStorage.key(i);
         if (k && k.indexOf("sms_pane_") === 0) localStorage.removeItem(k);
@@ -74,7 +71,7 @@
         credentials: "same-origin",
         body: JSON.stringify({
           method: String(method),
-          args: Array.isArray(args) ? args : [],
+          args: Array.isArray(args) ? args :,
           token: getToken(),
         }),
         signal: controller ? controller.signal : undefined,
@@ -105,7 +102,6 @@
 
           var result = data.result === undefined ? null : data.result;
 
-          // Ikiwa server imetoa session token mpya (mfano baada ya login), ihifadhi
           if (result && typeof result === "object" && result.sessionToken) {
             setToken(result.sessionToken);
           }
@@ -123,55 +119,59 @@
     });
   }
 
-  // --------------------------------------------------------------------------
-  // 4. google.script.run Emulation (Proxy inayokubali method yoyote)
-  // --------------------------------------------------------------------------
-  var runState = {
-    _success: null,
-    _failure: null,
-    withSuccessHandler: function (fn) {
-      this._success = typeof fn === "function" ? fn : null;
-      return runProxy;
-    },
-    withFailureHandler: function (fn) {
-      this._failure = typeof fn === "function" ? fn : null;
-      return runProxy;
-    },
-  };
+  function restApiCall(path, options) {
+    options = options || {};
+    var headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
+    var tok = getToken();
+    if (tok) headers["Authorization"] = "Bearer " + tok;
 
-  var runProxy = new Proxy(runState, {
-    get: function (target, prop) {
-      if (prop === "withSuccessHandler" || prop === "withFailureHandler") {
-        return target[prop].bind(target);
-      }
-      if (typeof prop !== "string" || prop === "_success" || prop === "_failure") {
-        return undefined;
-      }
-      // Jina lolote jengine linachukuliwa kama method ya server
-      return function () {
-        var args = Array.prototype.slice.call(arguments);
-        var onSuccess = target._success;
-        var onFailure = target._failure;
-        target._success = null;
-        target._failure = null;
+    return fetch(withSchoolQuery(path), Object.assign({}, options, { headers: headers }))
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          if (!res.ok) throw new Error(data.error || "Ombi limeshindikana (" + res.status + ").");
+          return data;
+        });
+      });
+  }
 
-        serverCall(prop, args).then(
-          function (result) {
-            if (onSuccess) {
-              try { onSuccess(result); } catch (e) { console.error("Success handler error:", e); }
+  // --------------------------------------------------------------------------
+  // 4. google.script.run Emulation (Isolated runner per call chain)
+  // --------------------------------------------------------------------------
+  function createRunner(successFn, failureFn) {
+    return new Proxy({}, {
+      get: function (_, prop) {
+        if (prop === "withSuccessHandler") {
+          return function (fn) {
+            return createRunner(typeof fn === "function" ? fn : null, failureFn);
+          };
+        }
+        if (prop === "withFailureHandler") {
+          return function (fn) {
+            return createRunner(successFn, typeof fn === "function" ? fn : null);
+          };
+        }
+        if (typeof prop !== "string") return undefined;
+
+        return function () {
+          var args = Array.prototype.slice.call(arguments);
+          serverCall(prop, args).then(
+            function (result) {
+              if (successFn) {
+                try { successFn(result); } catch (e) { console.error("Success handler error:", e); }
+              }
+            },
+            function (err) {
+              if (failureFn) {
+                try { failureFn(err); } catch (e) { console.error("Failure handler error:", e); }
+              } else {
+                console.error("google.script.run." + prop + " imeshindwa:", err && err.message ? err.message : err);
+              }
             }
-          },
-          function (err) {
-            if (onFailure) {
-              try { onFailure(err); } catch (e) { console.error("Failure handler error:", e); }
-            } else {
-              console.error("google.script.run." + prop + " imeshindwa:", err && err.message ? err.message : err);
-            }
-          }
-        );
-      };
-    },
-  });
+          );
+        };
+      }
+    });
+  }
 
   // --------------------------------------------------------------------------
   // 5. Usakinishaji wa window.google.script (run, url, host)
@@ -179,7 +179,7 @@
   window.google = window.google || {};
   window.google.script = window.google.script || {};
 
-  window.google.script.run = runProxy;
+  window.google.script.run = createRunner(null, null);
 
   window.google.script.url = {
     getLocation: function (callback) {
@@ -190,7 +190,7 @@
       };
       queryString.forEach(function (value, key) {
         location.parameter[key] = value;
-        if (!location.parameters[key]) location.parameters[key] = [];
+        if (!location.parameters[key]) location.parameters[key] =;
         location.parameters[key].push(value);
       });
       if (typeof callback === "function") callback(location);
@@ -200,9 +200,9 @@
 
   window.google.script.host = {
     close: function () { window.close(); },
-    setWidth: function () { /* no-op kwenye Cloudflare SaaS */ },
-    setHeight: function () { /* no-op kwenye Cloudflare SaaS */ },
-    editor: { focus: function () { /* no-op */ } },
+    setWidth: function () {},
+    setHeight: function () {},
+    editor: { focus: function () {} },
   };
 
   // --------------------------------------------------------------------------
@@ -220,17 +220,29 @@
     getSubdomain: function () { return SCHOOL_SUBDOMAIN; },
     getPlan: function () { return injectedSchool && injectedSchool.plan ? injectedSchool.plan : ""; },
     logout: function () {
-      return serverCall("smsEndSession", [])
-        .catch(function () { /* ignore */ })
+      return serverCall("smsEndSession",)
+        .catch(function () {})
         .then(function () {
           clearToken();
-          var base = window.location.pathname.split("/")[1] || "";
-          window.location.href = "/" + (schoolParam ? "?school=" + encodeURIComponent(schoolParam) : "");
+          window.location.href = withSchoolQuery("/");
         });
     },
     fetchSchoolInfo: function () {
-      return fetch("/api/school-info" + (schoolParam ? "?school=" + encodeURIComponent(schoolParam) : ""))
-        .then(function (res) { return res.json(); });
+      return fetch(withSchoolQuery("/api/school-info")).then(function (res) { return res.json(); });
+    },
+    getPayments: function (studentId) {
+      var q = studentId ? "/api/payments?student_id=" + encodeURIComponent(studentId) : "/api/payments";
+      return restApiCall(q, { method: "GET" });
+    },
+    recordPayment: function (payload) {
+      return restApiCall("/api/payments", { method: "POST", body: JSON.stringify(payload || {}) });
+    },
+    getFeeStructures: function (academicYear) {
+      var q = academicYear ? "/api/fee-structures?academic_year=" + encodeURIComponent(academicYear) : "/api/fee-structures";
+      return restApiCall(q, { method: "GET" });
+    },
+    saveFeeStructure: function (payload) {
+      return restApiCall("/api/fee-structures", { method: "POST", body: JSON.stringify(payload || {}) });
     },
   };
 })();
