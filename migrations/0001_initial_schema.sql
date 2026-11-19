@@ -1,13 +1,34 @@
--- Migration: 0002_roles_and_payments.sql
+-- Migration: 0001_initial_schema.sql
 -- Engine: Cloudflare D1 (SQLite)
--- Purpose: Expand accounts.role CHECK constraint and add multi-tenant Fee Structures & Payments tables.
+-- SaaS Multi-tenant Schema for School Management System
 
-PRAGMA foreign_keys = OFF;
+PRAGMA foreign_keys = ON;
 
 -- ============================================================================
--- 1. UPDATE ACCOUNTS TABLE (Expand role CHECK constraint safely)
+-- 1. TENANTS / SCHOOLS TABLE
 -- ============================================================================
-CREATE TABLE accounts_new (
+CREATE TABLE IF NOT EXISTS schools (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  subdomain TEXT UNIQUE NOT NULL,
+  education_level TEXT NOT NULL DEFAULT 'O-Level',
+  plan TEXT NOT NULL CHECK (plan IN ('basic', 'pro', 'advanced')) DEFAULT 'basic',
+  status TEXT NOT NULL CHECK (status IN ('active', 'suspended', 'expired')) DEFAULT 'active',
+  max_students INTEGER NOT NULL DEFAULT 500,
+  logo_url TEXT DEFAULT '',
+  contact_email TEXT DEFAULT '',
+  contact_phone TEXT DEFAULT '',
+  subscription_expires_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+  updated_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_schools_subdomain ON schools (lower(trim(subdomain)));
+
+-- ============================================================================
+-- 2. ACCOUNTS & SESSIONS (Multi-Tenant)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS accounts (
   id TEXT PRIMARY KEY,
   school_id TEXT NOT NULL,
   seq INTEGER NOT NULL,
@@ -16,10 +37,8 @@ CREATE TABLE accounts_new (
   password_hash TEXT NOT NULL,
   password_salt TEXT NOT NULL,
   role TEXT NOT NULL CHECK (role IN (
-    'superadmin', 'schoolmanager', 'headofschool', 'headteacher',
-    'secondmaster', 'accountant', 'bursar', 'academic', 'academicmaster',
-    'discipline', 'classteacher', 'teacher', 'librarian', 'storekeeper',
-    'patron', 'matron', 'staff', 'parent', 'student'
+    'superadmin', 'schoolmanager', 'headofschool', 'secondmaster', 
+    'accountant', 'academic', 'classteacher', 'teacher', 'staff', 'parent'
   )),
   position TEXT NOT NULL DEFAULT '',
   status TEXT NOT NULL DEFAULT 'Active',
@@ -29,83 +48,68 @@ CREATE TABLE accounts_new (
   FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE
 );
 
-INSERT INTO accounts_new (
-  id, school_id, seq, username, full_name, password_hash, password_salt,
-  role, position, status, profile, created_at, updated_at
-)
-SELECT
-  id, school_id, seq, username, full_name, password_hash, password_salt,
-  role, position, status, profile, created_at, updated_at
-FROM accounts;
-
-DROP TABLE accounts;
-ALTER TABLE accounts_new RENAME TO accounts;
-
-CREATE UNIQUE INDEX IF NOT EXISTS idx_accounts_tenant_username
+CREATE UNIQUE INDEX IF NOT EXISTS idx_accounts_tenant_username 
   ON accounts (school_id, lower(trim(username)));
 
-CREATE INDEX IF NOT EXISTS idx_accounts_tenant_role
-  ON accounts (school_id, role);
-
--- ============================================================================
--- 2. FEE STRUCTURES TABLE (Multi-Tenant)
--- ============================================================================
-CREATE TABLE IF NOT EXISTS fee_structures (
-  id TEXT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS app_sessions (
+  token_hash TEXT PRIMARY KEY,
   school_id TEXT NOT NULL,
-  academic_year TEXT NOT NULL,                   -- e.g. '2026'
-  class_level TEXT NOT NULL,                     -- e.g. 'Form 1', 'Standard 4', 'ALL'
-  fee_name TEXT NOT NULL,                        -- e.g. 'Tuition Fee', 'Lunch', 'Exam Fee'
-  amount REAL NOT NULL CHECK (amount >= 0),
-  currency TEXT NOT NULL DEFAULT 'TZS',
-  term TEXT NOT NULL DEFAULT 'Annual',           -- 'Term 1', 'Term 2', 'Annual'
-  is_mandatory INTEGER NOT NULL DEFAULT 1,       -- 1 = True, 0 = False
+  username TEXT NOT NULL,
+  role TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-  updated_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
   FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS idx_fee_structures_tenant
-  ON fee_structures (school_id, academic_year, class_level);
+CREATE INDEX IF NOT EXISTS idx_app_sessions_expiry ON app_sessions (expires_at);
+CREATE INDEX IF NOT EXISTS idx_app_sessions_tenant ON app_sessions (school_id, token_hash);
 
 -- ============================================================================
--- 3. PAYMENTS / TRANSACTIONS TABLE (Multi-Tenant)
+-- 3. SCHOOL DATA STORAGE (GAS Emulator Virtual Sheets)
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS payments (
-  id TEXT PRIMARY KEY,                           -- UUID or 'pay_...'
-  school_id TEXT NOT NULL,                       -- Tenant key
-  receipt_no TEXT NOT NULL,                      -- Unique receipt per school
-  student_id TEXT NOT NULL,                      -- Admission No / Student ID
-  student_name TEXT NOT NULL DEFAULT '',
-  class_level TEXT NOT NULL DEFAULT '',
-  academic_year TEXT NOT NULL DEFAULT '',
-  fee_structure_id TEXT,                         -- Optional link to fee_structures
-  fee_category TEXT NOT NULL DEFAULT 'Tuition',  -- e.g. 'Tuition', 'Transport', 'Uniform'
-  amount_paid REAL NOT NULL CHECK (amount_paid > 0),
-  currency TEXT NOT NULL DEFAULT 'TZS',
-  payment_method TEXT NOT NULL CHECK (payment_method IN (
-    'cash', 'bank', 'mobile_money', 'control_number', 'cheque', 'other'
-  )) DEFAULT 'cash',
-  reference_no TEXT NOT NULL DEFAULT '',         -- Bank slip / M-Pesa / TigoPesa / GePG Control No
-  payment_date TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-  status TEXT NOT NULL CHECK (status IN (
-    'completed', 'pending', 'reversed', 'cancelled'
-  )) DEFAULT 'completed',
-  recorded_by TEXT NOT NULL DEFAULT '',          -- Username of accountant/bursar
-  notes TEXT NOT NULL DEFAULT '',
-  created_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+CREATE TABLE IF NOT EXISTS sheet_meta (
+  school_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  version INTEGER NOT NULL DEFAULT 1,
   updated_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-  FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE,
-  FOREIGN KEY (fee_structure_id) REFERENCES fee_structures(id) ON DELETE SET NULL
+  PRIMARY KEY (school_id, name),
+  FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_payments_tenant_receipt
-  ON payments (school_id, lower(trim(receipt_no)));
+CREATE TABLE IF NOT EXISTS sheet_rows (
+  school_id TEXT NOT NULL,
+  sheet TEXT NOT NULL,
+  row_no INTEGER NOT NULL CHECK (row_no >= 1),
+  cells TEXT NOT NULL,
+  PRIMARY KEY (school_id, sheet, row_no),
+  FOREIGN KEY (school_id, sheet) REFERENCES sheet_meta(school_id, name) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
-CREATE INDEX IF NOT EXISTS idx_payments_tenant_student
-  ON payments (school_id, student_id, academic_year);
+CREATE INDEX IF NOT EXISTS idx_sheet_rows_lookup ON sheet_rows (school_id, sheet);
 
-CREATE INDEX IF NOT EXISTS idx_payments_tenant_date
-  ON payments (school_id, payment_date DESC);
+-- ============================================================================
+-- 4. BACKUPS & AUDIT (Multi-Tenant)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS system_backups (
+  id TEXT PRIMARY KEY,
+  school_id TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+  created_by TEXT NOT NULL DEFAULT '',
+  note TEXT NOT NULL DEFAULT '',
+  data TEXT NOT NULL,
+  FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE
+);
 
-PRAGMA foreign_keys = ON;
+CREATE INDEX IF NOT EXISTS idx_backups_tenant ON system_backups (school_id, created_at DESC);
+
+-- ============================================================================
+-- 5. SECURITY & THROTTLING
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS login_failures (
+  school_id TEXT NOT NULL,
+  key TEXT NOT NULL,
+  fails INTEGER NOT NULL DEFAULT 0,
+  first_at TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+  PRIMARY KEY (school_id, key),
+  FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE
+);

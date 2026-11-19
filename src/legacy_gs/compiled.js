@@ -1,8 +1,15 @@
 export function runGas(sandbox, fnName, args) {
-  const { Date, console, __HOST__, Logger, Session, SpreadsheetApp, HtmlService, PropertiesService, CacheService, LockService, ScriptApp, Utilities } = sandbox;
-  const { Date, console, __HOST__, Logger, Session, SpreadsheetApp, HtmlService, PropertiesService, CacheService, LockService, ScriptApp, Utilities } = sandbox;
-  const __APP_ENV__ = "cloudflare";
-  const __PrimaryEngine = (function() { // ============================================================
+  const {
+    Date, console, __HOST__, __SCHOOL__, Logger, Session,
+    SpreadsheetApp, HtmlService, PropertiesService, CacheService,
+    LockService, ScriptApp, Utilities
+  } = sandbox;
+
+  globalThis.__APP_ENV__ = "cloudflare";
+  var calc, res, data, rows, sheet, ss, i, j, k, row, item, obj, list, map, out, tmp, val, key, id, name, code, err, msg, ok, status, total, count, sum, avg, min, max;
+
+  const __PrimaryEngine = (function() {
+    // ============================================================
 // UNIFIED CODE.GS - School Management System
 // ALL data stored in the MASTER spreadsheet only.
 // ============================================================
@@ -6012,8 +6019,11 @@ function saveAcademicSettings(payload) {
   }
 }
 
- return { doGet: typeof doGet!=="undefined"?doGet:undefined,attRosterRows_: typeof attRosterRows_!=="undefined"?attRosterRows_:undefined,attMonthRows_: typeof attMonthRows_!=="undefined"?attMonthRows_:undefined,attBuildClass_: typeof attBuildClass_!=="undefined"?attBuildClass_:undefined,addStudent: typeof addStudent!=="undefined"?addStudent:undefined,getMonthlyAttendance: typeof getMonthlyAttendance!=="undefined"?getMonthlyAttendance:undefined,getMonthlyAttendanceBatch: typeof getMonthlyAttendanceBatch!=="undefined"?getMonthlyAttendanceBatch:undefined,getDaysSavedBatch: typeof getDaysSavedBatch!=="undefined"?getDaysSavedBatch:undefined,getYearlyAttendanceSummary: typeof getYearlyAttendanceSummary!=="undefined"?getYearlyAttendanceSummary:undefined,legacyCheckLogin_v1_DISABLED: typeof legacyCheckLogin_v1_DISABLED!=="undefined"?legacyCheckLogin_v1_DISABLED:undefined,getParentPortalData: typeof getParentPortalData!=="undefined"?getParentPortalData:undefined,logout: typeof logout!=="undefined"?logout:undefined,setTeacherSession: typeof setTeacherSession!=="undefined"?setTeacherSession:undefined,getTeacherSession: typeof getTeacherSession!=="undefined"?getTeacherSession:undefined,getTodayPresentCount: typeof getTodayPresentCount!=="undefined"?getTodayPresentCount:undefined,clearTeacherSession: typeof clearTeacherSession!=="undefined"?clearTeacherSession:undefined,ensureUsersSheet: typeof ensureUsersSheet!=="undefined"?ensureUsersSheet:undefined,homeroomMap_: typeof homeroomMap_!=="undefined"?homeroomMap_:undefined,getTeacherList: typeof getTeacherList!=="undefined"?getTeacherList:undefined,getTeachers: typeof getTeachers!=="undefined"?getTeachers:undefined,addTeacher: typeof addTeacher!=="undefined"?addTeacher:undefined,updateTeacher: typeof updateTeacher!=="undefined"?updateTeacher:undefined,deleteTeacher: typeof deleteTeacher!=="undefined"?deleteTeacher:undefined,logActivity: typeof logActivity!=="undefined"?logActivity:undefined,getActivityLog: typeof getActivityLog!=="undefined"?getActivityLog:undefined,getCurrentStatus: typeof getCurrentStatus!=="undefined"?getCurrentStatus:undefined,getDeadlineData: typeof getDeadlineData!=="undefined"?getDeadlineData:undefined,setDeadlineRange: typeof setDeadlineRange!=="undefined"?setDeadlineRange:undefined,setStatus: typeof setStatus!=="undefined"?setStatus:undefined,getDeadline: typeof getDeadline!=="undefined"?getDeadline:undefined,setDeadline: typeof setDeadline!=="undefined"?setDeadline:undefined,resolveClassLevel: typeof resolveClassLevel!=="undefined"?resolveClassLevel:undefined,extractFormNumber: typeof extractFormNumber!=="undefined"?extractFormNumber:undefined,primaryClassSheetName_: typeof primaryClassSheetName_!=="undefined"?primaryClassSheetName_:undefined,primaryStudentSheetNames_: typeof primaryStudentSheetNames_!=="undefined"?primaryStudentSheetNames_:undefined,studentSheetForClass_: typeof studentSheetForClass_!=="undefined"?studentSheetForClass_:undefined,classMatchesExam: typeof classMatchesExam!=="undefined"?classMatchesExam:undefined,dateToInt: typeof dateToInt!=="undefined"?dateToInt:undefined,todayInt: typeof todayInt!=="undefined"?todayInt:undefined,sheetDateToLocal: typeof sheetDateToLocal!=="undefined"?sheetDateToLocal:undefined,getExamCategoriesForClass: typeof getExamCategoriesForClass!=="undefined"?getExamCategoriesForClass:undefined,getExamsForClass: typeof getExamsForClass!=="undefined"?getExamsForClass:undefined,getSubjectsForClassAndTeacher: typeof getSubjectsForClassAndTeacher!=="undefined"?getSubjectsForClassAndTeacher:undefined,getScoresSheet: typeof getScoresSheet!=="undefined"?getScoresSheet:undefined,ensureScoresSheetLegacy: typeof ensureScoresSheetLegacy!=="undefined"?ensureScoresSheetLegacy:undefined,ensureScoresSheet: typeof ensureScoresSheet!=="undefined"?ensureScoresSheet:undefined,getStudentCountForClass: typeof getStudentCountForClass!=="undefined"?getStudentCountForClass:undefined,getStudentsForClass: typeof getStudentsForClass!=="undefined"?getStudentsForClass:undefined,getStudentsForScoring: typeof getStudentsForScoring!=="undefined"?getStudentsForScoring:undefined,mergeScores: typeof mergeScores!=="undefined"?mergeScores:undefined,submitScoresByName: typeof submitScoresByName!=="undefined"?submitScoresByName:undefined,getExistingScores: typeof getExistingScores!=="undefined"?getExistingScores:undefined,submitOrUpdateScores: typeof submitOrUpdateScores!=="undefined"?submitOrUpdateScores:undefined,getScoreReport: typeof getScoreReport!=="undefined"?getScoreReport:undefined,getClassExamReport: typeof getClassExamReport!=="undefined"?getClassExamReport:undefined,getScoreTrackingDataLegacy_: typeof getScoreTrackingDataLegacy_!=="undefined"?getScoreTrackingDataLegacy_:undefined,openClassSheet: typeof openClassSheet!=="undefined"?openClassSheet:undefined,openAttendanceSheet: typeof openAttendanceSheet!=="undefined"?openAttendanceSheet:undefined,ensureAttendanceSheet: typeof ensureAttendanceSheet!=="undefined"?ensureAttendanceSheet:undefined,attAssertClass_: typeof attAssertClass_!=="undefined"?attAssertClass_:undefined,getAttendanceStudents: typeof getAttendanceStudents!=="undefined"?getAttendanceStudents:undefined,classLevelMatch: typeof classLevelMatch!=="undefined"?classLevelMatch:undefined,submitAttendance: typeof submitAttendance!=="undefined"?submitAttendance:undefined,logAttendanceSummary: typeof logAttendanceSummary!=="undefined"?logAttendanceSummary:undefined,getTODStudents: typeof getTODStudents!=="undefined"?getTODStudents:undefined,submitTOD: typeof submitTOD!=="undefined"?submitTOD:undefined,getTeacherProfile: typeof getTeacherProfile!=="undefined"?getTeacherProfile:undefined,fetchProfile: typeof fetchProfile!=="undefined"?fetchProfile:undefined,fetchReport: typeof fetchReport!=="undefined"?fetchReport:undefined,fetchExamTypes: typeof fetchExamTypes!=="undefined"?fetchExamTypes:undefined,getTrackingExamTypes: typeof getTrackingExamTypes!=="undefined"?getTrackingExamTypes:undefined,getTrackingReport: typeof getTrackingReport!=="undefined"?getTrackingReport:undefined,clean: typeof clean!=="undefined"?clean:undefined,lower: typeof lower!=="undefined"?lower:undefined,sameClass: typeof sameClass!=="undefined"?sameClass:undefined,addSubject: typeof addSubject!=="undefined"?addSubject:undefined,readSubjectsFromAssignment: typeof readSubjectsFromAssignment!=="undefined"?readSubjectsFromAssignment:undefined,getSubjectsByClass: typeof getSubjectsByClass!=="undefined"?getSubjectsByClass:undefined,getClassSheetId: typeof getClassSheetId!=="undefined"?getClassSheetId:undefined,getClasses: typeof getClasses!=="undefined"?getClasses:undefined,getClassExamTypes: typeof getClassExamTypes!=="undefined"?getClassExamTypes:undefined,getExamSubTypes: typeof getExamSubTypes!=="undefined"?getExamSubTypes:undefined,examScoreToGrade_: typeof examScoreToGrade_!=="undefined"?examScoreToGrade_:undefined,examGradeToPoint_: typeof examGradeToPoint_!=="undefined"?examGradeToPoint_:undefined,examPointToDivision_: typeof examPointToDivision_!=="undefined"?examPointToDivision_:undefined,examBest7PointSum_: typeof examBest7PointSum_!=="undefined"?examBest7PointSum_:undefined,examNormalizeDivisionKey_: typeof examNormalizeDivisionKey_!=="undefined"?examNormalizeDivisionKey_:undefined,examBest7SummaryFromSubjects_: typeof examBest7SummaryFromSubjects_!=="undefined"?examBest7SummaryFromSubjects_:undefined,getExamResults: typeof getExamResults!=="undefined"?getExamResults:undefined,fetchTopPanelData: typeof fetchTopPanelData!=="undefined"?fetchTopPanelData:undefined,getStudentListRaw: typeof getStudentListRaw!=="undefined"?getStudentListRaw:undefined,getStudentList: typeof getStudentList!=="undefined"?getStudentList:undefined,generateUniqueAdmNo: typeof generateUniqueAdmNo!=="undefined"?generateUniqueAdmNo:undefined,findDuplicateAdmNos: typeof findDuplicateAdmNos!=="undefined"?findDuplicateAdmNos:undefined,admDefaultPrefix_: typeof admDefaultPrefix_!=="undefined"?admDefaultPrefix_:undefined,admSeriesConfig_: typeof admSeriesConfig_!=="undefined"?admSeriesConfig_:undefined,admSeriesFormat_: typeof admSeriesFormat_!=="undefined"?admSeriesFormat_:undefined,admSeriesNextFor_: typeof admSeriesNextFor_!=="undefined"?admSeriesNextFor_:undefined,getAdmissionSeries: typeof getAdmissionSeries!=="undefined"?getAdmissionSeries:undefined,saveAdmissionSeries: typeof saveAdmissionSeries!=="undefined"?saveAdmissionSeries:undefined,previewNextAdmNo: typeof previewNextAdmNo!=="undefined"?previewNextAdmNo:undefined,admEnsureStudentCols_: typeof admEnsureStudentCols_!=="undefined"?admEnsureStudentCols_:undefined,admPremTakenBy_: typeof admPremTakenBy_!=="undefined"?admPremTakenBy_:undefined,saveStudent: typeof saveStudent!=="undefined"?saveStudent:undefined,deleteStudent: typeof deleteStudent!=="undefined"?deleteStudent:undefined,getAcademicClassesRaw: typeof getAcademicClassesRaw!=="undefined"?getAcademicClassesRaw:undefined,getAcademicClasses: typeof getAcademicClasses!=="undefined"?getAcademicClasses:undefined,saveAcademicClass: typeof saveAcademicClass!=="undefined"?saveAcademicClass:undefined,deleteAcademicClass: typeof deleteAcademicClass!=="undefined"?deleteAcademicClass:undefined,getAcademicSubjectsRaw: typeof getAcademicSubjectsRaw!=="undefined"?getAcademicSubjectsRaw:undefined,getAcademicSubjects: typeof getAcademicSubjects!=="undefined"?getAcademicSubjects:undefined,saveAcademicSubject: typeof saveAcademicSubject!=="undefined"?saveAcademicSubject:undefined,deleteAcademicSubject: typeof deleteAcademicSubject!=="undefined"?deleteAcademicSubject:undefined,getAcademicExamsRaw: typeof getAcademicExamsRaw!=="undefined"?getAcademicExamsRaw:undefined,isoLocal: typeof isoLocal!=="undefined"?isoLocal:undefined,getAcademicExams: typeof getAcademicExams!=="undefined"?getAcademicExams:undefined,getActiveExamsForTeacher: typeof getActiveExamsForTeacher!=="undefined"?getActiveExamsForTeacher:undefined,saveAcademicExam: typeof saveAcademicExam!=="undefined"?saveAcademicExam:undefined,checkAndDeactivatePastExams: typeof checkAndDeactivatePastExams!=="undefined"?checkAndDeactivatePastExams:undefined,deleteAcademicExam: typeof deleteAcademicExam!=="undefined"?deleteAcademicExam:undefined,publishExamResults: typeof publishExamResults!=="undefined"?publishExamResults:undefined,getTimetable: typeof getTimetable!=="undefined"?getTimetable:undefined,saveTimetable: typeof saveTimetable!=="undefined"?saveTimetable:undefined,getMessages: typeof getMessages!=="undefined"?getMessages:undefined,sendMessage: typeof sendMessage!=="undefined"?sendMessage:undefined,changeTeacherPassword: typeof changeTeacherPassword!=="undefined"?changeTeacherPassword:undefined,saveStaffRecord: typeof saveStaffRecord!=="undefined"?saveStaffRecord:undefined,getStaffRecords: typeof getStaffRecords!=="undefined"?getStaffRecords:undefined,deleteStaffRecord: typeof deleteStaffRecord!=="undefined"?deleteStaffRecord:undefined,getFinancialSummary: typeof getFinancialSummary!=="undefined"?getFinancialSummary:undefined,getAcademicStats: typeof getAcademicStats!=="undefined"?getAcademicStats:undefined,updateStudentStatus: typeof updateStudentStatus!=="undefined"?updateStudentStatus:undefined,updateClassStatus: typeof updateClassStatus!=="undefined"?updateClassStatus:undefined,updateSubjectStatus: typeof updateSubjectStatus!=="undefined"?updateSubjectStatus:undefined,getMonitorData: typeof getMonitorData!=="undefined"?getMonitorData:undefined,saveSystemConfig: typeof saveSystemConfig!=="undefined"?saveSystemConfig:undefined,saveSchoolConfig: typeof saveSchoolConfig!=="undefined"?saveSchoolConfig:undefined,saveAdminProfile: typeof saveAdminProfile!=="undefined"?saveAdminProfile:undefined,changeAdminPassword: typeof changeAdminPassword!=="undefined"?changeAdminPassword:undefined,checkParentLogin: typeof checkParentLogin!=="undefined"?checkParentLogin:undefined,getClassesAndExamTypes: typeof getClassesAndExamTypes!=="undefined"?getClassesAndExamTypes:undefined,getStudentsForParent: typeof getStudentsForParent!=="undefined"?getStudentsForParent:undefined,getStudentReport: typeof getStudentReport!=="undefined"?getStudentReport:undefined,readByAliases: typeof readByAliases!=="undefined"?readByAliases:undefined,getAllParentAssignments: typeof getAllParentAssignments!=="undefined"?getAllParentAssignments:undefined,addParentAssignment: typeof addParentAssignment!=="undefined"?addParentAssignment:undefined,deleteParentAssignment: typeof deleteParentAssignment!=="undefined"?deleteParentAssignment:undefined,getTeacherClasses: typeof getTeacherClasses!=="undefined"?getTeacherClasses:undefined,isSubjectValidForClass: typeof isSubjectValidForClass!=="undefined"?isSubjectValidForClass:undefined,getExamNamesForTracking: typeof getExamNamesForTracking!=="undefined"?getExamNamesForTracking:undefined,getScoreTrackingData: typeof getScoreTrackingData!=="undefined"?getScoreTrackingData:undefined,norm: typeof norm!=="undefined"?norm:undefined,formNo: typeof formNo!=="undefined"?formNo:undefined,classSame: typeof classSame!=="undefined"?classSame:undefined,subjectSame: typeof subjectSame!=="undefined"?subjectSame:undefined,detectCategory: typeof detectCategory!=="undefined"?detectCategory:undefined,resolveExamType: typeof resolveExamType!=="undefined"?resolveExamType:undefined,getTeacherFullName: typeof getTeacherFullName!=="undefined"?getTeacherFullName:undefined,migrateScoresToFormSheets: typeof migrateScoresToFormSheets!=="undefined"?migrateScoresToFormSheets:undefined,authorizeDriveAccess: typeof authorizeDriveAccess!=="undefined"?authorizeDriveAccess:undefined,saveTODReport: typeof saveTODReport!=="undefined"?saveTODReport:undefined,getMyTODDates: typeof getMyTODDates!=="undefined"?getMyTODDates:undefined,getMyTODReports: typeof getMyTODReports!=="undefined"?getMyTODReports:undefined,deleteTODReport: typeof deleteTODReport!=="undefined"?deleteTODReport:undefined,getTODReportByDate: typeof getTODReportByDate!=="undefined"?getTODReportByDate:undefined,getTODWeeklyReport: typeof getTODWeeklyReport!=="undefined"?getTODWeeklyReport:undefined,mapSheetName: typeof mapSheetName!=="undefined"?mapSheetName:undefined,getOrCreateMapSheet: typeof getOrCreateMapSheet!=="undefined"?getOrCreateMapSheet:undefined,saveStudentSubjectMapping: typeof saveStudentSubjectMapping!=="undefined"?saveStudentSubjectMapping:undefined,getStudentsAndMappingForSubject: typeof getStudentsAndMappingForSubject!=="undefined"?getStudentsAndMappingForSubject:undefined,getSubjectMappedCount: typeof getSubjectMappedCount!=="undefined"?getSubjectMappedCount:undefined,getSubjectMappingSummary: typeof getSubjectMappingSummary!=="undefined"?getSubjectMappingSummary:undefined,ensureAcademicYearsSheet: typeof ensureAcademicYearsSheet!=="undefined"?ensureAcademicYearsSheet:undefined,ensureAlumniSheet: typeof ensureAlumniSheet!=="undefined"?ensureAlumniSheet:undefined,progGetAcademicYears: typeof progGetAcademicYears!=="undefined"?progGetAcademicYears:undefined,progSetActiveYear: typeof progSetActiveYear!=="undefined"?progSetActiveYear:undefined,progCreateAcademicYear: typeof progCreateAcademicYear!=="undefined"?progCreateAcademicYear:undefined,progPromoteStudents: typeof progPromoteStudents!=="undefined"?progPromoteStudents:undefined,progGetAlumni: typeof progGetAlumni!=="undefined"?progGetAlumni:undefined,getClassTeachersWithAttendanceStatus: typeof getClassTeachersWithAttendanceStatus!=="undefined"?getClassTeachersWithAttendanceStatus:undefined,colIdx: typeof colIdx!=="undefined"?colIdx:undefined,addParent: typeof addParent!=="undefined"?addParent:undefined,ensureParentsSheet: typeof ensureParentsSheet!=="undefined"?ensureParentsSheet:undefined,getParentList: typeof getParentList!=="undefined"?getParentList:undefined,updateParent: typeof updateParent!=="undefined"?updateParent:undefined,deleteParent: typeof deleteParent!=="undefined"?deleteParent:undefined,getLoginPage: typeof getLoginPage!=="undefined"?getLoginPage:undefined,getIndexPage: typeof getIndexPage!=="undefined"?getIndexPage:undefined,getParentPortalHtml: typeof getParentPortalHtml!=="undefined"?getParentPortalHtml:undefined,legacyCheckLogin_v2_DISABLED: typeof legacyCheckLogin_v2_DISABLED!=="undefined"?legacyCheckLogin_v2_DISABLED:undefined,getSchoolAnnouncements: typeof getSchoolAnnouncements!=="undefined"?getSchoolAnnouncements:undefined,getAttendanceRecords: typeof getAttendanceRecords!=="undefined"?getAttendanceRecords:undefined,col: typeof col!=="undefined"?col:undefined,getAllExamResults: typeof getAllExamResults!=="undefined"?getAllExamResults:undefined,clearAllActivityLogs: typeof clearAllActivityLogs!=="undefined"?clearAllActivityLogs:undefined,legacyCheckLogin_v3_DISABLED: typeof legacyCheckLogin_v3_DISABLED!=="undefined"?legacyCheckLogin_v3_DISABLED:undefined,smsCheckLoginCore_: typeof smsCheckLoginCore_!=="undefined"?smsCheckLoginCore_:undefined,getDashboardKeyFromPosition: typeof getDashboardKeyFromPosition!=="undefined"?getDashboardKeyFromPosition:undefined,ensureDashboardAccessSheet_: typeof ensureDashboardAccessSheet_!=="undefined"?ensureDashboardAccessSheet_:undefined,getDashboardAccessPolicies: typeof getDashboardAccessPolicies!=="undefined"?getDashboardAccessPolicies:undefined,saveDashboardAccessPolicies: typeof saveDashboardAccessPolicies!=="undefined"?saveDashboardAccessPolicies:undefined,saveDashboardAccessState: typeof saveDashboardAccessState!=="undefined"?saveDashboardAccessState:undefined,logDashboardAccessEvent_: typeof logDashboardAccessEvent_!=="undefined"?logDashboardAccessEvent_:undefined,getDashboardAccessEvents: typeof getDashboardAccessEvents!=="undefined"?getDashboardAccessEvents:undefined,forceLogoutDashboard: typeof forceLogoutDashboard!=="undefined"?forceLogoutDashboard:undefined,canAccessDashboard: typeof canAccessDashboard!=="undefined"?canAccessDashboard:undefined,evalRichDashboardPolicy_: typeof evalRichDashboardPolicy_!=="undefined"?evalRichDashboardPolicy_:undefined,checkCurrentDashboardAccess: typeof checkCurrentDashboardAccess!=="undefined"?checkCurrentDashboardAccess:undefined,getAccessDeniedPage: typeof getAccessDeniedPage!=="undefined"?getAccessDeniedPage:undefined,logDashboardBlockedAttempt: typeof logDashboardBlockedAttempt!=="undefined"?logDashboardBlockedAttempt:undefined,behLevel_: typeof behLevel_!=="undefined"?behLevel_:undefined,ensureBehaviorSheet_: typeof ensureBehaviorSheet_!=="undefined"?ensureBehaviorSheet_:undefined,behNorm_: typeof behNorm_!=="undefined"?behNorm_:undefined,behClassKey_: typeof behClassKey_!=="undefined"?behClassKey_:undefined,behTeacherClasses_: typeof behTeacherClasses_!=="undefined"?behTeacherClasses_:undefined,add: typeof add!=="undefined"?add:undefined,behCanAccess_: typeof behCanAccess_!=="undefined"?behCanAccess_:undefined,getMyHomeroomClasses: typeof getMyHomeroomClasses!=="undefined"?getMyHomeroomClasses:undefined,behReadMap_: typeof behReadMap_!=="undefined"?behReadMap_:undefined,getBehaviorSheet: typeof getBehaviorSheet!=="undefined"?getBehaviorSheet:undefined,saveBehaviors: typeof saveBehaviors!=="undefined"?saveBehaviors:undefined,fetchReportBehaviors: typeof fetchReportBehaviors!=="undefined"?fetchReportBehaviors:undefined,smsNewToken_: typeof smsNewToken_!=="undefined"?smsNewToken_:undefined,smsEndSession: typeof smsEndSession!=="undefined"?smsEndSession:undefined,smsStoreScript_: typeof smsStoreScript_!=="undefined"?smsStoreScript_:undefined,smsClearScript_: typeof smsClearScript_!=="undefined"?smsClearScript_:undefined,smsAppendScript_: typeof smsAppendScript_!=="undefined"?smsAppendScript_:undefined,smsInjectRestore_: typeof smsInjectRestore_!=="undefined"?smsInjectRestore_:undefined,drop: typeof drop!=="undefined"?drop:undefined,run: typeof run!=="undefined"?run:undefined,smsDashboardFor_: typeof smsDashboardFor_!=="undefined"?smsDashboardFor_:undefined,smsRestoreSession: typeof smsRestoreSession!=="undefined"?smsRestoreSession:undefined,smsParentData_: typeof smsParentData_!=="undefined"?smsParentData_:undefined,smsParentHtml_: typeof smsParentHtml_!=="undefined"?smsParentHtml_:undefined,tryBoot: typeof tryBoot!=="undefined"?tryBoot:undefined,checkLogin: typeof checkLogin!=="undefined"?checkLogin:undefined,acsSheet_: typeof acsSheet_!=="undefined"?acsSheet_:undefined,getAcademicSettings: typeof getAcademicSettings!=="undefined"?getAcademicSettings:undefined,saveAcademicSettings: typeof saveAcademicSettings!=="undefined"?saveAcademicSettings:undefined }; })();
-  const __SecondaryEngine = (function() { // ============================================================
+    return { doGet: typeof doGet !== "undefined" ? doGet : undefined, attRosterRows_: typeof attRosterRows_ !== "undefined" ? attRosterRows_ : undefined, attMonthRows_: typeof attMonthRows_ !== "undefined" ? attMonthRows_ : undefined, attBuildClass_: typeof attBuildClass_ !== "undefined" ? attBuildClass_ : undefined, addStudent: typeof addStudent !== "undefined" ? addStudent : undefined, getMonthlyAttendance: typeof getMonthlyAttendance !== "undefined" ? getMonthlyAttendance : undefined, getMonthlyAttendanceBatch: typeof getMonthlyAttendanceBatch !== "undefined" ? getMonthlyAttendanceBatch : undefined, getDaysSavedBatch: typeof getDaysSavedBatch !== "undefined" ? getDaysSavedBatch : undefined, getYearlyAttendanceSummary: typeof getYearlyAttendanceSummary !== "undefined" ? getYearlyAttendanceSummary : undefined, legacyCheckLogin_v1_DISABLED: typeof legacyCheckLogin_v1_DISABLED !== "undefined" ? legacyCheckLogin_v1_DISABLED : undefined, getParentPortalData: typeof getParentPortalData !== "undefined" ? getParentPortalData : undefined, logout: typeof logout !== "undefined" ? logout : undefined, setTeacherSession: typeof setTeacherSession !== "undefined" ? setTeacherSession : undefined, getTeacherSession: typeof getTeacherSession !== "undefined" ? getTeacherSession : undefined, getTodayPresentCount: typeof getTodayPresentCount !== "undefined" ? getTodayPresentCount : undefined, clearTeacherSession: typeof clearTeacherSession !== "undefined" ? clearTeacherSession : undefined, ensureUsersSheet: typeof ensureUsersSheet !== "undefined" ? ensureUsersSheet : undefined, homeroomMap_: typeof homeroomMap_ !== "undefined" ? homeroomMap_ : undefined, getTeacherList: typeof getTeacherList !== "undefined" ? getTeacherList : undefined, getTeachers: typeof getTeachers !== "undefined" ? getTeachers : undefined, addTeacher: typeof addTeacher !== "undefined" ? addTeacher : undefined, updateTeacher: typeof updateTeacher !== "undefined" ? updateTeacher : undefined, deleteTeacher: typeof deleteTeacher !== "undefined" ? deleteTeacher : undefined, logActivity: typeof logActivity !== "undefined" ? logActivity : undefined, getActivityLog: typeof getActivityLog !== "undefined" ? getActivityLog : undefined, getCurrentStatus: typeof getCurrentStatus !== "undefined" ? getCurrentStatus : undefined, getDeadlineData: typeof getDeadlineData !== "undefined" ? getDeadlineData : undefined, setDeadlineRange: typeof setDeadlineRange !== "undefined" ? setDeadlineRange : undefined, setStatus: typeof setStatus !== "undefined" ? setStatus : undefined, getDeadline: typeof getDeadline !== "undefined" ? getDeadline : undefined, setDeadline: typeof setDeadline !== "undefined" ? setDeadline : undefined, resolveClassLevel: typeof resolveClassLevel !== "undefined" ? resolveClassLevel : undefined, extractFormNumber: typeof extractFormNumber !== "undefined" ? extractFormNumber : undefined, primaryClassSheetName_: typeof primaryClassSheetName_ !== "undefined" ? primaryClassSheetName_ : undefined, primaryStudentSheetNames_: typeof primaryStudentSheetNames_ !== "undefined" ? primaryStudentSheetNames_ : undefined, studentSheetForClass_: typeof studentSheetForClass_ !== "undefined" ? studentSheetForClass_ : undefined, classMatchesExam: typeof classMatchesExam !== "undefined" ? classMatchesExam : undefined, dateToInt: typeof dateToInt !== "undefined" ? dateToInt : undefined, todayInt: typeof todayInt !== "undefined" ? todayInt : undefined, sheetDateToLocal: typeof sheetDateToLocal !== "undefined" ? sheetDateToLocal : undefined, getExamCategoriesForClass: typeof getExamCategoriesForClass !== "undefined" ? getExamCategoriesForClass : undefined, getExamsForClass: typeof getExamsForClass !== "undefined" ? getExamsForClass : undefined, getSubjectsForClassAndTeacher: typeof getSubjectsForClassAndTeacher !== "undefined" ? getSubjectsForClassAndTeacher : undefined, getScoresSheet: typeof getScoresSheet !== "undefined" ? getScoresSheet : undefined, ensureScoresSheetLegacy: typeof ensureScoresSheetLegacy !== "undefined" ? ensureScoresSheetLegacy : undefined, ensureScoresSheet: typeof ensureScoresSheet !== "undefined" ? ensureScoresSheet : undefined, getStudentCountForClass: typeof getStudentCountForClass !== "undefined" ? getStudentCountForClass : undefined, getStudentsForClass: typeof getStudentsForClass !== "undefined" ? getStudentsForClass : undefined, getStudentsForScoring: typeof getStudentsForScoring !== "undefined" ? getStudentsForScoring : undefined, mergeScores: typeof mergeScores !== "undefined" ? mergeScores : undefined, submitScoresByName: typeof submitScoresByName !== "undefined" ? submitScoresByName : undefined, getExistingScores: typeof getExistingScores !== "undefined" ? getExistingScores : undefined, submitOrUpdateScores: typeof submitOrUpdateScores !== "undefined" ? submitOrUpdateScores : undefined, getScoreReport: typeof getScoreReport !== "undefined" ? getScoreReport : undefined, getClassExamReport: typeof getClassExamReport !== "undefined" ? getClassExamReport : undefined, getScoreTrackingDataLegacy_: typeof getScoreTrackingDataLegacy_ !== "undefined" ? getScoreTrackingDataLegacy_ : undefined, openClassSheet: typeof openClassSheet !== "undefined" ? openClassSheet : undefined, openAttendanceSheet: typeof openAttendanceSheet !== "undefined" ? openAttendanceSheet : undefined, ensureAttendanceSheet: typeof ensureAttendanceSheet !== "undefined" ? ensureAttendanceSheet : undefined, attAssertClass_: typeof attAssertClass_ !== "undefined" ? attAssertClass_ : undefined, getAttendanceStudents: typeof getAttendanceStudents !== "undefined" ? getAttendanceStudents : undefined, classLevelMatch: typeof classLevelMatch !== "undefined" ? classLevelMatch : undefined, submitAttendance: typeof submitAttendance !== "undefined" ? submitAttendance : undefined, logAttendanceSummary: typeof logAttendanceSummary !== "undefined" ? logAttendanceSummary : undefined, getTODStudents: typeof getTODStudents !== "undefined" ? getTODStudents : undefined, submitTOD: typeof submitTOD !== "undefined" ? submitTOD : undefined, getTeacherProfile: typeof getTeacherProfile !== "undefined" ? getTeacherProfile : undefined, fetchProfile: typeof fetchProfile !== "undefined" ? fetchProfile : undefined, fetchReport: typeof fetchReport !== "undefined" ? fetchReport : undefined, fetchExamTypes: typeof fetchExamTypes !== "undefined" ? fetchExamTypes : undefined, getTrackingExamTypes: typeof getTrackingExamTypes !== "undefined" ? getTrackingExamTypes : undefined, getTrackingReport: typeof getTrackingReport !== "undefined" ? getTrackingReport : undefined, clean: typeof clean !== "undefined" ? clean : undefined, lower: typeof lower !== "undefined" ? lower : undefined, sameClass: typeof sameClass !== "undefined" ? sameClass : undefined, addSubject: typeof addSubject !== "undefined" ? addSubject : undefined, readSubjectsFromAssignment: typeof readSubjectsFromAssignment !== "undefined" ? readSubjectsFromAssignment : undefined, getSubjectsByClass: typeof getSubjectsByClass !== "undefined" ? getSubjectsByClass : undefined, getClassSheetId: typeof getClassSheetId !== "undefined" ? getClassSheetId : undefined, getClasses: typeof getClasses !== "undefined" ? getClasses : undefined, getClassExamTypes: typeof getClassExamTypes !== "undefined" ? getClassExamTypes : undefined, getExamSubTypes: typeof getExamSubTypes !== "undefined" ? getExamSubTypes : undefined, examScoreToGrade_: typeof examScoreToGrade_ !== "undefined" ? examScoreToGrade_ : undefined, examGradeToPoint_: typeof examGradeToPoint_ !== "undefined" ? examGradeToPoint_ : undefined, examPointToDivision_: typeof examPointToDivision_ !== "undefined" ? examPointToDivision_ : undefined, examBest7PointSum_: typeof examBest7PointSum_ !== "undefined" ? examBest7PointSum_ : undefined, examNormalizeDivisionKey_: typeof examNormalizeDivisionKey_ !== "undefined" ? examNormalizeDivisionKey_ : undefined, examBest7SummaryFromSubjects_: typeof examBest7SummaryFromSubjects_ !== "undefined" ? examBest7SummaryFromSubjects_ : undefined, getExamResults: typeof getExamResults !== "undefined" ? getExamResults : undefined, fetchTopPanelData: typeof fetchTopPanelData !== "undefined" ? fetchTopPanelData : undefined, getStudentListRaw: typeof getStudentListRaw !== "undefined" ? getStudentListRaw : undefined, getStudentList: typeof getStudentList !== "undefined" ? getStudentList : undefined, generateUniqueAdmNo: typeof generateUniqueAdmNo !== "undefined" ? generateUniqueAdmNo : undefined, findDuplicateAdmNos: typeof findDuplicateAdmNos !== "undefined" ? findDuplicateAdmNos : undefined, admDefaultPrefix_: typeof admDefaultPrefix_ !== "undefined" ? admDefaultPrefix_ : undefined, admSeriesConfig_: typeof admSeriesConfig_ !== "undefined" ? admSeriesConfig_ : undefined, admSeriesFormat_: typeof admSeriesFormat_ !== "undefined" ? admSeriesFormat_ : undefined, admSeriesNextFor_: typeof admSeriesNextFor_ !== "undefined" ? admSeriesNextFor_ : undefined, getAdmissionSeries: typeof getAdmissionSeries !== "undefined" ? getAdmissionSeries : undefined, saveAdmissionSeries: typeof saveAdmissionSeries !== "undefined" ? saveAdmissionSeries : undefined, previewNextAdmNo: typeof previewNextAdmNo !== "undefined" ? previewNextAdmNo : undefined, admEnsureStudentCols_: typeof admEnsureStudentCols_ !== "undefined" ? admEnsureStudentCols_ : undefined, admPremTakenBy_: typeof admPremTakenBy_ !== "undefined" ? admPremTakenBy_ : undefined, saveStudent: typeof saveStudent !== "undefined" ? saveStudent : undefined, deleteStudent: typeof deleteStudent !== "undefined" ? deleteStudent : undefined, getAcademicClassesRaw: typeof getAcademicClassesRaw !== "undefined" ? getAcademicClassesRaw : undefined, getAcademicClasses: typeof getAcademicClasses !== "undefined" ? getAcademicClasses : undefined, saveAcademicClass: typeof saveAcademicClass !== "undefined" ? saveAcademicClass : undefined, deleteAcademicClass: typeof deleteAcademicClass !== "undefined" ? deleteAcademicClass : undefined, getAcademicSubjectsRaw: typeof getAcademicSubjectsRaw !== "undefined" ? getAcademicSubjectsRaw : undefined, getAcademicSubjects: typeof getAcademicSubjects !== "undefined" ? getAcademicSubjects : undefined, saveAcademicSubject: typeof saveAcademicSubject !== "undefined" ? saveAcademicSubject : undefined, deleteAcademicSubject: typeof deleteAcademicSubject !== "undefined" ? deleteAcademicSubject : undefined, getAcademicExamsRaw: typeof getAcademicExamsRaw !== "undefined" ? getAcademicExamsRaw : undefined, isoLocal: typeof isoLocal !== "undefined" ? isoLocal : undefined, getAcademicExams: typeof getAcademicExams !== "undefined" ? getAcademicExams : undefined, getActiveExamsForTeacher: typeof getActiveExamsForTeacher !== "undefined" ? getActiveExamsForTeacher : undefined, saveAcademicExam: typeof saveAcademicExam !== "undefined" ? saveAcademicExam : undefined, checkAndDeactivatePastExams: typeof checkAndDeactivatePastExams !== "undefined" ? checkAndDeactivatePastExams : undefined, deleteAcademicExam: typeof deleteAcademicExam !== "undefined" ? deleteAcademicExam : undefined, publishExamResults: typeof publishExamResults !== "undefined" ? publishExamResults : undefined, getTimetable: typeof getTimetable !== "undefined" ? getTimetable : undefined, saveTimetable: typeof saveTimetable !== "undefined" ? saveTimetable : undefined, getMessages: typeof getMessages !== "undefined" ? getMessages : undefined, sendMessage: typeof sendMessage !== "undefined" ? sendMessage : undefined, changeTeacherPassword: typeof changeTeacherPassword !== "undefined" ? changeTeacherPassword : undefined, saveStaffRecord: typeof saveStaffRecord !== "undefined" ? saveStaffRecord : undefined, getStaffRecords: typeof getStaffRecords !== "undefined" ? getStaffRecords : undefined, deleteStaffRecord: typeof deleteStaffRecord !== "undefined" ? deleteStaffRecord : undefined, getFinancialSummary: typeof getFinancialSummary !== "undefined" ? getFinancialSummary : undefined, getAcademicStats: typeof getAcademicStats !== "undefined" ? getAcademicStats : undefined, updateStudentStatus: typeof updateStudentStatus !== "undefined" ? updateStudentStatus : undefined, updateClassStatus: typeof updateClassStatus !== "undefined" ? updateClassStatus : undefined, updateSubjectStatus: typeof updateSubjectStatus !== "undefined" ? updateSubjectStatus : undefined, getMonitorData: typeof getMonitorData !== "undefined" ? getMonitorData : undefined, saveSystemConfig: typeof saveSystemConfig !== "undefined" ? saveSystemConfig : undefined, saveSchoolConfig: typeof saveSchoolConfig !== "undefined" ? saveSchoolConfig : undefined, saveAdminProfile: typeof saveAdminProfile !== "undefined" ? saveAdminProfile : undefined, changeAdminPassword: typeof changeAdminPassword !== "undefined" ? changeAdminPassword : undefined, checkParentLogin: typeof checkParentLogin !== "undefined" ? checkParentLogin : undefined, getClassesAndExamTypes: typeof getClassesAndExamTypes !== "undefined" ? getClassesAndExamTypes : undefined, getStudentsForParent: typeof getStudentsForParent !== "undefined" ? getStudentsForParent : undefined, getStudentReport: typeof getStudentReport !== "undefined" ? getStudentReport : undefined, readByAliases: typeof readByAliases !== "undefined" ? readByAliases : undefined, getAllParentAssignments: typeof getAllParentAssignments !== "undefined" ? getAllParentAssignments : undefined, addParentAssignment: typeof addParentAssignment !== "undefined" ? addParentAssignment : undefined, deleteParentAssignment: typeof deleteParentAssignment !== "undefined" ? deleteParentAssignment : undefined, getTeacherClasses: typeof getTeacherClasses !== "undefined" ? getTeacherClasses : undefined, isSubjectValidForClass: typeof isSubjectValidForClass !== "undefined" ? isSubjectValidForClass : undefined, getExamNamesForTracking: typeof getExamNamesForTracking !== "undefined" ? getExamNamesForTracking : undefined, getScoreTrackingData: typeof getScoreTrackingData !== "undefined" ? getScoreTrackingData : undefined, norm: typeof norm !== "undefined" ? norm : undefined, formNo: typeof formNo !== "undefined" ? formNo : undefined, classSame: typeof classSame !== "undefined" ? classSame : undefined, subjectSame: typeof subjectSame !== "undefined" ? subjectSame : undefined, detectCategory: typeof detectCategory !== "undefined" ? detectCategory : undefined, resolveExamType: typeof resolveExamType !== "undefined" ? resolveExamType : undefined, getTeacherFullName: typeof getTeacherFullName !== "undefined" ? getTeacherFullName : undefined, migrateScoresToFormSheets: typeof migrateScoresToFormSheets !== "undefined" ? migrateScoresToFormSheets : undefined, authorizeDriveAccess: typeof authorizeDriveAccess !== "undefined" ? authorizeDriveAccess : undefined, saveTODReport: typeof saveTODReport !== "undefined" ? saveTODReport : undefined, getMyTODDates: typeof getMyTODDates !== "undefined" ? getMyTODDates : undefined, getMyTODReports: typeof getMyTODReports !== "undefined" ? getMyTODReports : undefined, deleteTODReport: typeof deleteTODReport !== "undefined" ? deleteTODReport : undefined, getTODReportByDate: typeof getTODReportByDate !== "undefined" ? getTODReportByDate : undefined, getTODWeeklyReport: typeof getTODWeeklyReport !== "undefined" ? getTODWeeklyReport : undefined, mapSheetName: typeof mapSheetName !== "undefined" ? mapSheetName : undefined, getOrCreateMapSheet: typeof getOrCreateMapSheet !== "undefined" ? getOrCreateMapSheet : undefined, saveStudentSubjectMapping: typeof saveStudentSubjectMapping !== "undefined" ? saveStudentSubjectMapping : undefined, getStudentsAndMappingForSubject: typeof getStudentsAndMappingForSubject !== "undefined" ? getStudentsAndMappingForSubject : undefined, getSubjectMappedCount: typeof getSubjectMappedCount !== "undefined" ? getSubjectMappedCount : undefined, getSubjectMappingSummary: typeof getSubjectMappingSummary !== "undefined" ? getSubjectMappingSummary : undefined, ensureAcademicYearsSheet: typeof ensureAcademicYearsSheet !== "undefined" ? ensureAcademicYearsSheet : undefined, ensureAlumniSheet: typeof ensureAlumniSheet !== "undefined" ? ensureAlumniSheet : undefined, progGetAcademicYears: typeof progGetAcademicYears !== "undefined" ? progGetAcademicYears : undefined, progSetActiveYear: typeof progSetActiveYear !== "undefined" ? progSetActiveYear : undefined, progCreateAcademicYear: typeof progCreateAcademicYear !== "undefined" ? progCreateAcademicYear : undefined, progPromoteStudents: typeof progPromoteStudents !== "undefined" ? progPromoteStudents : undefined, progGetAlumni: typeof progGetAlumni !== "undefined" ? progGetAlumni : undefined, getClassTeachersWithAttendanceStatus: typeof getClassTeachersWithAttendanceStatus !== "undefined" ? getClassTeachersWithAttendanceStatus : undefined, colIdx: typeof colIdx !== "undefined" ? colIdx : undefined, addParent: typeof addParent !== "undefined" ? addParent : undefined, ensureParentsSheet: typeof ensureParentsSheet !== "undefined" ? ensureParentsSheet : undefined, getParentList: typeof getParentList !== "undefined" ? getParentList : undefined, updateParent: typeof updateParent !== "undefined" ? updateParent : undefined, deleteParent: typeof deleteParent !== "undefined" ? deleteParent : undefined, getLoginPage: typeof getLoginPage !== "undefined" ? getLoginPage : undefined, getIndexPage: typeof getIndexPage !== "undefined" ? getIndexPage : undefined, getParentPortalHtml: typeof getParentPortalHtml !== "undefined" ? getParentPortalHtml : undefined, legacyCheckLogin_v2_DISABLED: typeof legacyCheckLogin_v2_DISABLED !== "undefined" ? legacyCheckLogin_v2_DISABLED : undefined, getSchoolAnnouncements: typeof getSchoolAnnouncements !== "undefined" ? getSchoolAnnouncements : undefined, getAttendanceRecords: typeof getAttendanceRecords !== "undefined" ? getAttendanceRecords : undefined, col: typeof col !== "undefined" ? col : undefined, getAllExamResults: typeof getAllExamResults !== "undefined" ? getAllExamResults : undefined, clearAllActivityLogs: typeof clearAllActivityLogs !== "undefined" ? clearAllActivityLogs : undefined, legacyCheckLogin_v3_DISABLED: typeof legacyCheckLogin_v3_DISABLED !== "undefined" ? legacyCheckLogin_v3_DISABLED : undefined, smsCheckLoginCore_: typeof smsCheckLoginCore_ !== "undefined" ? smsCheckLoginCore_ : undefined, getDashboardKeyFromPosition: typeof getDashboardKeyFromPosition !== "undefined" ? getDashboardKeyFromPosition : undefined, ensureDashboardAccessSheet_: typeof ensureDashboardAccessSheet_ !== "undefined" ? ensureDashboardAccessSheet_ : undefined, getDashboardAccessPolicies: typeof getDashboardAccessPolicies !== "undefined" ? getDashboardAccessPolicies : undefined, saveDashboardAccessPolicies: typeof saveDashboardAccessPolicies !== "undefined" ? saveDashboardAccessPolicies : undefined, saveDashboardAccessState: typeof saveDashboardAccessState !== "undefined" ? saveDashboardAccessState : undefined, logDashboardAccessEvent_: typeof logDashboardAccessEvent_ !== "undefined" ? logDashboardAccessEvent_ : undefined, getDashboardAccessEvents: typeof getDashboardAccessEvents !== "undefined" ? getDashboardAccessEvents : undefined, forceLogoutDashboard: typeof forceLogoutDashboard !== "undefined" ? forceLogoutDashboard : undefined, canAccessDashboard: typeof canAccessDashboard !== "undefined" ? canAccessDashboard : undefined, evalRichDashboardPolicy_: typeof evalRichDashboardPolicy_ !== "undefined" ? evalRichDashboardPolicy_ : undefined, checkCurrentDashboardAccess: typeof checkCurrentDashboardAccess !== "undefined" ? checkCurrentDashboardAccess : undefined, getAccessDeniedPage: typeof getAccessDeniedPage !== "undefined" ? getAccessDeniedPage : undefined, logDashboardBlockedAttempt: typeof logDashboardBlockedAttempt !== "undefined" ? logDashboardBlockedAttempt : undefined, behLevel_: typeof behLevel_ !== "undefined" ? behLevel_ : undefined, ensureBehaviorSheet_: typeof ensureBehaviorSheet_ !== "undefined" ? ensureBehaviorSheet_ : undefined, behNorm_: typeof behNorm_ !== "undefined" ? behNorm_ : undefined, behClassKey_: typeof behClassKey_ !== "undefined" ? behClassKey_ : undefined, behTeacherClasses_: typeof behTeacherClasses_ !== "undefined" ? behTeacherClasses_ : undefined, add: typeof add !== "undefined" ? add : undefined, behCanAccess_: typeof behCanAccess_ !== "undefined" ? behCanAccess_ : undefined, getMyHomeroomClasses: typeof getMyHomeroomClasses !== "undefined" ? getMyHomeroomClasses : undefined, behReadMap_: typeof behReadMap_ !== "undefined" ? behReadMap_ : undefined, getBehaviorSheet: typeof getBehaviorSheet !== "undefined" ? getBehaviorSheet : undefined, saveBehaviors: typeof saveBehaviors !== "undefined" ? saveBehaviors : undefined, fetchReportBehaviors: typeof fetchReportBehaviors !== "undefined" ? fetchReportBehaviors : undefined, smsNewToken_: typeof smsNewToken_ !== "undefined" ? smsNewToken_ : undefined, smsEndSession: typeof smsEndSession !== "undefined" ? smsEndSession : undefined, smsStoreScript_: typeof smsStoreScript_ !== "undefined" ? smsStoreScript_ : undefined, smsClearScript_: typeof smsClearScript_ !== "undefined" ? smsClearScript_ : undefined, smsAppendScript_: typeof smsAppendScript_ !== "undefined" ? smsAppendScript_ : undefined, smsInjectRestore_: typeof smsInjectRestore_ !== "undefined" ? smsInjectRestore_ : undefined, drop: typeof drop !== "undefined" ? drop : undefined, run: typeof run !== "undefined" ? run : undefined, smsDashboardFor_: typeof smsDashboardFor_ !== "undefined" ? smsDashboardFor_ : undefined, smsRestoreSession: typeof smsRestoreSession !== "undefined" ? smsRestoreSession : undefined, smsParentData_: typeof smsParentData_ !== "undefined" ? smsParentData_ : undefined, smsParentHtml_: typeof smsParentHtml_ !== "undefined" ? smsParentHtml_ : undefined, tryBoot: typeof tryBoot !== "undefined" ? tryBoot : undefined, checkLogin: typeof checkLogin !== "undefined" ? checkLogin : undefined, acsSheet_: typeof acsSheet_ !== "undefined" ? acsSheet_ : undefined, getAcademicSettings: typeof getAcademicSettings !== "undefined" ? getAcademicSettings : undefined, saveAcademicSettings: typeof saveAcademicSettings !== "undefined" ? saveAcademicSettings : undefined };
+  })();
+
+  const __SecondaryEngine = (function() {
+    // ============================================================
 // UNIFIED CODE.GS - School Management System
 // ALL data stored in the MASTER spreadsheet only.
 // ============================================================
@@ -11666,254 +11676,1721 @@ function testSecondMaster() {
   var html = HtmlService.createHtmlOutputFromFile('DeputeHeadmaster').getContent();
   Logger.log('OK, urefu = ' + html.length);
 }
- return { doGet: typeof doGet!=="undefined"?doGet:undefined,getMonthlyAttendance: typeof getMonthlyAttendance!=="undefined"?getMonthlyAttendance:undefined,addStudent: typeof addStudent!=="undefined"?addStudent:undefined,getYearlyAttendanceSummary: typeof getYearlyAttendanceSummary!=="undefined"?getYearlyAttendanceSummary:undefined,legacyCheckLogin_v1_DISABLED: typeof legacyCheckLogin_v1_DISABLED!=="undefined"?legacyCheckLogin_v1_DISABLED:undefined,getParentPortalData: typeof getParentPortalData!=="undefined"?getParentPortalData:undefined,logout: typeof logout!=="undefined"?logout:undefined,setTeacherSession: typeof setTeacherSession!=="undefined"?setTeacherSession:undefined,getTeacherSession: typeof getTeacherSession!=="undefined"?getTeacherSession:undefined,getTodayPresentCount: typeof getTodayPresentCount!=="undefined"?getTodayPresentCount:undefined,clearTeacherSession: typeof clearTeacherSession!=="undefined"?clearTeacherSession:undefined,ensureUsersSheet: typeof ensureUsersSheet!=="undefined"?ensureUsersSheet:undefined,getTeacherList: typeof getTeacherList!=="undefined"?getTeacherList:undefined,getTeachers: typeof getTeachers!=="undefined"?getTeachers:undefined,addTeacher: typeof addTeacher!=="undefined"?addTeacher:undefined,updateTeacher: typeof updateTeacher!=="undefined"?updateTeacher:undefined,deleteTeacher: typeof deleteTeacher!=="undefined"?deleteTeacher:undefined,logActivity: typeof logActivity!=="undefined"?logActivity:undefined,getActivityLog: typeof getActivityLog!=="undefined"?getActivityLog:undefined,getCurrentStatus: typeof getCurrentStatus!=="undefined"?getCurrentStatus:undefined,getDeadlineData: typeof getDeadlineData!=="undefined"?getDeadlineData:undefined,setDeadlineRange: typeof setDeadlineRange!=="undefined"?setDeadlineRange:undefined,setStatus: typeof setStatus!=="undefined"?setStatus:undefined,getDeadline: typeof getDeadline!=="undefined"?getDeadline:undefined,setDeadline: typeof setDeadline!=="undefined"?setDeadline:undefined,resolveClassLevel: typeof resolveClassLevel!=="undefined"?resolveClassLevel:undefined,extractFormNumber: typeof extractFormNumber!=="undefined"?extractFormNumber:undefined,classMatchesExam: typeof classMatchesExam!=="undefined"?classMatchesExam:undefined,dateToInt: typeof dateToInt!=="undefined"?dateToInt:undefined,todayInt: typeof todayInt!=="undefined"?todayInt:undefined,sheetDateToLocal: typeof sheetDateToLocal!=="undefined"?sheetDateToLocal:undefined,getExamCategoriesForClass: typeof getExamCategoriesForClass!=="undefined"?getExamCategoriesForClass:undefined,getExamsForClass: typeof getExamsForClass!=="undefined"?getExamsForClass:undefined,getSubjectsForClassAndTeacher: typeof getSubjectsForClassAndTeacher!=="undefined"?getSubjectsForClassAndTeacher:undefined,getScoresSheet: typeof getScoresSheet!=="undefined"?getScoresSheet:undefined,ensureScoresSheetLegacy: typeof ensureScoresSheetLegacy!=="undefined"?ensureScoresSheetLegacy:undefined,ensureScoresSheet: typeof ensureScoresSheet!=="undefined"?ensureScoresSheet:undefined,getStudentCountForClass: typeof getStudentCountForClass!=="undefined"?getStudentCountForClass:undefined,getStudentsForClass: typeof getStudentsForClass!=="undefined"?getStudentsForClass:undefined,getStudentsForScoring: typeof getStudentsForScoring!=="undefined"?getStudentsForScoring:undefined,mergeScores: typeof mergeScores!=="undefined"?mergeScores:undefined,submitScoresByName: typeof submitScoresByName!=="undefined"?submitScoresByName:undefined,getExistingScores: typeof getExistingScores!=="undefined"?getExistingScores:undefined,submitOrUpdateScores: typeof submitOrUpdateScores!=="undefined"?submitOrUpdateScores:undefined,getScoreReport: typeof getScoreReport!=="undefined"?getScoreReport:undefined,getClassExamReport: typeof getClassExamReport!=="undefined"?getClassExamReport:undefined,getScoreTrackingDataLegacy_: typeof getScoreTrackingDataLegacy_!=="undefined"?getScoreTrackingDataLegacy_:undefined,openClassSheet: typeof openClassSheet!=="undefined"?openClassSheet:undefined,openAttendanceSheet: typeof openAttendanceSheet!=="undefined"?openAttendanceSheet:undefined,ensureAttendanceSheet: typeof ensureAttendanceSheet!=="undefined"?ensureAttendanceSheet:undefined,getAttendanceStudents: typeof getAttendanceStudents!=="undefined"?getAttendanceStudents:undefined,classLevelMatch: typeof classLevelMatch!=="undefined"?classLevelMatch:undefined,submitAttendance: typeof submitAttendance!=="undefined"?submitAttendance:undefined,logAttendanceSummary: typeof logAttendanceSummary!=="undefined"?logAttendanceSummary:undefined,getTODStudents: typeof getTODStudents!=="undefined"?getTODStudents:undefined,submitTOD: typeof submitTOD!=="undefined"?submitTOD:undefined,getTeacherProfile: typeof getTeacherProfile!=="undefined"?getTeacherProfile:undefined,fetchProfile: typeof fetchProfile!=="undefined"?fetchProfile:undefined,fetchReport: typeof fetchReport!=="undefined"?fetchReport:undefined,fetchExamTypes: typeof fetchExamTypes!=="undefined"?fetchExamTypes:undefined,getTrackingExamTypes: typeof getTrackingExamTypes!=="undefined"?getTrackingExamTypes:undefined,getTrackingReport: typeof getTrackingReport!=="undefined"?getTrackingReport:undefined,clean: typeof clean!=="undefined"?clean:undefined,lower: typeof lower!=="undefined"?lower:undefined,sameClass: typeof sameClass!=="undefined"?sameClass:undefined,addSubject: typeof addSubject!=="undefined"?addSubject:undefined,readSubjectsFromAssignment: typeof readSubjectsFromAssignment!=="undefined"?readSubjectsFromAssignment:undefined,getSubjectsByClass: typeof getSubjectsByClass!=="undefined"?getSubjectsByClass:undefined,getClassSheetId: typeof getClassSheetId!=="undefined"?getClassSheetId:undefined,getClasses: typeof getClasses!=="undefined"?getClasses:undefined,getClassExamTypes: typeof getClassExamTypes!=="undefined"?getClassExamTypes:undefined,getExamSubTypes: typeof getExamSubTypes!=="undefined"?getExamSubTypes:undefined,examScoreToGrade_: typeof examScoreToGrade_!=="undefined"?examScoreToGrade_:undefined,examGradeToPoint_: typeof examGradeToPoint_!=="undefined"?examGradeToPoint_:undefined,examPointToDivision_: typeof examPointToDivision_!=="undefined"?examPointToDivision_:undefined,examBest7PointSum_: typeof examBest7PointSum_!=="undefined"?examBest7PointSum_:undefined,examNormalizeDivisionKey_: typeof examNormalizeDivisionKey_!=="undefined"?examNormalizeDivisionKey_:undefined,examBest7SummaryFromSubjects_: typeof examBest7SummaryFromSubjects_!=="undefined"?examBest7SummaryFromSubjects_:undefined,getExamResults: typeof getExamResults!=="undefined"?getExamResults:undefined,fetchTopPanelData: typeof fetchTopPanelData!=="undefined"?fetchTopPanelData:undefined,getStudentListRaw: typeof getStudentListRaw!=="undefined"?getStudentListRaw:undefined,getStudentList: typeof getStudentList!=="undefined"?getStudentList:undefined,generateUniqueAdmNo: typeof generateUniqueAdmNo!=="undefined"?generateUniqueAdmNo:undefined,findDuplicateAdmNos: typeof findDuplicateAdmNos!=="undefined"?findDuplicateAdmNos:undefined,saveStudent: typeof saveStudent!=="undefined"?saveStudent:undefined,deleteStudent: typeof deleteStudent!=="undefined"?deleteStudent:undefined,getAcademicClassesRaw: typeof getAcademicClassesRaw!=="undefined"?getAcademicClassesRaw:undefined,getAcademicClasses: typeof getAcademicClasses!=="undefined"?getAcademicClasses:undefined,saveAcademicClass: typeof saveAcademicClass!=="undefined"?saveAcademicClass:undefined,deleteAcademicClass: typeof deleteAcademicClass!=="undefined"?deleteAcademicClass:undefined,getAcademicSubjectsRaw: typeof getAcademicSubjectsRaw!=="undefined"?getAcademicSubjectsRaw:undefined,getAcademicSubjects: typeof getAcademicSubjects!=="undefined"?getAcademicSubjects:undefined,saveAcademicSubject: typeof saveAcademicSubject!=="undefined"?saveAcademicSubject:undefined,deleteAcademicSubject: typeof deleteAcademicSubject!=="undefined"?deleteAcademicSubject:undefined,getAcademicExamsRaw: typeof getAcademicExamsRaw!=="undefined"?getAcademicExamsRaw:undefined,isoLocal: typeof isoLocal!=="undefined"?isoLocal:undefined,getAcademicExams: typeof getAcademicExams!=="undefined"?getAcademicExams:undefined,getActiveExamsForTeacher: typeof getActiveExamsForTeacher!=="undefined"?getActiveExamsForTeacher:undefined,saveAcademicExam: typeof saveAcademicExam!=="undefined"?saveAcademicExam:undefined,checkAndDeactivatePastExams: typeof checkAndDeactivatePastExams!=="undefined"?checkAndDeactivatePastExams:undefined,deleteAcademicExam: typeof deleteAcademicExam!=="undefined"?deleteAcademicExam:undefined,publishExamResults: typeof publishExamResults!=="undefined"?publishExamResults:undefined,getTimetable: typeof getTimetable!=="undefined"?getTimetable:undefined,saveTimetable: typeof saveTimetable!=="undefined"?saveTimetable:undefined,getMessages: typeof getMessages!=="undefined"?getMessages:undefined,sendMessage: typeof sendMessage!=="undefined"?sendMessage:undefined,changeTeacherPassword: typeof changeTeacherPassword!=="undefined"?changeTeacherPassword:undefined,saveStaffRecord: typeof saveStaffRecord!=="undefined"?saveStaffRecord:undefined,getStaffRecords: typeof getStaffRecords!=="undefined"?getStaffRecords:undefined,deleteStaffRecord: typeof deleteStaffRecord!=="undefined"?deleteStaffRecord:undefined,getFinancialSummary: typeof getFinancialSummary!=="undefined"?getFinancialSummary:undefined,getAcademicStats: typeof getAcademicStats!=="undefined"?getAcademicStats:undefined,updateStudentStatus: typeof updateStudentStatus!=="undefined"?updateStudentStatus:undefined,updateClassStatus: typeof updateClassStatus!=="undefined"?updateClassStatus:undefined,updateSubjectStatus: typeof updateSubjectStatus!=="undefined"?updateSubjectStatus:undefined,getMonitorData: typeof getMonitorData!=="undefined"?getMonitorData:undefined,saveSystemConfig: typeof saveSystemConfig!=="undefined"?saveSystemConfig:undefined,saveSchoolConfig: typeof saveSchoolConfig!=="undefined"?saveSchoolConfig:undefined,saveAdminProfile: typeof saveAdminProfile!=="undefined"?saveAdminProfile:undefined,changeAdminPassword: typeof changeAdminPassword!=="undefined"?changeAdminPassword:undefined,checkParentLogin: typeof checkParentLogin!=="undefined"?checkParentLogin:undefined,getClassesAndExamTypes: typeof getClassesAndExamTypes!=="undefined"?getClassesAndExamTypes:undefined,getStudentsForParent: typeof getStudentsForParent!=="undefined"?getStudentsForParent:undefined,getStudentReport: typeof getStudentReport!=="undefined"?getStudentReport:undefined,readByAliases: typeof readByAliases!=="undefined"?readByAliases:undefined,getAllParentAssignments: typeof getAllParentAssignments!=="undefined"?getAllParentAssignments:undefined,addParentAssignment: typeof addParentAssignment!=="undefined"?addParentAssignment:undefined,deleteParentAssignment: typeof deleteParentAssignment!=="undefined"?deleteParentAssignment:undefined,getTeacherClasses: typeof getTeacherClasses!=="undefined"?getTeacherClasses:undefined,isSubjectValidForClass: typeof isSubjectValidForClass!=="undefined"?isSubjectValidForClass:undefined,getExamNamesForTracking: typeof getExamNamesForTracking!=="undefined"?getExamNamesForTracking:undefined,getScoreTrackingData: typeof getScoreTrackingData!=="undefined"?getScoreTrackingData:undefined,norm: typeof norm!=="undefined"?norm:undefined,formNo: typeof formNo!=="undefined"?formNo:undefined,classSame: typeof classSame!=="undefined"?classSame:undefined,subjectSame: typeof subjectSame!=="undefined"?subjectSame:undefined,detectCategory: typeof detectCategory!=="undefined"?detectCategory:undefined,resolveExamType: typeof resolveExamType!=="undefined"?resolveExamType:undefined,getTeacherFullName: typeof getTeacherFullName!=="undefined"?getTeacherFullName:undefined,migrateScoresToFormSheets: typeof migrateScoresToFormSheets!=="undefined"?migrateScoresToFormSheets:undefined,authorizeDriveAccess: typeof authorizeDriveAccess!=="undefined"?authorizeDriveAccess:undefined,saveTODReport: typeof saveTODReport!=="undefined"?saveTODReport:undefined,getMyTODDates: typeof getMyTODDates!=="undefined"?getMyTODDates:undefined,getMyTODReports: typeof getMyTODReports!=="undefined"?getMyTODReports:undefined,deleteTODReport: typeof deleteTODReport!=="undefined"?deleteTODReport:undefined,getTODReportByDate: typeof getTODReportByDate!=="undefined"?getTODReportByDate:undefined,getTODWeeklyReport: typeof getTODWeeklyReport!=="undefined"?getTODWeeklyReport:undefined,mapSheetName: typeof mapSheetName!=="undefined"?mapSheetName:undefined,getOrCreateMapSheet: typeof getOrCreateMapSheet!=="undefined"?getOrCreateMapSheet:undefined,saveStudentSubjectMapping: typeof saveStudentSubjectMapping!=="undefined"?saveStudentSubjectMapping:undefined,getStudentsAndMappingForSubject: typeof getStudentsAndMappingForSubject!=="undefined"?getStudentsAndMappingForSubject:undefined,getSubjectMappedCount: typeof getSubjectMappedCount!=="undefined"?getSubjectMappedCount:undefined,getSubjectMappingSummary: typeof getSubjectMappingSummary!=="undefined"?getSubjectMappingSummary:undefined,ensureAcademicYearsSheet: typeof ensureAcademicYearsSheet!=="undefined"?ensureAcademicYearsSheet:undefined,ensureAlumniSheet: typeof ensureAlumniSheet!=="undefined"?ensureAlumniSheet:undefined,progGetAcademicYears: typeof progGetAcademicYears!=="undefined"?progGetAcademicYears:undefined,progSetActiveYear: typeof progSetActiveYear!=="undefined"?progSetActiveYear:undefined,progCreateAcademicYear: typeof progCreateAcademicYear!=="undefined"?progCreateAcademicYear:undefined,progPromoteStudents: typeof progPromoteStudents!=="undefined"?progPromoteStudents:undefined,progGetAlumni: typeof progGetAlumni!=="undefined"?progGetAlumni:undefined,getClassTeachersWithAttendanceStatus: typeof getClassTeachersWithAttendanceStatus!=="undefined"?getClassTeachersWithAttendanceStatus:undefined,colIdx: typeof colIdx!=="undefined"?colIdx:undefined,addParent: typeof addParent!=="undefined"?addParent:undefined,ensureParentsSheet: typeof ensureParentsSheet!=="undefined"?ensureParentsSheet:undefined,getParentList: typeof getParentList!=="undefined"?getParentList:undefined,updateParent: typeof updateParent!=="undefined"?updateParent:undefined,deleteParent: typeof deleteParent!=="undefined"?deleteParent:undefined,getLoginPage: typeof getLoginPage!=="undefined"?getLoginPage:undefined,getIndexPage: typeof getIndexPage!=="undefined"?getIndexPage:undefined,getParentPortalHtml: typeof getParentPortalHtml!=="undefined"?getParentPortalHtml:undefined,legacyCheckLogin_v2_DISABLED: typeof legacyCheckLogin_v2_DISABLED!=="undefined"?legacyCheckLogin_v2_DISABLED:undefined,getSchoolAnnouncements: typeof getSchoolAnnouncements!=="undefined"?getSchoolAnnouncements:undefined,getAttendanceRecords: typeof getAttendanceRecords!=="undefined"?getAttendanceRecords:undefined,col: typeof col!=="undefined"?col:undefined,getAllExamResults: typeof getAllExamResults!=="undefined"?getAllExamResults:undefined,clearAllActivityLogs: typeof clearAllActivityLogs!=="undefined"?clearAllActivityLogs:undefined,legacyCheckLogin_v3_DISABLED: typeof legacyCheckLogin_v3_DISABLED!=="undefined"?legacyCheckLogin_v3_DISABLED:undefined,smsCheckLoginCore_: typeof smsCheckLoginCore_!=="undefined"?smsCheckLoginCore_:undefined,getDashboardKeyFromPosition: typeof getDashboardKeyFromPosition!=="undefined"?getDashboardKeyFromPosition:undefined,ensureDashboardAccessSheet_: typeof ensureDashboardAccessSheet_!=="undefined"?ensureDashboardAccessSheet_:undefined,getDashboardAccessPolicies: typeof getDashboardAccessPolicies!=="undefined"?getDashboardAccessPolicies:undefined,saveDashboardAccessPolicies: typeof saveDashboardAccessPolicies!=="undefined"?saveDashboardAccessPolicies:undefined,saveDashboardAccessState: typeof saveDashboardAccessState!=="undefined"?saveDashboardAccessState:undefined,logDashboardAccessEvent_: typeof logDashboardAccessEvent_!=="undefined"?logDashboardAccessEvent_:undefined,getDashboardAccessEvents: typeof getDashboardAccessEvents!=="undefined"?getDashboardAccessEvents:undefined,forceLogoutDashboard: typeof forceLogoutDashboard!=="undefined"?forceLogoutDashboard:undefined,canAccessDashboard: typeof canAccessDashboard!=="undefined"?canAccessDashboard:undefined,evalRichDashboardPolicy_: typeof evalRichDashboardPolicy_!=="undefined"?evalRichDashboardPolicy_:undefined,checkCurrentDashboardAccess: typeof checkCurrentDashboardAccess!=="undefined"?checkCurrentDashboardAccess:undefined,getAccessDeniedPage: typeof getAccessDeniedPage!=="undefined"?getAccessDeniedPage:undefined,logDashboardBlockedAttempt: typeof logDashboardBlockedAttempt!=="undefined"?logDashboardBlockedAttempt:undefined,ensureBehaviorSheet_: typeof ensureBehaviorSheet_!=="undefined"?ensureBehaviorSheet_:undefined,behNorm_: typeof behNorm_!=="undefined"?behNorm_:undefined,behClassKey_: typeof behClassKey_!=="undefined"?behClassKey_:undefined,behTeacherClasses_: typeof behTeacherClasses_!=="undefined"?behTeacherClasses_:undefined,add: typeof add!=="undefined"?add:undefined,behCanAccess_: typeof behCanAccess_!=="undefined"?behCanAccess_:undefined,getMyHomeroomClasses: typeof getMyHomeroomClasses!=="undefined"?getMyHomeroomClasses:undefined,behReadMap_: typeof behReadMap_!=="undefined"?behReadMap_:undefined,getBehaviorSheet: typeof getBehaviorSheet!=="undefined"?getBehaviorSheet:undefined,saveBehaviors: typeof saveBehaviors!=="undefined"?saveBehaviors:undefined,behIsClassTeacher_: typeof behIsClassTeacher_!=="undefined"?behIsClassTeacher_:undefined,behFindTeacher_: typeof behFindTeacher_!=="undefined"?behFindTeacher_:undefined,behResolveClassTeacher_: typeof behResolveClassTeacher_!=="undefined"?behResolveClassTeacher_:undefined,fetchReportBehaviors: typeof fetchReportBehaviors!=="undefined"?fetchReportBehaviors:undefined,smsNewToken_: typeof smsNewToken_!=="undefined"?smsNewToken_:undefined,smsEndSession: typeof smsEndSession!=="undefined"?smsEndSession:undefined,smsStoreScript_: typeof smsStoreScript_!=="undefined"?smsStoreScript_:undefined,smsClearScript_: typeof smsClearScript_!=="undefined"?smsClearScript_:undefined,smsAppendScript_: typeof smsAppendScript_!=="undefined"?smsAppendScript_:undefined,smsInjectRestore_: typeof smsInjectRestore_!=="undefined"?smsInjectRestore_:undefined,drop: typeof drop!=="undefined"?drop:undefined,run: typeof run!=="undefined"?run:undefined,smsDashboardFor_: typeof smsDashboardFor_!=="undefined"?smsDashboardFor_:undefined,smsRestoreSession: typeof smsRestoreSession!=="undefined"?smsRestoreSession:undefined,smsParentData_: typeof smsParentData_!=="undefined"?smsParentData_:undefined,smsParentHtml_: typeof smsParentHtml_!=="undefined"?smsParentHtml_:undefined,tryBoot: typeof tryBoot!=="undefined"?tryBoot:undefined,checkLogin: typeof checkLogin!=="undefined"?checkLogin:undefined,testSecondMaster: typeof testSecondMaster!=="undefined"?testSecondMaster:undefined }; })();
+    return { doGet: typeof doGet !== "undefined" ? doGet : undefined, getMonthlyAttendance: typeof getMonthlyAttendance !== "undefined" ? getMonthlyAttendance : undefined, addStudent: typeof addStudent !== "undefined" ? addStudent : undefined, getYearlyAttendanceSummary: typeof getYearlyAttendanceSummary !== "undefined" ? getYearlyAttendanceSummary : undefined, legacyCheckLogin_v1_DISABLED: typeof legacyCheckLogin_v1_DISABLED !== "undefined" ? legacyCheckLogin_v1_DISABLED : undefined, getParentPortalData: typeof getParentPortalData !== "undefined" ? getParentPortalData : undefined, logout: typeof logout !== "undefined" ? logout : undefined, setTeacherSession: typeof setTeacherSession !== "undefined" ? setTeacherSession : undefined, getTeacherSession: typeof getTeacherSession !== "undefined" ? getTeacherSession : undefined, getTodayPresentCount: typeof getTodayPresentCount !== "undefined" ? getTodayPresentCount : undefined, clearTeacherSession: typeof clearTeacherSession !== "undefined" ? clearTeacherSession : undefined, ensureUsersSheet: typeof ensureUsersSheet !== "undefined" ? ensureUsersSheet : undefined, getTeacherList: typeof getTeacherList !== "undefined" ? getTeacherList : undefined, getTeachers: typeof getTeachers !== "undefined" ? getTeachers : undefined, addTeacher: typeof addTeacher !== "undefined" ? addTeacher : undefined, updateTeacher: typeof updateTeacher !== "undefined" ? updateTeacher : undefined, deleteTeacher: typeof deleteTeacher !== "undefined" ? deleteTeacher : undefined, logActivity: typeof logActivity !== "undefined" ? logActivity : undefined, getActivityLog: typeof getActivityLog !== "undefined" ? getActivityLog : undefined, getCurrentStatus: typeof getCurrentStatus !== "undefined" ? getCurrentStatus : undefined, getDeadlineData: typeof getDeadlineData !== "undefined" ? getDeadlineData : undefined, setDeadlineRange: typeof setDeadlineRange !== "undefined" ? setDeadlineRange : undefined, setStatus: typeof setStatus !== "undefined" ? setStatus : undefined, getDeadline: typeof getDeadline !== "undefined" ? getDeadline : undefined, setDeadline: typeof setDeadline !== "undefined" ? setDeadline : undefined, resolveClassLevel: typeof resolveClassLevel !== "undefined" ? resolveClassLevel : undefined, extractFormNumber: typeof extractFormNumber !== "undefined" ? extractFormNumber : undefined, classMatchesExam: typeof classMatchesExam !== "undefined" ? classMatchesExam : undefined, dateToInt: typeof dateToInt !== "undefined" ? dateToInt : undefined, todayInt: typeof todayInt !== "undefined" ? todayInt : undefined, sheetDateToLocal: typeof sheetDateToLocal !== "undefined" ? sheetDateToLocal : undefined, getExamCategoriesForClass: typeof getExamCategoriesForClass !== "undefined" ? getExamCategoriesForClass : undefined, getExamsForClass: typeof getExamsForClass !== "undefined" ? getExamsForClass : undefined, getSubjectsForClassAndTeacher: typeof getSubjectsForClassAndTeacher !== "undefined" ? getSubjectsForClassAndTeacher : undefined, getScoresSheet: typeof getScoresSheet !== "undefined" ? getScoresSheet : undefined, ensureScoresSheetLegacy: typeof ensureScoresSheetLegacy !== "undefined" ? ensureScoresSheetLegacy : undefined, ensureScoresSheet: typeof ensureScoresSheet !== "undefined" ? ensureScoresSheet : undefined, getStudentCountForClass: typeof getStudentCountForClass !== "undefined" ? getStudentCountForClass : undefined, getStudentsForClass: typeof getStudentsForClass !== "undefined" ? getStudentsForClass : undefined, getStudentsForScoring: typeof getStudentsForScoring !== "undefined" ? getStudentsForScoring : undefined, mergeScores: typeof mergeScores !== "undefined" ? mergeScores : undefined, submitScoresByName: typeof submitScoresByName !== "undefined" ? submitScoresByName : undefined, getExistingScores: typeof getExistingScores !== "undefined" ? getExistingScores : undefined, submitOrUpdateScores: typeof submitOrUpdateScores !== "undefined" ? submitOrUpdateScores : undefined, getScoreReport: typeof getScoreReport !== "undefined" ? getScoreReport : undefined, getClassExamReport: typeof getClassExamReport !== "undefined" ? getClassExamReport : undefined, getScoreTrackingDataLegacy_: typeof getScoreTrackingDataLegacy_ !== "undefined" ? getScoreTrackingDataLegacy_ : undefined, openClassSheet: typeof openClassSheet !== "undefined" ? openClassSheet : undefined, openAttendanceSheet: typeof openAttendanceSheet !== "undefined" ? openAttendanceSheet : undefined, ensureAttendanceSheet: typeof ensureAttendanceSheet !== "undefined" ? ensureAttendanceSheet : undefined, getAttendanceStudents: typeof getAttendanceStudents !== "undefined" ? getAttendanceStudents : undefined, classLevelMatch: typeof classLevelMatch !== "undefined" ? classLevelMatch : undefined, submitAttendance: typeof submitAttendance !== "undefined" ? submitAttendance : undefined, logAttendanceSummary: typeof logAttendanceSummary !== "undefined" ? logAttendanceSummary : undefined, getTODStudents: typeof getTODStudents !== "undefined" ? getTODStudents : undefined, submitTOD: typeof submitTOD !== "undefined" ? submitTOD : undefined, getTeacherProfile: typeof getTeacherProfile !== "undefined" ? getTeacherProfile : undefined, fetchProfile: typeof fetchProfile !== "undefined" ? fetchProfile : undefined, fetchReport: typeof fetchReport !== "undefined" ? fetchReport : undefined, fetchExamTypes: typeof fetchExamTypes !== "undefined" ? fetchExamTypes : undefined, getTrackingExamTypes: typeof getTrackingExamTypes !== "undefined" ? getTrackingExamTypes : undefined, getTrackingReport: typeof getTrackingReport !== "undefined" ? getTrackingReport : undefined, clean: typeof clean !== "undefined" ? clean : undefined, lower: typeof lower !== "undefined" ? lower : undefined, sameClass: typeof sameClass !== "undefined" ? sameClass : undefined, addSubject: typeof addSubject !== "undefined" ? addSubject : undefined, readSubjectsFromAssignment: typeof readSubjectsFromAssignment !== "undefined" ? readSubjectsFromAssignment : undefined, getSubjectsByClass: typeof getSubjectsByClass !== "undefined" ? getSubjectsByClass : undefined, getClassSheetId: typeof getClassSheetId !== "undefined" ? getClassSheetId : undefined, getClasses: typeof getClasses !== "undefined" ? getClasses : undefined, getClassExamTypes: typeof getClassExamTypes !== "undefined" ? getClassExamTypes : undefined, getExamSubTypes: typeof getExamSubTypes !== "undefined" ? getExamSubTypes : undefined, examScoreToGrade_: typeof examScoreToGrade_ !== "undefined" ? examScoreToGrade_ : undefined, examGradeToPoint_: typeof examGradeToPoint_ !== "undefined" ? examGradeToPoint_ : undefined, examPointToDivision_: typeof examPointToDivision_ !== "undefined" ? examPointToDivision_ : undefined, examBest7PointSum_: typeof examBest7PointSum_ !== "undefined" ? examBest7PointSum_ : undefined, examNormalizeDivisionKey_: typeof examNormalizeDivisionKey_ !== "undefined" ? examNormalizeDivisionKey_ : undefined, examBest7SummaryFromSubjects_: typeof examBest7SummaryFromSubjects_ !== "undefined" ? examBest7SummaryFromSubjects_ : undefined, getExamResults: typeof getExamResults !== "undefined" ? getExamResults : undefined, fetchTopPanelData: typeof fetchTopPanelData !== "undefined" ? fetchTopPanelData : undefined, getStudentListRaw: typeof getStudentListRaw !== "undefined" ? getStudentListRaw : undefined, getStudentList: typeof getStudentList !== "undefined" ? getStudentList : undefined, generateUniqueAdmNo: typeof generateUniqueAdmNo !== "undefined" ? generateUniqueAdmNo : undefined, findDuplicateAdmNos: typeof findDuplicateAdmNos !== "undefined" ? findDuplicateAdmNos : undefined, saveStudent: typeof saveStudent !== "undefined" ? saveStudent : undefined, deleteStudent: typeof deleteStudent !== "undefined" ? deleteStudent : undefined, getAcademicClassesRaw: typeof getAcademicClassesRaw !== "undefined" ? getAcademicClassesRaw : undefined, getAcademicClasses: typeof getAcademicClasses !== "undefined" ? getAcademicClasses : undefined, saveAcademicClass: typeof saveAcademicClass !== "undefined" ? saveAcademicClass : undefined, deleteAcademicClass: typeof deleteAcademicClass !== "undefined" ? deleteAcademicClass : undefined, getAcademicSubjectsRaw: typeof getAcademicSubjectsRaw !== "undefined" ? getAcademicSubjectsRaw : undefined, getAcademicSubjects: typeof getAcademicSubjects !== "undefined" ? getAcademicSubjects : undefined, saveAcademicSubject: typeof saveAcademicSubject !== "undefined" ? saveAcademicSubject : undefined, deleteAcademicSubject: typeof deleteAcademicSubject !== "undefined" ? deleteAcademicSubject : undefined, getAcademicExamsRaw: typeof getAcademicExamsRaw !== "undefined" ? getAcademicExamsRaw : undefined, isoLocal: typeof isoLocal !== "undefined" ? isoLocal : undefined, getAcademicExams: typeof getAcademicExams !== "undefined" ? getAcademicExams : undefined, getActiveExamsForTeacher: typeof getActiveExamsForTeacher !== "undefined" ? getActiveExamsForTeacher : undefined, saveAcademicExam: typeof saveAcademicExam !== "undefined" ? saveAcademicExam : undefined, checkAndDeactivatePastExams: typeof checkAndDeactivatePastExams !== "undefined" ? checkAndDeactivatePastExams : undefined, deleteAcademicExam: typeof deleteAcademicExam !== "undefined" ? deleteAcademicExam : undefined, publishExamResults: typeof publishExamResults !== "undefined" ? publishExamResults : undefined, getTimetable: typeof getTimetable !== "undefined" ? getTimetable : undefined, saveTimetable: typeof saveTimetable !== "undefined" ? saveTimetable : undefined, getMessages: typeof getMessages !== "undefined" ? getMessages : undefined, sendMessage: typeof sendMessage !== "undefined" ? sendMessage : undefined, changeTeacherPassword: typeof changeTeacherPassword !== "undefined" ? changeTeacherPassword : undefined, saveStaffRecord: typeof saveStaffRecord !== "undefined" ? saveStaffRecord : undefined, getStaffRecords: typeof getStaffRecords !== "undefined" ? getStaffRecords : undefined, deleteStaffRecord: typeof deleteStaffRecord !== "undefined" ? deleteStaffRecord : undefined, getFinancialSummary: typeof getFinancialSummary !== "undefined" ? getFinancialSummary : undefined, getAcademicStats: typeof getAcademicStats !== "undefined" ? getAcademicStats : undefined, updateStudentStatus: typeof updateStudentStatus !== "undefined" ? updateStudentStatus : undefined, updateClassStatus: typeof updateClassStatus !== "undefined" ? updateClassStatus : undefined, updateSubjectStatus: typeof updateSubjectStatus !== "undefined" ? updateSubjectStatus : undefined, getMonitorData: typeof getMonitorData !== "undefined" ? getMonitorData : undefined, saveSystemConfig: typeof saveSystemConfig !== "undefined" ? saveSystemConfig : undefined, saveSchoolConfig: typeof saveSchoolConfig !== "undefined" ? saveSchoolConfig : undefined, saveAdminProfile: typeof saveAdminProfile !== "undefined" ? saveAdminProfile : undefined, changeAdminPassword: typeof changeAdminPassword !== "undefined" ? changeAdminPassword : undefined, checkParentLogin: typeof checkParentLogin !== "undefined" ? checkParentLogin : undefined, getClassesAndExamTypes: typeof getClassesAndExamTypes !== "undefined" ? getClassesAndExamTypes : undefined, getStudentsForParent: typeof getStudentsForParent !== "undefined" ? getStudentsForParent : undefined, getStudentReport: typeof getStudentReport !== "undefined" ? getStudentReport : undefined, readByAliases: typeof readByAliases !== "undefined" ? readByAliases : undefined, getAllParentAssignments: typeof getAllParentAssignments !== "undefined" ? getAllParentAssignments : undefined, addParentAssignment: typeof addParentAssignment !== "undefined" ? addParentAssignment : undefined, deleteParentAssignment: typeof deleteParentAssignment !== "undefined" ? deleteParentAssignment : undefined, getTeacherClasses: typeof getTeacherClasses !== "undefined" ? getTeacherClasses : undefined, isSubjectValidForClass: typeof isSubjectValidForClass !== "undefined" ? isSubjectValidForClass : undefined, getExamNamesForTracking: typeof getExamNamesForTracking !== "undefined" ? getExamNamesForTracking : undefined, getScoreTrackingData: typeof getScoreTrackingData !== "undefined" ? getScoreTrackingData : undefined, norm: typeof norm !== "undefined" ? norm : undefined, formNo: typeof formNo !== "undefined" ? formNo : undefined, classSame: typeof classSame !== "undefined" ? classSame : undefined, subjectSame: typeof subjectSame !== "undefined" ? subjectSame : undefined, detectCategory: typeof detectCategory !== "undefined" ? detectCategory : undefined, resolveExamType: typeof resolveExamType !== "undefined" ? resolveExamType : undefined, getTeacherFullName: typeof getTeacherFullName !== "undefined" ? getTeacherFullName : undefined, migrateScoresToFormSheets: typeof migrateScoresToFormSheets !== "undefined" ? migrateScoresToFormSheets : undefined, authorizeDriveAccess: typeof authorizeDriveAccess !== "undefined" ? authorizeDriveAccess : undefined, saveTODReport: typeof saveTODReport !== "undefined" ? saveTODReport : undefined, getMyTODDates: typeof getMyTODDates !== "undefined" ? getMyTODDates : undefined, getMyTODReports: typeof getMyTODReports !== "undefined" ? getMyTODReports : undefined, deleteTODReport: typeof deleteTODReport !== "undefined" ? deleteTODReport : undefined, getTODReportByDate: typeof getTODReportByDate !== "undefined" ? getTODReportByDate : undefined, getTODWeeklyReport: typeof getTODWeeklyReport !== "undefined" ? getTODWeeklyReport : undefined, mapSheetName: typeof mapSheetName !== "undefined" ? mapSheetName : undefined, getOrCreateMapSheet: typeof getOrCreateMapSheet !== "undefined" ? getOrCreateMapSheet : undefined, saveStudentSubjectMapping: typeof saveStudentSubjectMapping !== "undefined" ? saveStudentSubjectMapping : undefined, getStudentsAndMappingForSubject: typeof getStudentsAndMappingForSubject !== "undefined" ? getStudentsAndMappingForSubject : undefined, getSubjectMappedCount: typeof getSubjectMappedCount !== "undefined" ? getSubjectMappedCount : undefined, getSubjectMappingSummary: typeof getSubjectMappingSummary !== "undefined" ? getSubjectMappingSummary : undefined, ensureAcademicYearsSheet: typeof ensureAcademicYearsSheet !== "undefined" ? ensureAcademicYearsSheet : undefined, ensureAlumniSheet: typeof ensureAlumniSheet !== "undefined" ? ensureAlumniSheet : undefined, progGetAcademicYears: typeof progGetAcademicYears !== "undefined" ? progGetAcademicYears : undefined, progSetActiveYear: typeof progSetActiveYear !== "undefined" ? progSetActiveYear : undefined, progCreateAcademicYear: typeof progCreateAcademicYear !== "undefined" ? progCreateAcademicYear : undefined, progPromoteStudents: typeof progPromoteStudents !== "undefined" ? progPromoteStudents : undefined, progGetAlumni: typeof progGetAlumni !== "undefined" ? progGetAlumni : undefined, getClassTeachersWithAttendanceStatus: typeof getClassTeachersWithAttendanceStatus !== "undefined" ? getClassTeachersWithAttendanceStatus : undefined, colIdx: typeof colIdx !== "undefined" ? colIdx : undefined, addParent: typeof addParent !== "undefined" ? addParent : undefined, ensureParentsSheet: typeof ensureParentsSheet !== "undefined" ? ensureParentsSheet : undefined, getParentList: typeof getParentList !== "undefined" ? getParentList : undefined, updateParent: typeof updateParent !== "undefined" ? updateParent : undefined, deleteParent: typeof deleteParent !== "undefined" ? deleteParent : undefined, getLoginPage: typeof getLoginPage !== "undefined" ? getLoginPage : undefined, getIndexPage: typeof getIndexPage !== "undefined" ? getIndexPage : undefined, getParentPortalHtml: typeof getParentPortalHtml !== "undefined" ? getParentPortalHtml : undefined, legacyCheckLogin_v2_DISABLED: typeof legacyCheckLogin_v2_DISABLED !== "undefined" ? legacyCheckLogin_v2_DISABLED : undefined, getSchoolAnnouncements: typeof getSchoolAnnouncements !== "undefined" ? getSchoolAnnouncements : undefined, getAttendanceRecords: typeof getAttendanceRecords !== "undefined" ? getAttendanceRecords : undefined, col: typeof col !== "undefined" ? col : undefined, getAllExamResults: typeof getAllExamResults !== "undefined" ? getAllExamResults : undefined, clearAllActivityLogs: typeof clearAllActivityLogs !== "undefined" ? clearAllActivityLogs : undefined, legacyCheckLogin_v3_DISABLED: typeof legacyCheckLogin_v3_DISABLED !== "undefined" ? legacyCheckLogin_v3_DISABLED : undefined, smsCheckLoginCore_: typeof smsCheckLoginCore_ !== "undefined" ? smsCheckLoginCore_ : undefined, getDashboardKeyFromPosition: typeof getDashboardKeyFromPosition !== "undefined" ? getDashboardKeyFromPosition : undefined, ensureDashboardAccessSheet_: typeof ensureDashboardAccessSheet_ !== "undefined" ? ensureDashboardAccessSheet_ : undefined, getDashboardAccessPolicies: typeof getDashboardAccessPolicies !== "undefined" ? getDashboardAccessPolicies : undefined, saveDashboardAccessPolicies: typeof saveDashboardAccessPolicies !== "undefined" ? saveDashboardAccessPolicies : undefined, saveDashboardAccessState: typeof saveDashboardAccessState !== "undefined" ? saveDashboardAccessState : undefined, logDashboardAccessEvent_: typeof logDashboardAccessEvent_ !== "undefined" ? logDashboardAccessEvent_ : undefined, getDashboardAccessEvents: typeof getDashboardAccessEvents !== "undefined" ? getDashboardAccessEvents : undefined, forceLogoutDashboard: typeof forceLogoutDashboard !== "undefined" ? forceLogoutDashboard : undefined, canAccessDashboard: typeof canAccessDashboard !== "undefined" ? canAccessDashboard : undefined, evalRichDashboardPolicy_: typeof evalRichDashboardPolicy_ !== "undefined" ? evalRichDashboardPolicy_ : undefined, checkCurrentDashboardAccess: typeof checkCurrentDashboardAccess !== "undefined" ? checkCurrentDashboardAccess : undefined, getAccessDeniedPage: typeof getAccessDeniedPage !== "undefined" ? getAccessDeniedPage : undefined, logDashboardBlockedAttempt: typeof logDashboardBlockedAttempt !== "undefined" ? logDashboardBlockedAttempt : undefined, ensureBehaviorSheet_: typeof ensureBehaviorSheet_ !== "undefined" ? ensureBehaviorSheet_ : undefined, behNorm_: typeof behNorm_ !== "undefined" ? behNorm_ : undefined, behClassKey_: typeof behClassKey_ !== "undefined" ? behClassKey_ : undefined, behTeacherClasses_: typeof behTeacherClasses_ !== "undefined" ? behTeacherClasses_ : undefined, add: typeof add !== "undefined" ? add : undefined, behCanAccess_: typeof behCanAccess_ !== "undefined" ? behCanAccess_ : undefined, getMyHomeroomClasses: typeof getMyHomeroomClasses !== "undefined" ? getMyHomeroomClasses : undefined, behReadMap_: typeof behReadMap_ !== "undefined" ? behReadMap_ : undefined, getBehaviorSheet: typeof getBehaviorSheet !== "undefined" ? getBehaviorSheet : undefined, saveBehaviors: typeof saveBehaviors !== "undefined" ? saveBehaviors : undefined, behIsClassTeacher_: typeof behIsClassTeacher_ !== "undefined" ? behIsClassTeacher_ : undefined, behFindTeacher_: typeof behFindTeacher_ !== "undefined" ? behFindTeacher_ : undefined, behResolveClassTeacher_: typeof behResolveClassTeacher_ !== "undefined" ? behResolveClassTeacher_ : undefined, fetchReportBehaviors: typeof fetchReportBehaviors !== "undefined" ? fetchReportBehaviors : undefined, smsNewToken_: typeof smsNewToken_ !== "undefined" ? smsNewToken_ : undefined, smsEndSession: typeof smsEndSession !== "undefined" ? smsEndSession : undefined, smsStoreScript_: typeof smsStoreScript_ !== "undefined" ? smsStoreScript_ : undefined, smsClearScript_: typeof smsClearScript_ !== "undefined" ? smsClearScript_ : undefined, smsAppendScript_: typeof smsAppendScript_ !== "undefined" ? smsAppendScript_ : undefined, smsInjectRestore_: typeof smsInjectRestore_ !== "undefined" ? smsInjectRestore_ : undefined, drop: typeof drop !== "undefined" ? drop : undefined, run: typeof run !== "undefined" ? run : undefined, smsDashboardFor_: typeof smsDashboardFor_ !== "undefined" ? smsDashboardFor_ : undefined, smsRestoreSession: typeof smsRestoreSession !== "undefined" ? smsRestoreSession : undefined, smsParentData_: typeof smsParentData_ !== "undefined" ? smsParentData_ : undefined, smsParentHtml_: typeof smsParentHtml_ !== "undefined" ? smsParentHtml_ : undefined, tryBoot: typeof tryBoot !== "undefined" ? tryBoot : undefined, checkLogin: typeof checkLogin !== "undefined" ? checkLogin : undefined, testSecondMaster: typeof testSecondMaster !== "undefined" ? testSecondMaster : undefined };
+  })();
+
   function __resolveCoreEngine__() {
-    var l = String((typeof school!=="undefined"&&school?.education_level)||(typeof __SCHOOL__!=="undefined"&&__SCHOOL__?.education_level)||"").toUpperCase();
-    return (l.includes("PRIMARY")||l.includes("PRE")||l==="NURSERY") ? __PrimaryEngine : __SecondaryEngine;
+    const lvl = String(
+      (__SCHOOL__ && __SCHOOL__.education_level) ||
+      (__HOST__ && __HOST__.education_level) ||
+      ""
+    ).toUpperCase();
+    const isPrimary = lvl.includes("PRIMARY") || lvl.includes("PRE") || lvl === "NURSERY";
+    return isPrimary ? __PrimaryEngine : __SecondaryEngine;
   }
-  function doGet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.doGet||fb?.doGet; if(!fn) throw new Error("Missing doGet"); return fn.apply(p, arguments); }
-function attRosterRows_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.attRosterRows_||fb?.attRosterRows_; if(!fn) throw new Error("Missing attRosterRows_"); return fn.apply(p, arguments); }
-function attMonthRows_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.attMonthRows_||fb?.attMonthRows_; if(!fn) throw new Error("Missing attMonthRows_"); return fn.apply(p, arguments); }
-function attBuildClass_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.attBuildClass_||fb?.attBuildClass_; if(!fn) throw new Error("Missing attBuildClass_"); return fn.apply(p, arguments); }
-function addStudent(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.addStudent||fb?.addStudent; if(!fn) throw new Error("Missing addStudent"); return fn.apply(p, arguments); }
-function getMonthlyAttendance(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getMonthlyAttendance||fb?.getMonthlyAttendance; if(!fn) throw new Error("Missing getMonthlyAttendance"); return fn.apply(p, arguments); }
-function getMonthlyAttendanceBatch(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getMonthlyAttendanceBatch||fb?.getMonthlyAttendanceBatch; if(!fn) throw new Error("Missing getMonthlyAttendanceBatch"); return fn.apply(p, arguments); }
-function getDaysSavedBatch(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getDaysSavedBatch||fb?.getDaysSavedBatch; if(!fn) throw new Error("Missing getDaysSavedBatch"); return fn.apply(p, arguments); }
-function getYearlyAttendanceSummary(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getYearlyAttendanceSummary||fb?.getYearlyAttendanceSummary; if(!fn) throw new Error("Missing getYearlyAttendanceSummary"); return fn.apply(p, arguments); }
-function legacyCheckLogin_v1_DISABLED(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.legacyCheckLogin_v1_DISABLED||fb?.legacyCheckLogin_v1_DISABLED; if(!fn) throw new Error("Missing legacyCheckLogin_v1_DISABLED"); return fn.apply(p, arguments); }
-function getParentPortalData(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getParentPortalData||fb?.getParentPortalData; if(!fn) throw new Error("Missing getParentPortalData"); return fn.apply(p, arguments); }
-function logout(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.logout||fb?.logout; if(!fn) throw new Error("Missing logout"); return fn.apply(p, arguments); }
-function setTeacherSession(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.setTeacherSession||fb?.setTeacherSession; if(!fn) throw new Error("Missing setTeacherSession"); return fn.apply(p, arguments); }
-function getTeacherSession(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTeacherSession||fb?.getTeacherSession; if(!fn) throw new Error("Missing getTeacherSession"); return fn.apply(p, arguments); }
-function getTodayPresentCount(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTodayPresentCount||fb?.getTodayPresentCount; if(!fn) throw new Error("Missing getTodayPresentCount"); return fn.apply(p, arguments); }
-function clearTeacherSession(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.clearTeacherSession||fb?.clearTeacherSession; if(!fn) throw new Error("Missing clearTeacherSession"); return fn.apply(p, arguments); }
-function ensureUsersSheet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.ensureUsersSheet||fb?.ensureUsersSheet; if(!fn) throw new Error("Missing ensureUsersSheet"); return fn.apply(p, arguments); }
-function homeroomMap_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.homeroomMap_||fb?.homeroomMap_; if(!fn) throw new Error("Missing homeroomMap_"); return fn.apply(p, arguments); }
-function getTeacherList(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTeacherList||fb?.getTeacherList; if(!fn) throw new Error("Missing getTeacherList"); return fn.apply(p, arguments); }
-function getTeachers(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTeachers||fb?.getTeachers; if(!fn) throw new Error("Missing getTeachers"); return fn.apply(p, arguments); }
-function addTeacher(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.addTeacher||fb?.addTeacher; if(!fn) throw new Error("Missing addTeacher"); return fn.apply(p, arguments); }
-function updateTeacher(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.updateTeacher||fb?.updateTeacher; if(!fn) throw new Error("Missing updateTeacher"); return fn.apply(p, arguments); }
-function deleteTeacher(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.deleteTeacher||fb?.deleteTeacher; if(!fn) throw new Error("Missing deleteTeacher"); return fn.apply(p, arguments); }
-function logActivity(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.logActivity||fb?.logActivity; if(!fn) throw new Error("Missing logActivity"); return fn.apply(p, arguments); }
-function getActivityLog(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getActivityLog||fb?.getActivityLog; if(!fn) throw new Error("Missing getActivityLog"); return fn.apply(p, arguments); }
-function getCurrentStatus(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getCurrentStatus||fb?.getCurrentStatus; if(!fn) throw new Error("Missing getCurrentStatus"); return fn.apply(p, arguments); }
-function getDeadlineData(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getDeadlineData||fb?.getDeadlineData; if(!fn) throw new Error("Missing getDeadlineData"); return fn.apply(p, arguments); }
-function setDeadlineRange(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.setDeadlineRange||fb?.setDeadlineRange; if(!fn) throw new Error("Missing setDeadlineRange"); return fn.apply(p, arguments); }
-function setStatus(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.setStatus||fb?.setStatus; if(!fn) throw new Error("Missing setStatus"); return fn.apply(p, arguments); }
-function getDeadline(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getDeadline||fb?.getDeadline; if(!fn) throw new Error("Missing getDeadline"); return fn.apply(p, arguments); }
-function setDeadline(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.setDeadline||fb?.setDeadline; if(!fn) throw new Error("Missing setDeadline"); return fn.apply(p, arguments); }
-function resolveClassLevel(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.resolveClassLevel||fb?.resolveClassLevel; if(!fn) throw new Error("Missing resolveClassLevel"); return fn.apply(p, arguments); }
-function extractFormNumber(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.extractFormNumber||fb?.extractFormNumber; if(!fn) throw new Error("Missing extractFormNumber"); return fn.apply(p, arguments); }
-function primaryClassSheetName_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.primaryClassSheetName_||fb?.primaryClassSheetName_; if(!fn) throw new Error("Missing primaryClassSheetName_"); return fn.apply(p, arguments); }
-function primaryStudentSheetNames_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.primaryStudentSheetNames_||fb?.primaryStudentSheetNames_; if(!fn) throw new Error("Missing primaryStudentSheetNames_"); return fn.apply(p, arguments); }
-function studentSheetForClass_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.studentSheetForClass_||fb?.studentSheetForClass_; if(!fn) throw new Error("Missing studentSheetForClass_"); return fn.apply(p, arguments); }
-function classMatchesExam(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.classMatchesExam||fb?.classMatchesExam; if(!fn) throw new Error("Missing classMatchesExam"); return fn.apply(p, arguments); }
-function dateToInt(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.dateToInt||fb?.dateToInt; if(!fn) throw new Error("Missing dateToInt"); return fn.apply(p, arguments); }
-function todayInt(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.todayInt||fb?.todayInt; if(!fn) throw new Error("Missing todayInt"); return fn.apply(p, arguments); }
-function sheetDateToLocal(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.sheetDateToLocal||fb?.sheetDateToLocal; if(!fn) throw new Error("Missing sheetDateToLocal"); return fn.apply(p, arguments); }
-function getExamCategoriesForClass(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getExamCategoriesForClass||fb?.getExamCategoriesForClass; if(!fn) throw new Error("Missing getExamCategoriesForClass"); return fn.apply(p, arguments); }
-function getExamsForClass(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getExamsForClass||fb?.getExamsForClass; if(!fn) throw new Error("Missing getExamsForClass"); return fn.apply(p, arguments); }
-function getSubjectsForClassAndTeacher(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getSubjectsForClassAndTeacher||fb?.getSubjectsForClassAndTeacher; if(!fn) throw new Error("Missing getSubjectsForClassAndTeacher"); return fn.apply(p, arguments); }
-function getScoresSheet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getScoresSheet||fb?.getScoresSheet; if(!fn) throw new Error("Missing getScoresSheet"); return fn.apply(p, arguments); }
-function ensureScoresSheetLegacy(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.ensureScoresSheetLegacy||fb?.ensureScoresSheetLegacy; if(!fn) throw new Error("Missing ensureScoresSheetLegacy"); return fn.apply(p, arguments); }
-function ensureScoresSheet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.ensureScoresSheet||fb?.ensureScoresSheet; if(!fn) throw new Error("Missing ensureScoresSheet"); return fn.apply(p, arguments); }
-function getStudentCountForClass(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getStudentCountForClass||fb?.getStudentCountForClass; if(!fn) throw new Error("Missing getStudentCountForClass"); return fn.apply(p, arguments); }
-function getStudentsForClass(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getStudentsForClass||fb?.getStudentsForClass; if(!fn) throw new Error("Missing getStudentsForClass"); return fn.apply(p, arguments); }
-function getStudentsForScoring(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getStudentsForScoring||fb?.getStudentsForScoring; if(!fn) throw new Error("Missing getStudentsForScoring"); return fn.apply(p, arguments); }
-function mergeScores(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.mergeScores||fb?.mergeScores; if(!fn) throw new Error("Missing mergeScores"); return fn.apply(p, arguments); }
-function submitScoresByName(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.submitScoresByName||fb?.submitScoresByName; if(!fn) throw new Error("Missing submitScoresByName"); return fn.apply(p, arguments); }
-function getExistingScores(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getExistingScores||fb?.getExistingScores; if(!fn) throw new Error("Missing getExistingScores"); return fn.apply(p, arguments); }
-function submitOrUpdateScores(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.submitOrUpdateScores||fb?.submitOrUpdateScores; if(!fn) throw new Error("Missing submitOrUpdateScores"); return fn.apply(p, arguments); }
-function getScoreReport(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getScoreReport||fb?.getScoreReport; if(!fn) throw new Error("Missing getScoreReport"); return fn.apply(p, arguments); }
-function getClassExamReport(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getClassExamReport||fb?.getClassExamReport; if(!fn) throw new Error("Missing getClassExamReport"); return fn.apply(p, arguments); }
-function getScoreTrackingDataLegacy_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getScoreTrackingDataLegacy_||fb?.getScoreTrackingDataLegacy_; if(!fn) throw new Error("Missing getScoreTrackingDataLegacy_"); return fn.apply(p, arguments); }
-function openClassSheet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.openClassSheet||fb?.openClassSheet; if(!fn) throw new Error("Missing openClassSheet"); return fn.apply(p, arguments); }
-function openAttendanceSheet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.openAttendanceSheet||fb?.openAttendanceSheet; if(!fn) throw new Error("Missing openAttendanceSheet"); return fn.apply(p, arguments); }
-function ensureAttendanceSheet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.ensureAttendanceSheet||fb?.ensureAttendanceSheet; if(!fn) throw new Error("Missing ensureAttendanceSheet"); return fn.apply(p, arguments); }
-function attAssertClass_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.attAssertClass_||fb?.attAssertClass_; if(!fn) throw new Error("Missing attAssertClass_"); return fn.apply(p, arguments); }
-function getAttendanceStudents(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAttendanceStudents||fb?.getAttendanceStudents; if(!fn) throw new Error("Missing getAttendanceStudents"); return fn.apply(p, arguments); }
-function classLevelMatch(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.classLevelMatch||fb?.classLevelMatch; if(!fn) throw new Error("Missing classLevelMatch"); return fn.apply(p, arguments); }
-function submitAttendance(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.submitAttendance||fb?.submitAttendance; if(!fn) throw new Error("Missing submitAttendance"); return fn.apply(p, arguments); }
-function logAttendanceSummary(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.logAttendanceSummary||fb?.logAttendanceSummary; if(!fn) throw new Error("Missing logAttendanceSummary"); return fn.apply(p, arguments); }
-function getTODStudents(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTODStudents||fb?.getTODStudents; if(!fn) throw new Error("Missing getTODStudents"); return fn.apply(p, arguments); }
-function submitTOD(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.submitTOD||fb?.submitTOD; if(!fn) throw new Error("Missing submitTOD"); return fn.apply(p, arguments); }
-function getTeacherProfile(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTeacherProfile||fb?.getTeacherProfile; if(!fn) throw new Error("Missing getTeacherProfile"); return fn.apply(p, arguments); }
-function fetchProfile(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.fetchProfile||fb?.fetchProfile; if(!fn) throw new Error("Missing fetchProfile"); return fn.apply(p, arguments); }
-function fetchReport(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.fetchReport||fb?.fetchReport; if(!fn) throw new Error("Missing fetchReport"); return fn.apply(p, arguments); }
-function fetchExamTypes(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.fetchExamTypes||fb?.fetchExamTypes; if(!fn) throw new Error("Missing fetchExamTypes"); return fn.apply(p, arguments); }
-function getTrackingExamTypes(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTrackingExamTypes||fb?.getTrackingExamTypes; if(!fn) throw new Error("Missing getTrackingExamTypes"); return fn.apply(p, arguments); }
-function getTrackingReport(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTrackingReport||fb?.getTrackingReport; if(!fn) throw new Error("Missing getTrackingReport"); return fn.apply(p, arguments); }
-function clean(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.clean||fb?.clean; if(!fn) throw new Error("Missing clean"); return fn.apply(p, arguments); }
-function lower(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.lower||fb?.lower; if(!fn) throw new Error("Missing lower"); return fn.apply(p, arguments); }
-function sameClass(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.sameClass||fb?.sameClass; if(!fn) throw new Error("Missing sameClass"); return fn.apply(p, arguments); }
-function addSubject(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.addSubject||fb?.addSubject; if(!fn) throw new Error("Missing addSubject"); return fn.apply(p, arguments); }
-function readSubjectsFromAssignment(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.readSubjectsFromAssignment||fb?.readSubjectsFromAssignment; if(!fn) throw new Error("Missing readSubjectsFromAssignment"); return fn.apply(p, arguments); }
-function getSubjectsByClass(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getSubjectsByClass||fb?.getSubjectsByClass; if(!fn) throw new Error("Missing getSubjectsByClass"); return fn.apply(p, arguments); }
-function getClassSheetId(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getClassSheetId||fb?.getClassSheetId; if(!fn) throw new Error("Missing getClassSheetId"); return fn.apply(p, arguments); }
-function getClasses(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getClasses||fb?.getClasses; if(!fn) throw new Error("Missing getClasses"); return fn.apply(p, arguments); }
-function getClassExamTypes(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getClassExamTypes||fb?.getClassExamTypes; if(!fn) throw new Error("Missing getClassExamTypes"); return fn.apply(p, arguments); }
-function getExamSubTypes(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getExamSubTypes||fb?.getExamSubTypes; if(!fn) throw new Error("Missing getExamSubTypes"); return fn.apply(p, arguments); }
-function examScoreToGrade_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.examScoreToGrade_||fb?.examScoreToGrade_; if(!fn) throw new Error("Missing examScoreToGrade_"); return fn.apply(p, arguments); }
-function examGradeToPoint_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.examGradeToPoint_||fb?.examGradeToPoint_; if(!fn) throw new Error("Missing examGradeToPoint_"); return fn.apply(p, arguments); }
-function examPointToDivision_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.examPointToDivision_||fb?.examPointToDivision_; if(!fn) throw new Error("Missing examPointToDivision_"); return fn.apply(p, arguments); }
-function examBest7PointSum_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.examBest7PointSum_||fb?.examBest7PointSum_; if(!fn) throw new Error("Missing examBest7PointSum_"); return fn.apply(p, arguments); }
-function examNormalizeDivisionKey_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.examNormalizeDivisionKey_||fb?.examNormalizeDivisionKey_; if(!fn) throw new Error("Missing examNormalizeDivisionKey_"); return fn.apply(p, arguments); }
-function examBest7SummaryFromSubjects_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.examBest7SummaryFromSubjects_||fb?.examBest7SummaryFromSubjects_; if(!fn) throw new Error("Missing examBest7SummaryFromSubjects_"); return fn.apply(p, arguments); }
-function getExamResults(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getExamResults||fb?.getExamResults; if(!fn) throw new Error("Missing getExamResults"); return fn.apply(p, arguments); }
-function fetchTopPanelData(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.fetchTopPanelData||fb?.fetchTopPanelData; if(!fn) throw new Error("Missing fetchTopPanelData"); return fn.apply(p, arguments); }
-function getStudentListRaw(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getStudentListRaw||fb?.getStudentListRaw; if(!fn) throw new Error("Missing getStudentListRaw"); return fn.apply(p, arguments); }
-function getStudentList(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getStudentList||fb?.getStudentList; if(!fn) throw new Error("Missing getStudentList"); return fn.apply(p, arguments); }
-function generateUniqueAdmNo(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.generateUniqueAdmNo||fb?.generateUniqueAdmNo; if(!fn) throw new Error("Missing generateUniqueAdmNo"); return fn.apply(p, arguments); }
-function findDuplicateAdmNos(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.findDuplicateAdmNos||fb?.findDuplicateAdmNos; if(!fn) throw new Error("Missing findDuplicateAdmNos"); return fn.apply(p, arguments); }
-function admDefaultPrefix_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.admDefaultPrefix_||fb?.admDefaultPrefix_; if(!fn) throw new Error("Missing admDefaultPrefix_"); return fn.apply(p, arguments); }
-function admSeriesConfig_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.admSeriesConfig_||fb?.admSeriesConfig_; if(!fn) throw new Error("Missing admSeriesConfig_"); return fn.apply(p, arguments); }
-function admSeriesFormat_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.admSeriesFormat_||fb?.admSeriesFormat_; if(!fn) throw new Error("Missing admSeriesFormat_"); return fn.apply(p, arguments); }
-function admSeriesNextFor_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.admSeriesNextFor_||fb?.admSeriesNextFor_; if(!fn) throw new Error("Missing admSeriesNextFor_"); return fn.apply(p, arguments); }
-function getAdmissionSeries(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAdmissionSeries||fb?.getAdmissionSeries; if(!fn) throw new Error("Missing getAdmissionSeries"); return fn.apply(p, arguments); }
-function saveAdmissionSeries(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveAdmissionSeries||fb?.saveAdmissionSeries; if(!fn) throw new Error("Missing saveAdmissionSeries"); return fn.apply(p, arguments); }
-function previewNextAdmNo(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.previewNextAdmNo||fb?.previewNextAdmNo; if(!fn) throw new Error("Missing previewNextAdmNo"); return fn.apply(p, arguments); }
-function admEnsureStudentCols_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.admEnsureStudentCols_||fb?.admEnsureStudentCols_; if(!fn) throw new Error("Missing admEnsureStudentCols_"); return fn.apply(p, arguments); }
-function admPremTakenBy_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.admPremTakenBy_||fb?.admPremTakenBy_; if(!fn) throw new Error("Missing admPremTakenBy_"); return fn.apply(p, arguments); }
-function saveStudent(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveStudent||fb?.saveStudent; if(!fn) throw new Error("Missing saveStudent"); return fn.apply(p, arguments); }
-function deleteStudent(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.deleteStudent||fb?.deleteStudent; if(!fn) throw new Error("Missing deleteStudent"); return fn.apply(p, arguments); }
-function getAcademicClassesRaw(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAcademicClassesRaw||fb?.getAcademicClassesRaw; if(!fn) throw new Error("Missing getAcademicClassesRaw"); return fn.apply(p, arguments); }
-function getAcademicClasses(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAcademicClasses||fb?.getAcademicClasses; if(!fn) throw new Error("Missing getAcademicClasses"); return fn.apply(p, arguments); }
-function saveAcademicClass(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveAcademicClass||fb?.saveAcademicClass; if(!fn) throw new Error("Missing saveAcademicClass"); return fn.apply(p, arguments); }
-function deleteAcademicClass(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.deleteAcademicClass||fb?.deleteAcademicClass; if(!fn) throw new Error("Missing deleteAcademicClass"); return fn.apply(p, arguments); }
-function getAcademicSubjectsRaw(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAcademicSubjectsRaw||fb?.getAcademicSubjectsRaw; if(!fn) throw new Error("Missing getAcademicSubjectsRaw"); return fn.apply(p, arguments); }
-function getAcademicSubjects(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAcademicSubjects||fb?.getAcademicSubjects; if(!fn) throw new Error("Missing getAcademicSubjects"); return fn.apply(p, arguments); }
-function saveAcademicSubject(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveAcademicSubject||fb?.saveAcademicSubject; if(!fn) throw new Error("Missing saveAcademicSubject"); return fn.apply(p, arguments); }
-function deleteAcademicSubject(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.deleteAcademicSubject||fb?.deleteAcademicSubject; if(!fn) throw new Error("Missing deleteAcademicSubject"); return fn.apply(p, arguments); }
-function getAcademicExamsRaw(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAcademicExamsRaw||fb?.getAcademicExamsRaw; if(!fn) throw new Error("Missing getAcademicExamsRaw"); return fn.apply(p, arguments); }
-function isoLocal(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.isoLocal||fb?.isoLocal; if(!fn) throw new Error("Missing isoLocal"); return fn.apply(p, arguments); }
-function getAcademicExams(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAcademicExams||fb?.getAcademicExams; if(!fn) throw new Error("Missing getAcademicExams"); return fn.apply(p, arguments); }
-function getActiveExamsForTeacher(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getActiveExamsForTeacher||fb?.getActiveExamsForTeacher; if(!fn) throw new Error("Missing getActiveExamsForTeacher"); return fn.apply(p, arguments); }
-function saveAcademicExam(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveAcademicExam||fb?.saveAcademicExam; if(!fn) throw new Error("Missing saveAcademicExam"); return fn.apply(p, arguments); }
-function checkAndDeactivatePastExams(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.checkAndDeactivatePastExams||fb?.checkAndDeactivatePastExams; if(!fn) throw new Error("Missing checkAndDeactivatePastExams"); return fn.apply(p, arguments); }
-function deleteAcademicExam(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.deleteAcademicExam||fb?.deleteAcademicExam; if(!fn) throw new Error("Missing deleteAcademicExam"); return fn.apply(p, arguments); }
-function publishExamResults(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.publishExamResults||fb?.publishExamResults; if(!fn) throw new Error("Missing publishExamResults"); return fn.apply(p, arguments); }
-function getTimetable(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTimetable||fb?.getTimetable; if(!fn) throw new Error("Missing getTimetable"); return fn.apply(p, arguments); }
-function saveTimetable(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveTimetable||fb?.saveTimetable; if(!fn) throw new Error("Missing saveTimetable"); return fn.apply(p, arguments); }
-function getMessages(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getMessages||fb?.getMessages; if(!fn) throw new Error("Missing getMessages"); return fn.apply(p, arguments); }
-function sendMessage(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.sendMessage||fb?.sendMessage; if(!fn) throw new Error("Missing sendMessage"); return fn.apply(p, arguments); }
-function changeTeacherPassword(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.changeTeacherPassword||fb?.changeTeacherPassword; if(!fn) throw new Error("Missing changeTeacherPassword"); return fn.apply(p, arguments); }
-function saveStaffRecord(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveStaffRecord||fb?.saveStaffRecord; if(!fn) throw new Error("Missing saveStaffRecord"); return fn.apply(p, arguments); }
-function getStaffRecords(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getStaffRecords||fb?.getStaffRecords; if(!fn) throw new Error("Missing getStaffRecords"); return fn.apply(p, arguments); }
-function deleteStaffRecord(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.deleteStaffRecord||fb?.deleteStaffRecord; if(!fn) throw new Error("Missing deleteStaffRecord"); return fn.apply(p, arguments); }
-function getFinancialSummary(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getFinancialSummary||fb?.getFinancialSummary; if(!fn) throw new Error("Missing getFinancialSummary"); return fn.apply(p, arguments); }
-function getAcademicStats(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAcademicStats||fb?.getAcademicStats; if(!fn) throw new Error("Missing getAcademicStats"); return fn.apply(p, arguments); }
-function updateStudentStatus(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.updateStudentStatus||fb?.updateStudentStatus; if(!fn) throw new Error("Missing updateStudentStatus"); return fn.apply(p, arguments); }
-function updateClassStatus(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.updateClassStatus||fb?.updateClassStatus; if(!fn) throw new Error("Missing updateClassStatus"); return fn.apply(p, arguments); }
-function updateSubjectStatus(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.updateSubjectStatus||fb?.updateSubjectStatus; if(!fn) throw new Error("Missing updateSubjectStatus"); return fn.apply(p, arguments); }
-function getMonitorData(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getMonitorData||fb?.getMonitorData; if(!fn) throw new Error("Missing getMonitorData"); return fn.apply(p, arguments); }
-function saveSystemConfig(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveSystemConfig||fb?.saveSystemConfig; if(!fn) throw new Error("Missing saveSystemConfig"); return fn.apply(p, arguments); }
-function saveSchoolConfig(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveSchoolConfig||fb?.saveSchoolConfig; if(!fn) throw new Error("Missing saveSchoolConfig"); return fn.apply(p, arguments); }
-function saveAdminProfile(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveAdminProfile||fb?.saveAdminProfile; if(!fn) throw new Error("Missing saveAdminProfile"); return fn.apply(p, arguments); }
-function changeAdminPassword(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.changeAdminPassword||fb?.changeAdminPassword; if(!fn) throw new Error("Missing changeAdminPassword"); return fn.apply(p, arguments); }
-function checkParentLogin(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.checkParentLogin||fb?.checkParentLogin; if(!fn) throw new Error("Missing checkParentLogin"); return fn.apply(p, arguments); }
-function getClassesAndExamTypes(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getClassesAndExamTypes||fb?.getClassesAndExamTypes; if(!fn) throw new Error("Missing getClassesAndExamTypes"); return fn.apply(p, arguments); }
-function getStudentsForParent(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getStudentsForParent||fb?.getStudentsForParent; if(!fn) throw new Error("Missing getStudentsForParent"); return fn.apply(p, arguments); }
-function getStudentReport(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getStudentReport||fb?.getStudentReport; if(!fn) throw new Error("Missing getStudentReport"); return fn.apply(p, arguments); }
-function readByAliases(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.readByAliases||fb?.readByAliases; if(!fn) throw new Error("Missing readByAliases"); return fn.apply(p, arguments); }
-function getAllParentAssignments(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAllParentAssignments||fb?.getAllParentAssignments; if(!fn) throw new Error("Missing getAllParentAssignments"); return fn.apply(p, arguments); }
-function addParentAssignment(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.addParentAssignment||fb?.addParentAssignment; if(!fn) throw new Error("Missing addParentAssignment"); return fn.apply(p, arguments); }
-function deleteParentAssignment(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.deleteParentAssignment||fb?.deleteParentAssignment; if(!fn) throw new Error("Missing deleteParentAssignment"); return fn.apply(p, arguments); }
-function getTeacherClasses(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTeacherClasses||fb?.getTeacherClasses; if(!fn) throw new Error("Missing getTeacherClasses"); return fn.apply(p, arguments); }
-function isSubjectValidForClass(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.isSubjectValidForClass||fb?.isSubjectValidForClass; if(!fn) throw new Error("Missing isSubjectValidForClass"); return fn.apply(p, arguments); }
-function getExamNamesForTracking(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getExamNamesForTracking||fb?.getExamNamesForTracking; if(!fn) throw new Error("Missing getExamNamesForTracking"); return fn.apply(p, arguments); }
-function getScoreTrackingData(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getScoreTrackingData||fb?.getScoreTrackingData; if(!fn) throw new Error("Missing getScoreTrackingData"); return fn.apply(p, arguments); }
-function norm(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.norm||fb?.norm; if(!fn) throw new Error("Missing norm"); return fn.apply(p, arguments); }
-function formNo(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.formNo||fb?.formNo; if(!fn) throw new Error("Missing formNo"); return fn.apply(p, arguments); }
-function classSame(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.classSame||fb?.classSame; if(!fn) throw new Error("Missing classSame"); return fn.apply(p, arguments); }
-function subjectSame(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.subjectSame||fb?.subjectSame; if(!fn) throw new Error("Missing subjectSame"); return fn.apply(p, arguments); }
-function detectCategory(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.detectCategory||fb?.detectCategory; if(!fn) throw new Error("Missing detectCategory"); return fn.apply(p, arguments); }
-function resolveExamType(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.resolveExamType||fb?.resolveExamType; if(!fn) throw new Error("Missing resolveExamType"); return fn.apply(p, arguments); }
-function getTeacherFullName(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTeacherFullName||fb?.getTeacherFullName; if(!fn) throw new Error("Missing getTeacherFullName"); return fn.apply(p, arguments); }
-function migrateScoresToFormSheets(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.migrateScoresToFormSheets||fb?.migrateScoresToFormSheets; if(!fn) throw new Error("Missing migrateScoresToFormSheets"); return fn.apply(p, arguments); }
-function authorizeDriveAccess(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.authorizeDriveAccess||fb?.authorizeDriveAccess; if(!fn) throw new Error("Missing authorizeDriveAccess"); return fn.apply(p, arguments); }
-function saveTODReport(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveTODReport||fb?.saveTODReport; if(!fn) throw new Error("Missing saveTODReport"); return fn.apply(p, arguments); }
-function getMyTODDates(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getMyTODDates||fb?.getMyTODDates; if(!fn) throw new Error("Missing getMyTODDates"); return fn.apply(p, arguments); }
-function getMyTODReports(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getMyTODReports||fb?.getMyTODReports; if(!fn) throw new Error("Missing getMyTODReports"); return fn.apply(p, arguments); }
-function deleteTODReport(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.deleteTODReport||fb?.deleteTODReport; if(!fn) throw new Error("Missing deleteTODReport"); return fn.apply(p, arguments); }
-function getTODReportByDate(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTODReportByDate||fb?.getTODReportByDate; if(!fn) throw new Error("Missing getTODReportByDate"); return fn.apply(p, arguments); }
-function getTODWeeklyReport(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getTODWeeklyReport||fb?.getTODWeeklyReport; if(!fn) throw new Error("Missing getTODWeeklyReport"); return fn.apply(p, arguments); }
-function mapSheetName(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.mapSheetName||fb?.mapSheetName; if(!fn) throw new Error("Missing mapSheetName"); return fn.apply(p, arguments); }
-function getOrCreateMapSheet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getOrCreateMapSheet||fb?.getOrCreateMapSheet; if(!fn) throw new Error("Missing getOrCreateMapSheet"); return fn.apply(p, arguments); }
-function saveStudentSubjectMapping(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveStudentSubjectMapping||fb?.saveStudentSubjectMapping; if(!fn) throw new Error("Missing saveStudentSubjectMapping"); return fn.apply(p, arguments); }
-function getStudentsAndMappingForSubject(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getStudentsAndMappingForSubject||fb?.getStudentsAndMappingForSubject; if(!fn) throw new Error("Missing getStudentsAndMappingForSubject"); return fn.apply(p, arguments); }
-function getSubjectMappedCount(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getSubjectMappedCount||fb?.getSubjectMappedCount; if(!fn) throw new Error("Missing getSubjectMappedCount"); return fn.apply(p, arguments); }
-function getSubjectMappingSummary(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getSubjectMappingSummary||fb?.getSubjectMappingSummary; if(!fn) throw new Error("Missing getSubjectMappingSummary"); return fn.apply(p, arguments); }
-function ensureAcademicYearsSheet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.ensureAcademicYearsSheet||fb?.ensureAcademicYearsSheet; if(!fn) throw new Error("Missing ensureAcademicYearsSheet"); return fn.apply(p, arguments); }
-function ensureAlumniSheet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.ensureAlumniSheet||fb?.ensureAlumniSheet; if(!fn) throw new Error("Missing ensureAlumniSheet"); return fn.apply(p, arguments); }
-function progGetAcademicYears(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.progGetAcademicYears||fb?.progGetAcademicYears; if(!fn) throw new Error("Missing progGetAcademicYears"); return fn.apply(p, arguments); }
-function progSetActiveYear(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.progSetActiveYear||fb?.progSetActiveYear; if(!fn) throw new Error("Missing progSetActiveYear"); return fn.apply(p, arguments); }
-function progCreateAcademicYear(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.progCreateAcademicYear||fb?.progCreateAcademicYear; if(!fn) throw new Error("Missing progCreateAcademicYear"); return fn.apply(p, arguments); }
-function progPromoteStudents(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.progPromoteStudents||fb?.progPromoteStudents; if(!fn) throw new Error("Missing progPromoteStudents"); return fn.apply(p, arguments); }
-function progGetAlumni(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.progGetAlumni||fb?.progGetAlumni; if(!fn) throw new Error("Missing progGetAlumni"); return fn.apply(p, arguments); }
-function getClassTeachersWithAttendanceStatus(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getClassTeachersWithAttendanceStatus||fb?.getClassTeachersWithAttendanceStatus; if(!fn) throw new Error("Missing getClassTeachersWithAttendanceStatus"); return fn.apply(p, arguments); }
-function colIdx(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.colIdx||fb?.colIdx; if(!fn) throw new Error("Missing colIdx"); return fn.apply(p, arguments); }
-function addParent(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.addParent||fb?.addParent; if(!fn) throw new Error("Missing addParent"); return fn.apply(p, arguments); }
-function ensureParentsSheet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.ensureParentsSheet||fb?.ensureParentsSheet; if(!fn) throw new Error("Missing ensureParentsSheet"); return fn.apply(p, arguments); }
-function getParentList(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getParentList||fb?.getParentList; if(!fn) throw new Error("Missing getParentList"); return fn.apply(p, arguments); }
-function updateParent(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.updateParent||fb?.updateParent; if(!fn) throw new Error("Missing updateParent"); return fn.apply(p, arguments); }
-function deleteParent(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.deleteParent||fb?.deleteParent; if(!fn) throw new Error("Missing deleteParent"); return fn.apply(p, arguments); }
-function getLoginPage(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getLoginPage||fb?.getLoginPage; if(!fn) throw new Error("Missing getLoginPage"); return fn.apply(p, arguments); }
-function getIndexPage(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getIndexPage||fb?.getIndexPage; if(!fn) throw new Error("Missing getIndexPage"); return fn.apply(p, arguments); }
-function getParentPortalHtml(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getParentPortalHtml||fb?.getParentPortalHtml; if(!fn) throw new Error("Missing getParentPortalHtml"); return fn.apply(p, arguments); }
-function legacyCheckLogin_v2_DISABLED(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.legacyCheckLogin_v2_DISABLED||fb?.legacyCheckLogin_v2_DISABLED; if(!fn) throw new Error("Missing legacyCheckLogin_v2_DISABLED"); return fn.apply(p, arguments); }
-function getSchoolAnnouncements(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getSchoolAnnouncements||fb?.getSchoolAnnouncements; if(!fn) throw new Error("Missing getSchoolAnnouncements"); return fn.apply(p, arguments); }
-function getAttendanceRecords(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAttendanceRecords||fb?.getAttendanceRecords; if(!fn) throw new Error("Missing getAttendanceRecords"); return fn.apply(p, arguments); }
-function col(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.col||fb?.col; if(!fn) throw new Error("Missing col"); return fn.apply(p, arguments); }
-function getAllExamResults(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAllExamResults||fb?.getAllExamResults; if(!fn) throw new Error("Missing getAllExamResults"); return fn.apply(p, arguments); }
-function clearAllActivityLogs(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.clearAllActivityLogs||fb?.clearAllActivityLogs; if(!fn) throw new Error("Missing clearAllActivityLogs"); return fn.apply(p, arguments); }
-function legacyCheckLogin_v3_DISABLED(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.legacyCheckLogin_v3_DISABLED||fb?.legacyCheckLogin_v3_DISABLED; if(!fn) throw new Error("Missing legacyCheckLogin_v3_DISABLED"); return fn.apply(p, arguments); }
-function smsCheckLoginCore_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.smsCheckLoginCore_||fb?.smsCheckLoginCore_; if(!fn) throw new Error("Missing smsCheckLoginCore_"); return fn.apply(p, arguments); }
-function getDashboardKeyFromPosition(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getDashboardKeyFromPosition||fb?.getDashboardKeyFromPosition; if(!fn) throw new Error("Missing getDashboardKeyFromPosition"); return fn.apply(p, arguments); }
-function ensureDashboardAccessSheet_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.ensureDashboardAccessSheet_||fb?.ensureDashboardAccessSheet_; if(!fn) throw new Error("Missing ensureDashboardAccessSheet_"); return fn.apply(p, arguments); }
-function getDashboardAccessPolicies(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getDashboardAccessPolicies||fb?.getDashboardAccessPolicies; if(!fn) throw new Error("Missing getDashboardAccessPolicies"); return fn.apply(p, arguments); }
-function saveDashboardAccessPolicies(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveDashboardAccessPolicies||fb?.saveDashboardAccessPolicies; if(!fn) throw new Error("Missing saveDashboardAccessPolicies"); return fn.apply(p, arguments); }
-function saveDashboardAccessState(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveDashboardAccessState||fb?.saveDashboardAccessState; if(!fn) throw new Error("Missing saveDashboardAccessState"); return fn.apply(p, arguments); }
-function logDashboardAccessEvent_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.logDashboardAccessEvent_||fb?.logDashboardAccessEvent_; if(!fn) throw new Error("Missing logDashboardAccessEvent_"); return fn.apply(p, arguments); }
-function getDashboardAccessEvents(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getDashboardAccessEvents||fb?.getDashboardAccessEvents; if(!fn) throw new Error("Missing getDashboardAccessEvents"); return fn.apply(p, arguments); }
-function forceLogoutDashboard(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.forceLogoutDashboard||fb?.forceLogoutDashboard; if(!fn) throw new Error("Missing forceLogoutDashboard"); return fn.apply(p, arguments); }
-function canAccessDashboard(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.canAccessDashboard||fb?.canAccessDashboard; if(!fn) throw new Error("Missing canAccessDashboard"); return fn.apply(p, arguments); }
-function evalRichDashboardPolicy_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.evalRichDashboardPolicy_||fb?.evalRichDashboardPolicy_; if(!fn) throw new Error("Missing evalRichDashboardPolicy_"); return fn.apply(p, arguments); }
-function checkCurrentDashboardAccess(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.checkCurrentDashboardAccess||fb?.checkCurrentDashboardAccess; if(!fn) throw new Error("Missing checkCurrentDashboardAccess"); return fn.apply(p, arguments); }
-function getAccessDeniedPage(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAccessDeniedPage||fb?.getAccessDeniedPage; if(!fn) throw new Error("Missing getAccessDeniedPage"); return fn.apply(p, arguments); }
-function logDashboardBlockedAttempt(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.logDashboardBlockedAttempt||fb?.logDashboardBlockedAttempt; if(!fn) throw new Error("Missing logDashboardBlockedAttempt"); return fn.apply(p, arguments); }
-function behLevel_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.behLevel_||fb?.behLevel_; if(!fn) throw new Error("Missing behLevel_"); return fn.apply(p, arguments); }
-function ensureBehaviorSheet_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.ensureBehaviorSheet_||fb?.ensureBehaviorSheet_; if(!fn) throw new Error("Missing ensureBehaviorSheet_"); return fn.apply(p, arguments); }
-function behNorm_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.behNorm_||fb?.behNorm_; if(!fn) throw new Error("Missing behNorm_"); return fn.apply(p, arguments); }
-function behClassKey_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.behClassKey_||fb?.behClassKey_; if(!fn) throw new Error("Missing behClassKey_"); return fn.apply(p, arguments); }
-function behTeacherClasses_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.behTeacherClasses_||fb?.behTeacherClasses_; if(!fn) throw new Error("Missing behTeacherClasses_"); return fn.apply(p, arguments); }
-function add(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.add||fb?.add; if(!fn) throw new Error("Missing add"); return fn.apply(p, arguments); }
-function behCanAccess_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.behCanAccess_||fb?.behCanAccess_; if(!fn) throw new Error("Missing behCanAccess_"); return fn.apply(p, arguments); }
-function getMyHomeroomClasses(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getMyHomeroomClasses||fb?.getMyHomeroomClasses; if(!fn) throw new Error("Missing getMyHomeroomClasses"); return fn.apply(p, arguments); }
-function behReadMap_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.behReadMap_||fb?.behReadMap_; if(!fn) throw new Error("Missing behReadMap_"); return fn.apply(p, arguments); }
-function getBehaviorSheet(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getBehaviorSheet||fb?.getBehaviorSheet; if(!fn) throw new Error("Missing getBehaviorSheet"); return fn.apply(p, arguments); }
-function saveBehaviors(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveBehaviors||fb?.saveBehaviors; if(!fn) throw new Error("Missing saveBehaviors"); return fn.apply(p, arguments); }
-function fetchReportBehaviors(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.fetchReportBehaviors||fb?.fetchReportBehaviors; if(!fn) throw new Error("Missing fetchReportBehaviors"); return fn.apply(p, arguments); }
-function smsNewToken_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.smsNewToken_||fb?.smsNewToken_; if(!fn) throw new Error("Missing smsNewToken_"); return fn.apply(p, arguments); }
-function smsEndSession(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.smsEndSession||fb?.smsEndSession; if(!fn) throw new Error("Missing smsEndSession"); return fn.apply(p, arguments); }
-function smsStoreScript_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.smsStoreScript_||fb?.smsStoreScript_; if(!fn) throw new Error("Missing smsStoreScript_"); return fn.apply(p, arguments); }
-function smsClearScript_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.smsClearScript_||fb?.smsClearScript_; if(!fn) throw new Error("Missing smsClearScript_"); return fn.apply(p, arguments); }
-function smsAppendScript_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.smsAppendScript_||fb?.smsAppendScript_; if(!fn) throw new Error("Missing smsAppendScript_"); return fn.apply(p, arguments); }
-function smsInjectRestore_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.smsInjectRestore_||fb?.smsInjectRestore_; if(!fn) throw new Error("Missing smsInjectRestore_"); return fn.apply(p, arguments); }
-function drop(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.drop||fb?.drop; if(!fn) throw new Error("Missing drop"); return fn.apply(p, arguments); }
-function run(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.run||fb?.run; if(!fn) throw new Error("Missing run"); return fn.apply(p, arguments); }
-function smsDashboardFor_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.smsDashboardFor_||fb?.smsDashboardFor_; if(!fn) throw new Error("Missing smsDashboardFor_"); return fn.apply(p, arguments); }
-function smsRestoreSession(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.smsRestoreSession||fb?.smsRestoreSession; if(!fn) throw new Error("Missing smsRestoreSession"); return fn.apply(p, arguments); }
-function smsParentData_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.smsParentData_||fb?.smsParentData_; if(!fn) throw new Error("Missing smsParentData_"); return fn.apply(p, arguments); }
-function smsParentHtml_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.smsParentHtml_||fb?.smsParentHtml_; if(!fn) throw new Error("Missing smsParentHtml_"); return fn.apply(p, arguments); }
-function tryBoot(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.tryBoot||fb?.tryBoot; if(!fn) throw new Error("Missing tryBoot"); return fn.apply(p, arguments); }
-function checkLogin(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.checkLogin||fb?.checkLogin; if(!fn) throw new Error("Missing checkLogin"); return fn.apply(p, arguments); }
-function acsSheet_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.acsSheet_||fb?.acsSheet_; if(!fn) throw new Error("Missing acsSheet_"); return fn.apply(p, arguments); }
-function getAcademicSettings(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.getAcademicSettings||fb?.getAcademicSettings; if(!fn) throw new Error("Missing getAcademicSettings"); return fn.apply(p, arguments); }
-function saveAcademicSettings(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.saveAcademicSettings||fb?.saveAcademicSettings; if(!fn) throw new Error("Missing saveAcademicSettings"); return fn.apply(p, arguments); }
-function behIsClassTeacher_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.behIsClassTeacher_||fb?.behIsClassTeacher_; if(!fn) throw new Error("Missing behIsClassTeacher_"); return fn.apply(p, arguments); }
-function behFindTeacher_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.behFindTeacher_||fb?.behFindTeacher_; if(!fn) throw new Error("Missing behFindTeacher_"); return fn.apply(p, arguments); }
-function behResolveClassTeacher_(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.behResolveClassTeacher_||fb?.behResolveClassTeacher_; if(!fn) throw new Error("Missing behResolveClassTeacher_"); return fn.apply(p, arguments); }
-function testSecondMaster(){ var p=__resolveCoreEngine__(), fb=p===__PrimaryEngine?__SecondaryEngine:__PrimaryEngine, fn=p?.testSecondMaster||fb?.testSecondMaster; if(!fn) throw new Error("Missing testSecondMaster"); return fn.apply(p, arguments); }
+
+  function doGet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.doGet) || (fb && fb.doGet);
+    if (!fn) throw new Error("Missing function: doGet");
+    return fn.apply(p, arguments);
+  }
+  function attRosterRows_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.attRosterRows_) || (fb && fb.attRosterRows_);
+    if (!fn) throw new Error("Missing function: attRosterRows_");
+    return fn.apply(p, arguments);
+  }
+  function attMonthRows_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.attMonthRows_) || (fb && fb.attMonthRows_);
+    if (!fn) throw new Error("Missing function: attMonthRows_");
+    return fn.apply(p, arguments);
+  }
+  function attBuildClass_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.attBuildClass_) || (fb && fb.attBuildClass_);
+    if (!fn) throw new Error("Missing function: attBuildClass_");
+    return fn.apply(p, arguments);
+  }
+  function addStudent() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.addStudent) || (fb && fb.addStudent);
+    if (!fn) throw new Error("Missing function: addStudent");
+    return fn.apply(p, arguments);
+  }
+  function getMonthlyAttendance() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getMonthlyAttendance) || (fb && fb.getMonthlyAttendance);
+    if (!fn) throw new Error("Missing function: getMonthlyAttendance");
+    return fn.apply(p, arguments);
+  }
+  function getMonthlyAttendanceBatch() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getMonthlyAttendanceBatch) || (fb && fb.getMonthlyAttendanceBatch);
+    if (!fn) throw new Error("Missing function: getMonthlyAttendanceBatch");
+    return fn.apply(p, arguments);
+  }
+  function getDaysSavedBatch() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getDaysSavedBatch) || (fb && fb.getDaysSavedBatch);
+    if (!fn) throw new Error("Missing function: getDaysSavedBatch");
+    return fn.apply(p, arguments);
+  }
+  function getYearlyAttendanceSummary() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getYearlyAttendanceSummary) || (fb && fb.getYearlyAttendanceSummary);
+    if (!fn) throw new Error("Missing function: getYearlyAttendanceSummary");
+    return fn.apply(p, arguments);
+  }
+  function legacyCheckLogin_v1_DISABLED() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.legacyCheckLogin_v1_DISABLED) || (fb && fb.legacyCheckLogin_v1_DISABLED);
+    if (!fn) throw new Error("Missing function: legacyCheckLogin_v1_DISABLED");
+    return fn.apply(p, arguments);
+  }
+  function getParentPortalData() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getParentPortalData) || (fb && fb.getParentPortalData);
+    if (!fn) throw new Error("Missing function: getParentPortalData");
+    return fn.apply(p, arguments);
+  }
+  function logout() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.logout) || (fb && fb.logout);
+    if (!fn) throw new Error("Missing function: logout");
+    return fn.apply(p, arguments);
+  }
+  function setTeacherSession() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.setTeacherSession) || (fb && fb.setTeacherSession);
+    if (!fn) throw new Error("Missing function: setTeacherSession");
+    return fn.apply(p, arguments);
+  }
+  function getTeacherSession() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTeacherSession) || (fb && fb.getTeacherSession);
+    if (!fn) throw new Error("Missing function: getTeacherSession");
+    return fn.apply(p, arguments);
+  }
+  function getTodayPresentCount() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTodayPresentCount) || (fb && fb.getTodayPresentCount);
+    if (!fn) throw new Error("Missing function: getTodayPresentCount");
+    return fn.apply(p, arguments);
+  }
+  function clearTeacherSession() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.clearTeacherSession) || (fb && fb.clearTeacherSession);
+    if (!fn) throw new Error("Missing function: clearTeacherSession");
+    return fn.apply(p, arguments);
+  }
+  function ensureUsersSheet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.ensureUsersSheet) || (fb && fb.ensureUsersSheet);
+    if (!fn) throw new Error("Missing function: ensureUsersSheet");
+    return fn.apply(p, arguments);
+  }
+  function homeroomMap_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.homeroomMap_) || (fb && fb.homeroomMap_);
+    if (!fn) throw new Error("Missing function: homeroomMap_");
+    return fn.apply(p, arguments);
+  }
+  function getTeacherList() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTeacherList) || (fb && fb.getTeacherList);
+    if (!fn) throw new Error("Missing function: getTeacherList");
+    return fn.apply(p, arguments);
+  }
+  function getTeachers() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTeachers) || (fb && fb.getTeachers);
+    if (!fn) throw new Error("Missing function: getTeachers");
+    return fn.apply(p, arguments);
+  }
+  function addTeacher() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.addTeacher) || (fb && fb.addTeacher);
+    if (!fn) throw new Error("Missing function: addTeacher");
+    return fn.apply(p, arguments);
+  }
+  function updateTeacher() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.updateTeacher) || (fb && fb.updateTeacher);
+    if (!fn) throw new Error("Missing function: updateTeacher");
+    return fn.apply(p, arguments);
+  }
+  function deleteTeacher() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.deleteTeacher) || (fb && fb.deleteTeacher);
+    if (!fn) throw new Error("Missing function: deleteTeacher");
+    return fn.apply(p, arguments);
+  }
+  function logActivity() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.logActivity) || (fb && fb.logActivity);
+    if (!fn) throw new Error("Missing function: logActivity");
+    return fn.apply(p, arguments);
+  }
+  function getActivityLog() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getActivityLog) || (fb && fb.getActivityLog);
+    if (!fn) throw new Error("Missing function: getActivityLog");
+    return fn.apply(p, arguments);
+  }
+  function getCurrentStatus() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getCurrentStatus) || (fb && fb.getCurrentStatus);
+    if (!fn) throw new Error("Missing function: getCurrentStatus");
+    return fn.apply(p, arguments);
+  }
+  function getDeadlineData() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getDeadlineData) || (fb && fb.getDeadlineData);
+    if (!fn) throw new Error("Missing function: getDeadlineData");
+    return fn.apply(p, arguments);
+  }
+  function setDeadlineRange() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.setDeadlineRange) || (fb && fb.setDeadlineRange);
+    if (!fn) throw new Error("Missing function: setDeadlineRange");
+    return fn.apply(p, arguments);
+  }
+  function setStatus() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.setStatus) || (fb && fb.setStatus);
+    if (!fn) throw new Error("Missing function: setStatus");
+    return fn.apply(p, arguments);
+  }
+  function getDeadline() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getDeadline) || (fb && fb.getDeadline);
+    if (!fn) throw new Error("Missing function: getDeadline");
+    return fn.apply(p, arguments);
+  }
+  function setDeadline() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.setDeadline) || (fb && fb.setDeadline);
+    if (!fn) throw new Error("Missing function: setDeadline");
+    return fn.apply(p, arguments);
+  }
+  function resolveClassLevel() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.resolveClassLevel) || (fb && fb.resolveClassLevel);
+    if (!fn) throw new Error("Missing function: resolveClassLevel");
+    return fn.apply(p, arguments);
+  }
+  function extractFormNumber() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.extractFormNumber) || (fb && fb.extractFormNumber);
+    if (!fn) throw new Error("Missing function: extractFormNumber");
+    return fn.apply(p, arguments);
+  }
+  function primaryClassSheetName_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.primaryClassSheetName_) || (fb && fb.primaryClassSheetName_);
+    if (!fn) throw new Error("Missing function: primaryClassSheetName_");
+    return fn.apply(p, arguments);
+  }
+  function primaryStudentSheetNames_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.primaryStudentSheetNames_) || (fb && fb.primaryStudentSheetNames_);
+    if (!fn) throw new Error("Missing function: primaryStudentSheetNames_");
+    return fn.apply(p, arguments);
+  }
+  function studentSheetForClass_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.studentSheetForClass_) || (fb && fb.studentSheetForClass_);
+    if (!fn) throw new Error("Missing function: studentSheetForClass_");
+    return fn.apply(p, arguments);
+  }
+  function classMatchesExam() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.classMatchesExam) || (fb && fb.classMatchesExam);
+    if (!fn) throw new Error("Missing function: classMatchesExam");
+    return fn.apply(p, arguments);
+  }
+  function dateToInt() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.dateToInt) || (fb && fb.dateToInt);
+    if (!fn) throw new Error("Missing function: dateToInt");
+    return fn.apply(p, arguments);
+  }
+  function todayInt() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.todayInt) || (fb && fb.todayInt);
+    if (!fn) throw new Error("Missing function: todayInt");
+    return fn.apply(p, arguments);
+  }
+  function sheetDateToLocal() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.sheetDateToLocal) || (fb && fb.sheetDateToLocal);
+    if (!fn) throw new Error("Missing function: sheetDateToLocal");
+    return fn.apply(p, arguments);
+  }
+  function getExamCategoriesForClass() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getExamCategoriesForClass) || (fb && fb.getExamCategoriesForClass);
+    if (!fn) throw new Error("Missing function: getExamCategoriesForClass");
+    return fn.apply(p, arguments);
+  }
+  function getExamsForClass() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getExamsForClass) || (fb && fb.getExamsForClass);
+    if (!fn) throw new Error("Missing function: getExamsForClass");
+    return fn.apply(p, arguments);
+  }
+  function getSubjectsForClassAndTeacher() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getSubjectsForClassAndTeacher) || (fb && fb.getSubjectsForClassAndTeacher);
+    if (!fn) throw new Error("Missing function: getSubjectsForClassAndTeacher");
+    return fn.apply(p, arguments);
+  }
+  function getScoresSheet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getScoresSheet) || (fb && fb.getScoresSheet);
+    if (!fn) throw new Error("Missing function: getScoresSheet");
+    return fn.apply(p, arguments);
+  }
+  function ensureScoresSheetLegacy() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.ensureScoresSheetLegacy) || (fb && fb.ensureScoresSheetLegacy);
+    if (!fn) throw new Error("Missing function: ensureScoresSheetLegacy");
+    return fn.apply(p, arguments);
+  }
+  function ensureScoresSheet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.ensureScoresSheet) || (fb && fb.ensureScoresSheet);
+    if (!fn) throw new Error("Missing function: ensureScoresSheet");
+    return fn.apply(p, arguments);
+  }
+  function getStudentCountForClass() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getStudentCountForClass) || (fb && fb.getStudentCountForClass);
+    if (!fn) throw new Error("Missing function: getStudentCountForClass");
+    return fn.apply(p, arguments);
+  }
+  function getStudentsForClass() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getStudentsForClass) || (fb && fb.getStudentsForClass);
+    if (!fn) throw new Error("Missing function: getStudentsForClass");
+    return fn.apply(p, arguments);
+  }
+  function getStudentsForScoring() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getStudentsForScoring) || (fb && fb.getStudentsForScoring);
+    if (!fn) throw new Error("Missing function: getStudentsForScoring");
+    return fn.apply(p, arguments);
+  }
+  function mergeScores() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.mergeScores) || (fb && fb.mergeScores);
+    if (!fn) throw new Error("Missing function: mergeScores");
+    return fn.apply(p, arguments);
+  }
+  function submitScoresByName() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.submitScoresByName) || (fb && fb.submitScoresByName);
+    if (!fn) throw new Error("Missing function: submitScoresByName");
+    return fn.apply(p, arguments);
+  }
+  function getExistingScores() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getExistingScores) || (fb && fb.getExistingScores);
+    if (!fn) throw new Error("Missing function: getExistingScores");
+    return fn.apply(p, arguments);
+  }
+  function submitOrUpdateScores() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.submitOrUpdateScores) || (fb && fb.submitOrUpdateScores);
+    if (!fn) throw new Error("Missing function: submitOrUpdateScores");
+    return fn.apply(p, arguments);
+  }
+  function getScoreReport() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getScoreReport) || (fb && fb.getScoreReport);
+    if (!fn) throw new Error("Missing function: getScoreReport");
+    return fn.apply(p, arguments);
+  }
+  function getClassExamReport() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getClassExamReport) || (fb && fb.getClassExamReport);
+    if (!fn) throw new Error("Missing function: getClassExamReport");
+    return fn.apply(p, arguments);
+  }
+  function getScoreTrackingDataLegacy_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getScoreTrackingDataLegacy_) || (fb && fb.getScoreTrackingDataLegacy_);
+    if (!fn) throw new Error("Missing function: getScoreTrackingDataLegacy_");
+    return fn.apply(p, arguments);
+  }
+  function openClassSheet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.openClassSheet) || (fb && fb.openClassSheet);
+    if (!fn) throw new Error("Missing function: openClassSheet");
+    return fn.apply(p, arguments);
+  }
+  function openAttendanceSheet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.openAttendanceSheet) || (fb && fb.openAttendanceSheet);
+    if (!fn) throw new Error("Missing function: openAttendanceSheet");
+    return fn.apply(p, arguments);
+  }
+  function ensureAttendanceSheet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.ensureAttendanceSheet) || (fb && fb.ensureAttendanceSheet);
+    if (!fn) throw new Error("Missing function: ensureAttendanceSheet");
+    return fn.apply(p, arguments);
+  }
+  function attAssertClass_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.attAssertClass_) || (fb && fb.attAssertClass_);
+    if (!fn) throw new Error("Missing function: attAssertClass_");
+    return fn.apply(p, arguments);
+  }
+  function getAttendanceStudents() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAttendanceStudents) || (fb && fb.getAttendanceStudents);
+    if (!fn) throw new Error("Missing function: getAttendanceStudents");
+    return fn.apply(p, arguments);
+  }
+  function classLevelMatch() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.classLevelMatch) || (fb && fb.classLevelMatch);
+    if (!fn) throw new Error("Missing function: classLevelMatch");
+    return fn.apply(p, arguments);
+  }
+  function submitAttendance() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.submitAttendance) || (fb && fb.submitAttendance);
+    if (!fn) throw new Error("Missing function: submitAttendance");
+    return fn.apply(p, arguments);
+  }
+  function logAttendanceSummary() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.logAttendanceSummary) || (fb && fb.logAttendanceSummary);
+    if (!fn) throw new Error("Missing function: logAttendanceSummary");
+    return fn.apply(p, arguments);
+  }
+  function getTODStudents() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTODStudents) || (fb && fb.getTODStudents);
+    if (!fn) throw new Error("Missing function: getTODStudents");
+    return fn.apply(p, arguments);
+  }
+  function submitTOD() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.submitTOD) || (fb && fb.submitTOD);
+    if (!fn) throw new Error("Missing function: submitTOD");
+    return fn.apply(p, arguments);
+  }
+  function getTeacherProfile() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTeacherProfile) || (fb && fb.getTeacherProfile);
+    if (!fn) throw new Error("Missing function: getTeacherProfile");
+    return fn.apply(p, arguments);
+  }
+  function fetchProfile() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.fetchProfile) || (fb && fb.fetchProfile);
+    if (!fn) throw new Error("Missing function: fetchProfile");
+    return fn.apply(p, arguments);
+  }
+  function fetchReport() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.fetchReport) || (fb && fb.fetchReport);
+    if (!fn) throw new Error("Missing function: fetchReport");
+    return fn.apply(p, arguments);
+  }
+  function fetchExamTypes() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.fetchExamTypes) || (fb && fb.fetchExamTypes);
+    if (!fn) throw new Error("Missing function: fetchExamTypes");
+    return fn.apply(p, arguments);
+  }
+  function getTrackingExamTypes() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTrackingExamTypes) || (fb && fb.getTrackingExamTypes);
+    if (!fn) throw new Error("Missing function: getTrackingExamTypes");
+    return fn.apply(p, arguments);
+  }
+  function getTrackingReport() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTrackingReport) || (fb && fb.getTrackingReport);
+    if (!fn) throw new Error("Missing function: getTrackingReport");
+    return fn.apply(p, arguments);
+  }
+  function clean() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.clean) || (fb && fb.clean);
+    if (!fn) throw new Error("Missing function: clean");
+    return fn.apply(p, arguments);
+  }
+  function lower() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.lower) || (fb && fb.lower);
+    if (!fn) throw new Error("Missing function: lower");
+    return fn.apply(p, arguments);
+  }
+  function sameClass() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.sameClass) || (fb && fb.sameClass);
+    if (!fn) throw new Error("Missing function: sameClass");
+    return fn.apply(p, arguments);
+  }
+  function addSubject() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.addSubject) || (fb && fb.addSubject);
+    if (!fn) throw new Error("Missing function: addSubject");
+    return fn.apply(p, arguments);
+  }
+  function readSubjectsFromAssignment() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.readSubjectsFromAssignment) || (fb && fb.readSubjectsFromAssignment);
+    if (!fn) throw new Error("Missing function: readSubjectsFromAssignment");
+    return fn.apply(p, arguments);
+  }
+  function getSubjectsByClass() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getSubjectsByClass) || (fb && fb.getSubjectsByClass);
+    if (!fn) throw new Error("Missing function: getSubjectsByClass");
+    return fn.apply(p, arguments);
+  }
+  function getClassSheetId() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getClassSheetId) || (fb && fb.getClassSheetId);
+    if (!fn) throw new Error("Missing function: getClassSheetId");
+    return fn.apply(p, arguments);
+  }
+  function getClasses() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getClasses) || (fb && fb.getClasses);
+    if (!fn) throw new Error("Missing function: getClasses");
+    return fn.apply(p, arguments);
+  }
+  function getClassExamTypes() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getClassExamTypes) || (fb && fb.getClassExamTypes);
+    if (!fn) throw new Error("Missing function: getClassExamTypes");
+    return fn.apply(p, arguments);
+  }
+  function getExamSubTypes() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getExamSubTypes) || (fb && fb.getExamSubTypes);
+    if (!fn) throw new Error("Missing function: getExamSubTypes");
+    return fn.apply(p, arguments);
+  }
+  function examScoreToGrade_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.examScoreToGrade_) || (fb && fb.examScoreToGrade_);
+    if (!fn) throw new Error("Missing function: examScoreToGrade_");
+    return fn.apply(p, arguments);
+  }
+  function examGradeToPoint_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.examGradeToPoint_) || (fb && fb.examGradeToPoint_);
+    if (!fn) throw new Error("Missing function: examGradeToPoint_");
+    return fn.apply(p, arguments);
+  }
+  function examPointToDivision_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.examPointToDivision_) || (fb && fb.examPointToDivision_);
+    if (!fn) throw new Error("Missing function: examPointToDivision_");
+    return fn.apply(p, arguments);
+  }
+  function examBest7PointSum_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.examBest7PointSum_) || (fb && fb.examBest7PointSum_);
+    if (!fn) throw new Error("Missing function: examBest7PointSum_");
+    return fn.apply(p, arguments);
+  }
+  function examNormalizeDivisionKey_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.examNormalizeDivisionKey_) || (fb && fb.examNormalizeDivisionKey_);
+    if (!fn) throw new Error("Missing function: examNormalizeDivisionKey_");
+    return fn.apply(p, arguments);
+  }
+  function examBest7SummaryFromSubjects_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.examBest7SummaryFromSubjects_) || (fb && fb.examBest7SummaryFromSubjects_);
+    if (!fn) throw new Error("Missing function: examBest7SummaryFromSubjects_");
+    return fn.apply(p, arguments);
+  }
+  function getExamResults() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getExamResults) || (fb && fb.getExamResults);
+    if (!fn) throw new Error("Missing function: getExamResults");
+    return fn.apply(p, arguments);
+  }
+  function fetchTopPanelData() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.fetchTopPanelData) || (fb && fb.fetchTopPanelData);
+    if (!fn) throw new Error("Missing function: fetchTopPanelData");
+    return fn.apply(p, arguments);
+  }
+  function getStudentListRaw() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getStudentListRaw) || (fb && fb.getStudentListRaw);
+    if (!fn) throw new Error("Missing function: getStudentListRaw");
+    return fn.apply(p, arguments);
+  }
+  function getStudentList() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getStudentList) || (fb && fb.getStudentList);
+    if (!fn) throw new Error("Missing function: getStudentList");
+    return fn.apply(p, arguments);
+  }
+  function generateUniqueAdmNo() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.generateUniqueAdmNo) || (fb && fb.generateUniqueAdmNo);
+    if (!fn) throw new Error("Missing function: generateUniqueAdmNo");
+    return fn.apply(p, arguments);
+  }
+  function findDuplicateAdmNos() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.findDuplicateAdmNos) || (fb && fb.findDuplicateAdmNos);
+    if (!fn) throw new Error("Missing function: findDuplicateAdmNos");
+    return fn.apply(p, arguments);
+  }
+  function admDefaultPrefix_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.admDefaultPrefix_) || (fb && fb.admDefaultPrefix_);
+    if (!fn) throw new Error("Missing function: admDefaultPrefix_");
+    return fn.apply(p, arguments);
+  }
+  function admSeriesConfig_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.admSeriesConfig_) || (fb && fb.admSeriesConfig_);
+    if (!fn) throw new Error("Missing function: admSeriesConfig_");
+    return fn.apply(p, arguments);
+  }
+  function admSeriesFormat_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.admSeriesFormat_) || (fb && fb.admSeriesFormat_);
+    if (!fn) throw new Error("Missing function: admSeriesFormat_");
+    return fn.apply(p, arguments);
+  }
+  function admSeriesNextFor_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.admSeriesNextFor_) || (fb && fb.admSeriesNextFor_);
+    if (!fn) throw new Error("Missing function: admSeriesNextFor_");
+    return fn.apply(p, arguments);
+  }
+  function getAdmissionSeries() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAdmissionSeries) || (fb && fb.getAdmissionSeries);
+    if (!fn) throw new Error("Missing function: getAdmissionSeries");
+    return fn.apply(p, arguments);
+  }
+  function saveAdmissionSeries() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveAdmissionSeries) || (fb && fb.saveAdmissionSeries);
+    if (!fn) throw new Error("Missing function: saveAdmissionSeries");
+    return fn.apply(p, arguments);
+  }
+  function previewNextAdmNo() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.previewNextAdmNo) || (fb && fb.previewNextAdmNo);
+    if (!fn) throw new Error("Missing function: previewNextAdmNo");
+    return fn.apply(p, arguments);
+  }
+  function admEnsureStudentCols_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.admEnsureStudentCols_) || (fb && fb.admEnsureStudentCols_);
+    if (!fn) throw new Error("Missing function: admEnsureStudentCols_");
+    return fn.apply(p, arguments);
+  }
+  function admPremTakenBy_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.admPremTakenBy_) || (fb && fb.admPremTakenBy_);
+    if (!fn) throw new Error("Missing function: admPremTakenBy_");
+    return fn.apply(p, arguments);
+  }
+  function saveStudent() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveStudent) || (fb && fb.saveStudent);
+    if (!fn) throw new Error("Missing function: saveStudent");
+    return fn.apply(p, arguments);
+  }
+  function deleteStudent() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.deleteStudent) || (fb && fb.deleteStudent);
+    if (!fn) throw new Error("Missing function: deleteStudent");
+    return fn.apply(p, arguments);
+  }
+  function getAcademicClassesRaw() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAcademicClassesRaw) || (fb && fb.getAcademicClassesRaw);
+    if (!fn) throw new Error("Missing function: getAcademicClassesRaw");
+    return fn.apply(p, arguments);
+  }
+  function getAcademicClasses() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAcademicClasses) || (fb && fb.getAcademicClasses);
+    if (!fn) throw new Error("Missing function: getAcademicClasses");
+    return fn.apply(p, arguments);
+  }
+  function saveAcademicClass() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveAcademicClass) || (fb && fb.saveAcademicClass);
+    if (!fn) throw new Error("Missing function: saveAcademicClass");
+    return fn.apply(p, arguments);
+  }
+  function deleteAcademicClass() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.deleteAcademicClass) || (fb && fb.deleteAcademicClass);
+    if (!fn) throw new Error("Missing function: deleteAcademicClass");
+    return fn.apply(p, arguments);
+  }
+  function getAcademicSubjectsRaw() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAcademicSubjectsRaw) || (fb && fb.getAcademicSubjectsRaw);
+    if (!fn) throw new Error("Missing function: getAcademicSubjectsRaw");
+    return fn.apply(p, arguments);
+  }
+  function getAcademicSubjects() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAcademicSubjects) || (fb && fb.getAcademicSubjects);
+    if (!fn) throw new Error("Missing function: getAcademicSubjects");
+    return fn.apply(p, arguments);
+  }
+  function saveAcademicSubject() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveAcademicSubject) || (fb && fb.saveAcademicSubject);
+    if (!fn) throw new Error("Missing function: saveAcademicSubject");
+    return fn.apply(p, arguments);
+  }
+  function deleteAcademicSubject() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.deleteAcademicSubject) || (fb && fb.deleteAcademicSubject);
+    if (!fn) throw new Error("Missing function: deleteAcademicSubject");
+    return fn.apply(p, arguments);
+  }
+  function getAcademicExamsRaw() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAcademicExamsRaw) || (fb && fb.getAcademicExamsRaw);
+    if (!fn) throw new Error("Missing function: getAcademicExamsRaw");
+    return fn.apply(p, arguments);
+  }
+  function isoLocal() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.isoLocal) || (fb && fb.isoLocal);
+    if (!fn) throw new Error("Missing function: isoLocal");
+    return fn.apply(p, arguments);
+  }
+  function getAcademicExams() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAcademicExams) || (fb && fb.getAcademicExams);
+    if (!fn) throw new Error("Missing function: getAcademicExams");
+    return fn.apply(p, arguments);
+  }
+  function getActiveExamsForTeacher() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getActiveExamsForTeacher) || (fb && fb.getActiveExamsForTeacher);
+    if (!fn) throw new Error("Missing function: getActiveExamsForTeacher");
+    return fn.apply(p, arguments);
+  }
+  function saveAcademicExam() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveAcademicExam) || (fb && fb.saveAcademicExam);
+    if (!fn) throw new Error("Missing function: saveAcademicExam");
+    return fn.apply(p, arguments);
+  }
+  function checkAndDeactivatePastExams() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.checkAndDeactivatePastExams) || (fb && fb.checkAndDeactivatePastExams);
+    if (!fn) throw new Error("Missing function: checkAndDeactivatePastExams");
+    return fn.apply(p, arguments);
+  }
+  function deleteAcademicExam() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.deleteAcademicExam) || (fb && fb.deleteAcademicExam);
+    if (!fn) throw new Error("Missing function: deleteAcademicExam");
+    return fn.apply(p, arguments);
+  }
+  function publishExamResults() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.publishExamResults) || (fb && fb.publishExamResults);
+    if (!fn) throw new Error("Missing function: publishExamResults");
+    return fn.apply(p, arguments);
+  }
+  function getTimetable() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTimetable) || (fb && fb.getTimetable);
+    if (!fn) throw new Error("Missing function: getTimetable");
+    return fn.apply(p, arguments);
+  }
+  function saveTimetable() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveTimetable) || (fb && fb.saveTimetable);
+    if (!fn) throw new Error("Missing function: saveTimetable");
+    return fn.apply(p, arguments);
+  }
+  function getMessages() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getMessages) || (fb && fb.getMessages);
+    if (!fn) throw new Error("Missing function: getMessages");
+    return fn.apply(p, arguments);
+  }
+  function sendMessage() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.sendMessage) || (fb && fb.sendMessage);
+    if (!fn) throw new Error("Missing function: sendMessage");
+    return fn.apply(p, arguments);
+  }
+  function changeTeacherPassword() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.changeTeacherPassword) || (fb && fb.changeTeacherPassword);
+    if (!fn) throw new Error("Missing function: changeTeacherPassword");
+    return fn.apply(p, arguments);
+  }
+  function saveStaffRecord() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveStaffRecord) || (fb && fb.saveStaffRecord);
+    if (!fn) throw new Error("Missing function: saveStaffRecord");
+    return fn.apply(p, arguments);
+  }
+  function getStaffRecords() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getStaffRecords) || (fb && fb.getStaffRecords);
+    if (!fn) throw new Error("Missing function: getStaffRecords");
+    return fn.apply(p, arguments);
+  }
+  function deleteStaffRecord() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.deleteStaffRecord) || (fb && fb.deleteStaffRecord);
+    if (!fn) throw new Error("Missing function: deleteStaffRecord");
+    return fn.apply(p, arguments);
+  }
+  function getFinancialSummary() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getFinancialSummary) || (fb && fb.getFinancialSummary);
+    if (!fn) throw new Error("Missing function: getFinancialSummary");
+    return fn.apply(p, arguments);
+  }
+  function getAcademicStats() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAcademicStats) || (fb && fb.getAcademicStats);
+    if (!fn) throw new Error("Missing function: getAcademicStats");
+    return fn.apply(p, arguments);
+  }
+  function updateStudentStatus() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.updateStudentStatus) || (fb && fb.updateStudentStatus);
+    if (!fn) throw new Error("Missing function: updateStudentStatus");
+    return fn.apply(p, arguments);
+  }
+  function updateClassStatus() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.updateClassStatus) || (fb && fb.updateClassStatus);
+    if (!fn) throw new Error("Missing function: updateClassStatus");
+    return fn.apply(p, arguments);
+  }
+  function updateSubjectStatus() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.updateSubjectStatus) || (fb && fb.updateSubjectStatus);
+    if (!fn) throw new Error("Missing function: updateSubjectStatus");
+    return fn.apply(p, arguments);
+  }
+  function getMonitorData() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getMonitorData) || (fb && fb.getMonitorData);
+    if (!fn) throw new Error("Missing function: getMonitorData");
+    return fn.apply(p, arguments);
+  }
+  function saveSystemConfig() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveSystemConfig) || (fb && fb.saveSystemConfig);
+    if (!fn) throw new Error("Missing function: saveSystemConfig");
+    return fn.apply(p, arguments);
+  }
+  function saveSchoolConfig() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveSchoolConfig) || (fb && fb.saveSchoolConfig);
+    if (!fn) throw new Error("Missing function: saveSchoolConfig");
+    return fn.apply(p, arguments);
+  }
+  function saveAdminProfile() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveAdminProfile) || (fb && fb.saveAdminProfile);
+    if (!fn) throw new Error("Missing function: saveAdminProfile");
+    return fn.apply(p, arguments);
+  }
+  function changeAdminPassword() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.changeAdminPassword) || (fb && fb.changeAdminPassword);
+    if (!fn) throw new Error("Missing function: changeAdminPassword");
+    return fn.apply(p, arguments);
+  }
+  function checkParentLogin() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.checkParentLogin) || (fb && fb.checkParentLogin);
+    if (!fn) throw new Error("Missing function: checkParentLogin");
+    return fn.apply(p, arguments);
+  }
+  function getClassesAndExamTypes() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getClassesAndExamTypes) || (fb && fb.getClassesAndExamTypes);
+    if (!fn) throw new Error("Missing function: getClassesAndExamTypes");
+    return fn.apply(p, arguments);
+  }
+  function getStudentsForParent() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getStudentsForParent) || (fb && fb.getStudentsForParent);
+    if (!fn) throw new Error("Missing function: getStudentsForParent");
+    return fn.apply(p, arguments);
+  }
+  function getStudentReport() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getStudentReport) || (fb && fb.getStudentReport);
+    if (!fn) throw new Error("Missing function: getStudentReport");
+    return fn.apply(p, arguments);
+  }
+  function readByAliases() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.readByAliases) || (fb && fb.readByAliases);
+    if (!fn) throw new Error("Missing function: readByAliases");
+    return fn.apply(p, arguments);
+  }
+  function getAllParentAssignments() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAllParentAssignments) || (fb && fb.getAllParentAssignments);
+    if (!fn) throw new Error("Missing function: getAllParentAssignments");
+    return fn.apply(p, arguments);
+  }
+  function addParentAssignment() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.addParentAssignment) || (fb && fb.addParentAssignment);
+    if (!fn) throw new Error("Missing function: addParentAssignment");
+    return fn.apply(p, arguments);
+  }
+  function deleteParentAssignment() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.deleteParentAssignment) || (fb && fb.deleteParentAssignment);
+    if (!fn) throw new Error("Missing function: deleteParentAssignment");
+    return fn.apply(p, arguments);
+  }
+  function getTeacherClasses() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTeacherClasses) || (fb && fb.getTeacherClasses);
+    if (!fn) throw new Error("Missing function: getTeacherClasses");
+    return fn.apply(p, arguments);
+  }
+  function isSubjectValidForClass() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.isSubjectValidForClass) || (fb && fb.isSubjectValidForClass);
+    if (!fn) throw new Error("Missing function: isSubjectValidForClass");
+    return fn.apply(p, arguments);
+  }
+  function getExamNamesForTracking() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getExamNamesForTracking) || (fb && fb.getExamNamesForTracking);
+    if (!fn) throw new Error("Missing function: getExamNamesForTracking");
+    return fn.apply(p, arguments);
+  }
+  function getScoreTrackingData() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getScoreTrackingData) || (fb && fb.getScoreTrackingData);
+    if (!fn) throw new Error("Missing function: getScoreTrackingData");
+    return fn.apply(p, arguments);
+  }
+  function norm() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.norm) || (fb && fb.norm);
+    if (!fn) throw new Error("Missing function: norm");
+    return fn.apply(p, arguments);
+  }
+  function formNo() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.formNo) || (fb && fb.formNo);
+    if (!fn) throw new Error("Missing function: formNo");
+    return fn.apply(p, arguments);
+  }
+  function classSame() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.classSame) || (fb && fb.classSame);
+    if (!fn) throw new Error("Missing function: classSame");
+    return fn.apply(p, arguments);
+  }
+  function subjectSame() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.subjectSame) || (fb && fb.subjectSame);
+    if (!fn) throw new Error("Missing function: subjectSame");
+    return fn.apply(p, arguments);
+  }
+  function detectCategory() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.detectCategory) || (fb && fb.detectCategory);
+    if (!fn) throw new Error("Missing function: detectCategory");
+    return fn.apply(p, arguments);
+  }
+  function resolveExamType() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.resolveExamType) || (fb && fb.resolveExamType);
+    if (!fn) throw new Error("Missing function: resolveExamType");
+    return fn.apply(p, arguments);
+  }
+  function getTeacherFullName() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTeacherFullName) || (fb && fb.getTeacherFullName);
+    if (!fn) throw new Error("Missing function: getTeacherFullName");
+    return fn.apply(p, arguments);
+  }
+  function migrateScoresToFormSheets() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.migrateScoresToFormSheets) || (fb && fb.migrateScoresToFormSheets);
+    if (!fn) throw new Error("Missing function: migrateScoresToFormSheets");
+    return fn.apply(p, arguments);
+  }
+  function authorizeDriveAccess() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.authorizeDriveAccess) || (fb && fb.authorizeDriveAccess);
+    if (!fn) throw new Error("Missing function: authorizeDriveAccess");
+    return fn.apply(p, arguments);
+  }
+  function saveTODReport() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveTODReport) || (fb && fb.saveTODReport);
+    if (!fn) throw new Error("Missing function: saveTODReport");
+    return fn.apply(p, arguments);
+  }
+  function getMyTODDates() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getMyTODDates) || (fb && fb.getMyTODDates);
+    if (!fn) throw new Error("Missing function: getMyTODDates");
+    return fn.apply(p, arguments);
+  }
+  function getMyTODReports() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getMyTODReports) || (fb && fb.getMyTODReports);
+    if (!fn) throw new Error("Missing function: getMyTODReports");
+    return fn.apply(p, arguments);
+  }
+  function deleteTODReport() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.deleteTODReport) || (fb && fb.deleteTODReport);
+    if (!fn) throw new Error("Missing function: deleteTODReport");
+    return fn.apply(p, arguments);
+  }
+  function getTODReportByDate() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTODReportByDate) || (fb && fb.getTODReportByDate);
+    if (!fn) throw new Error("Missing function: getTODReportByDate");
+    return fn.apply(p, arguments);
+  }
+  function getTODWeeklyReport() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getTODWeeklyReport) || (fb && fb.getTODWeeklyReport);
+    if (!fn) throw new Error("Missing function: getTODWeeklyReport");
+    return fn.apply(p, arguments);
+  }
+  function mapSheetName() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.mapSheetName) || (fb && fb.mapSheetName);
+    if (!fn) throw new Error("Missing function: mapSheetName");
+    return fn.apply(p, arguments);
+  }
+  function getOrCreateMapSheet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getOrCreateMapSheet) || (fb && fb.getOrCreateMapSheet);
+    if (!fn) throw new Error("Missing function: getOrCreateMapSheet");
+    return fn.apply(p, arguments);
+  }
+  function saveStudentSubjectMapping() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveStudentSubjectMapping) || (fb && fb.saveStudentSubjectMapping);
+    if (!fn) throw new Error("Missing function: saveStudentSubjectMapping");
+    return fn.apply(p, arguments);
+  }
+  function getStudentsAndMappingForSubject() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getStudentsAndMappingForSubject) || (fb && fb.getStudentsAndMappingForSubject);
+    if (!fn) throw new Error("Missing function: getStudentsAndMappingForSubject");
+    return fn.apply(p, arguments);
+  }
+  function getSubjectMappedCount() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getSubjectMappedCount) || (fb && fb.getSubjectMappedCount);
+    if (!fn) throw new Error("Missing function: getSubjectMappedCount");
+    return fn.apply(p, arguments);
+  }
+  function getSubjectMappingSummary() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getSubjectMappingSummary) || (fb && fb.getSubjectMappingSummary);
+    if (!fn) throw new Error("Missing function: getSubjectMappingSummary");
+    return fn.apply(p, arguments);
+  }
+  function ensureAcademicYearsSheet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.ensureAcademicYearsSheet) || (fb && fb.ensureAcademicYearsSheet);
+    if (!fn) throw new Error("Missing function: ensureAcademicYearsSheet");
+    return fn.apply(p, arguments);
+  }
+  function ensureAlumniSheet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.ensureAlumniSheet) || (fb && fb.ensureAlumniSheet);
+    if (!fn) throw new Error("Missing function: ensureAlumniSheet");
+    return fn.apply(p, arguments);
+  }
+  function progGetAcademicYears() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.progGetAcademicYears) || (fb && fb.progGetAcademicYears);
+    if (!fn) throw new Error("Missing function: progGetAcademicYears");
+    return fn.apply(p, arguments);
+  }
+  function progSetActiveYear() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.progSetActiveYear) || (fb && fb.progSetActiveYear);
+    if (!fn) throw new Error("Missing function: progSetActiveYear");
+    return fn.apply(p, arguments);
+  }
+  function progCreateAcademicYear() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.progCreateAcademicYear) || (fb && fb.progCreateAcademicYear);
+    if (!fn) throw new Error("Missing function: progCreateAcademicYear");
+    return fn.apply(p, arguments);
+  }
+  function progPromoteStudents() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.progPromoteStudents) || (fb && fb.progPromoteStudents);
+    if (!fn) throw new Error("Missing function: progPromoteStudents");
+    return fn.apply(p, arguments);
+  }
+  function progGetAlumni() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.progGetAlumni) || (fb && fb.progGetAlumni);
+    if (!fn) throw new Error("Missing function: progGetAlumni");
+    return fn.apply(p, arguments);
+  }
+  function getClassTeachersWithAttendanceStatus() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getClassTeachersWithAttendanceStatus) || (fb && fb.getClassTeachersWithAttendanceStatus);
+    if (!fn) throw new Error("Missing function: getClassTeachersWithAttendanceStatus");
+    return fn.apply(p, arguments);
+  }
+  function colIdx() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.colIdx) || (fb && fb.colIdx);
+    if (!fn) throw new Error("Missing function: colIdx");
+    return fn.apply(p, arguments);
+  }
+  function addParent() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.addParent) || (fb && fb.addParent);
+    if (!fn) throw new Error("Missing function: addParent");
+    return fn.apply(p, arguments);
+  }
+  function ensureParentsSheet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.ensureParentsSheet) || (fb && fb.ensureParentsSheet);
+    if (!fn) throw new Error("Missing function: ensureParentsSheet");
+    return fn.apply(p, arguments);
+  }
+  function getParentList() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getParentList) || (fb && fb.getParentList);
+    if (!fn) throw new Error("Missing function: getParentList");
+    return fn.apply(p, arguments);
+  }
+  function updateParent() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.updateParent) || (fb && fb.updateParent);
+    if (!fn) throw new Error("Missing function: updateParent");
+    return fn.apply(p, arguments);
+  }
+  function deleteParent() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.deleteParent) || (fb && fb.deleteParent);
+    if (!fn) throw new Error("Missing function: deleteParent");
+    return fn.apply(p, arguments);
+  }
+  function getLoginPage() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getLoginPage) || (fb && fb.getLoginPage);
+    if (!fn) throw new Error("Missing function: getLoginPage");
+    return fn.apply(p, arguments);
+  }
+  function getIndexPage() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getIndexPage) || (fb && fb.getIndexPage);
+    if (!fn) throw new Error("Missing function: getIndexPage");
+    return fn.apply(p, arguments);
+  }
+  function getParentPortalHtml() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getParentPortalHtml) || (fb && fb.getParentPortalHtml);
+    if (!fn) throw new Error("Missing function: getParentPortalHtml");
+    return fn.apply(p, arguments);
+  }
+  function legacyCheckLogin_v2_DISABLED() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.legacyCheckLogin_v2_DISABLED) || (fb && fb.legacyCheckLogin_v2_DISABLED);
+    if (!fn) throw new Error("Missing function: legacyCheckLogin_v2_DISABLED");
+    return fn.apply(p, arguments);
+  }
+  function getSchoolAnnouncements() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getSchoolAnnouncements) || (fb && fb.getSchoolAnnouncements);
+    if (!fn) throw new Error("Missing function: getSchoolAnnouncements");
+    return fn.apply(p, arguments);
+  }
+  function getAttendanceRecords() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAttendanceRecords) || (fb && fb.getAttendanceRecords);
+    if (!fn) throw new Error("Missing function: getAttendanceRecords");
+    return fn.apply(p, arguments);
+  }
+  function col() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.col) || (fb && fb.col);
+    if (!fn) throw new Error("Missing function: col");
+    return fn.apply(p, arguments);
+  }
+  function getAllExamResults() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAllExamResults) || (fb && fb.getAllExamResults);
+    if (!fn) throw new Error("Missing function: getAllExamResults");
+    return fn.apply(p, arguments);
+  }
+  function clearAllActivityLogs() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.clearAllActivityLogs) || (fb && fb.clearAllActivityLogs);
+    if (!fn) throw new Error("Missing function: clearAllActivityLogs");
+    return fn.apply(p, arguments);
+  }
+  function legacyCheckLogin_v3_DISABLED() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.legacyCheckLogin_v3_DISABLED) || (fb && fb.legacyCheckLogin_v3_DISABLED);
+    if (!fn) throw new Error("Missing function: legacyCheckLogin_v3_DISABLED");
+    return fn.apply(p, arguments);
+  }
+  function smsCheckLoginCore_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.smsCheckLoginCore_) || (fb && fb.smsCheckLoginCore_);
+    if (!fn) throw new Error("Missing function: smsCheckLoginCore_");
+    return fn.apply(p, arguments);
+  }
+  function getDashboardKeyFromPosition() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getDashboardKeyFromPosition) || (fb && fb.getDashboardKeyFromPosition);
+    if (!fn) throw new Error("Missing function: getDashboardKeyFromPosition");
+    return fn.apply(p, arguments);
+  }
+  function ensureDashboardAccessSheet_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.ensureDashboardAccessSheet_) || (fb && fb.ensureDashboardAccessSheet_);
+    if (!fn) throw new Error("Missing function: ensureDashboardAccessSheet_");
+    return fn.apply(p, arguments);
+  }
+  function getDashboardAccessPolicies() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getDashboardAccessPolicies) || (fb && fb.getDashboardAccessPolicies);
+    if (!fn) throw new Error("Missing function: getDashboardAccessPolicies");
+    return fn.apply(p, arguments);
+  }
+  function saveDashboardAccessPolicies() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveDashboardAccessPolicies) || (fb && fb.saveDashboardAccessPolicies);
+    if (!fn) throw new Error("Missing function: saveDashboardAccessPolicies");
+    return fn.apply(p, arguments);
+  }
+  function saveDashboardAccessState() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveDashboardAccessState) || (fb && fb.saveDashboardAccessState);
+    if (!fn) throw new Error("Missing function: saveDashboardAccessState");
+    return fn.apply(p, arguments);
+  }
+  function logDashboardAccessEvent_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.logDashboardAccessEvent_) || (fb && fb.logDashboardAccessEvent_);
+    if (!fn) throw new Error("Missing function: logDashboardAccessEvent_");
+    return fn.apply(p, arguments);
+  }
+  function getDashboardAccessEvents() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getDashboardAccessEvents) || (fb && fb.getDashboardAccessEvents);
+    if (!fn) throw new Error("Missing function: getDashboardAccessEvents");
+    return fn.apply(p, arguments);
+  }
+  function forceLogoutDashboard() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.forceLogoutDashboard) || (fb && fb.forceLogoutDashboard);
+    if (!fn) throw new Error("Missing function: forceLogoutDashboard");
+    return fn.apply(p, arguments);
+  }
+  function canAccessDashboard() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.canAccessDashboard) || (fb && fb.canAccessDashboard);
+    if (!fn) throw new Error("Missing function: canAccessDashboard");
+    return fn.apply(p, arguments);
+  }
+  function evalRichDashboardPolicy_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.evalRichDashboardPolicy_) || (fb && fb.evalRichDashboardPolicy_);
+    if (!fn) throw new Error("Missing function: evalRichDashboardPolicy_");
+    return fn.apply(p, arguments);
+  }
+  function checkCurrentDashboardAccess() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.checkCurrentDashboardAccess) || (fb && fb.checkCurrentDashboardAccess);
+    if (!fn) throw new Error("Missing function: checkCurrentDashboardAccess");
+    return fn.apply(p, arguments);
+  }
+  function getAccessDeniedPage() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAccessDeniedPage) || (fb && fb.getAccessDeniedPage);
+    if (!fn) throw new Error("Missing function: getAccessDeniedPage");
+    return fn.apply(p, arguments);
+  }
+  function logDashboardBlockedAttempt() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.logDashboardBlockedAttempt) || (fb && fb.logDashboardBlockedAttempt);
+    if (!fn) throw new Error("Missing function: logDashboardBlockedAttempt");
+    return fn.apply(p, arguments);
+  }
+  function behLevel_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.behLevel_) || (fb && fb.behLevel_);
+    if (!fn) throw new Error("Missing function: behLevel_");
+    return fn.apply(p, arguments);
+  }
+  function ensureBehaviorSheet_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.ensureBehaviorSheet_) || (fb && fb.ensureBehaviorSheet_);
+    if (!fn) throw new Error("Missing function: ensureBehaviorSheet_");
+    return fn.apply(p, arguments);
+  }
+  function behNorm_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.behNorm_) || (fb && fb.behNorm_);
+    if (!fn) throw new Error("Missing function: behNorm_");
+    return fn.apply(p, arguments);
+  }
+  function behClassKey_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.behClassKey_) || (fb && fb.behClassKey_);
+    if (!fn) throw new Error("Missing function: behClassKey_");
+    return fn.apply(p, arguments);
+  }
+  function behTeacherClasses_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.behTeacherClasses_) || (fb && fb.behTeacherClasses_);
+    if (!fn) throw new Error("Missing function: behTeacherClasses_");
+    return fn.apply(p, arguments);
+  }
+  function add() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.add) || (fb && fb.add);
+    if (!fn) throw new Error("Missing function: add");
+    return fn.apply(p, arguments);
+  }
+  function behCanAccess_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.behCanAccess_) || (fb && fb.behCanAccess_);
+    if (!fn) throw new Error("Missing function: behCanAccess_");
+    return fn.apply(p, arguments);
+  }
+  function getMyHomeroomClasses() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getMyHomeroomClasses) || (fb && fb.getMyHomeroomClasses);
+    if (!fn) throw new Error("Missing function: getMyHomeroomClasses");
+    return fn.apply(p, arguments);
+  }
+  function behReadMap_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.behReadMap_) || (fb && fb.behReadMap_);
+    if (!fn) throw new Error("Missing function: behReadMap_");
+    return fn.apply(p, arguments);
+  }
+  function getBehaviorSheet() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getBehaviorSheet) || (fb && fb.getBehaviorSheet);
+    if (!fn) throw new Error("Missing function: getBehaviorSheet");
+    return fn.apply(p, arguments);
+  }
+  function saveBehaviors() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveBehaviors) || (fb && fb.saveBehaviors);
+    if (!fn) throw new Error("Missing function: saveBehaviors");
+    return fn.apply(p, arguments);
+  }
+  function fetchReportBehaviors() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.fetchReportBehaviors) || (fb && fb.fetchReportBehaviors);
+    if (!fn) throw new Error("Missing function: fetchReportBehaviors");
+    return fn.apply(p, arguments);
+  }
+  function smsNewToken_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.smsNewToken_) || (fb && fb.smsNewToken_);
+    if (!fn) throw new Error("Missing function: smsNewToken_");
+    return fn.apply(p, arguments);
+  }
+  function smsEndSession() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.smsEndSession) || (fb && fb.smsEndSession);
+    if (!fn) throw new Error("Missing function: smsEndSession");
+    return fn.apply(p, arguments);
+  }
+  function smsStoreScript_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.smsStoreScript_) || (fb && fb.smsStoreScript_);
+    if (!fn) throw new Error("Missing function: smsStoreScript_");
+    return fn.apply(p, arguments);
+  }
+  function smsClearScript_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.smsClearScript_) || (fb && fb.smsClearScript_);
+    if (!fn) throw new Error("Missing function: smsClearScript_");
+    return fn.apply(p, arguments);
+  }
+  function smsAppendScript_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.smsAppendScript_) || (fb && fb.smsAppendScript_);
+    if (!fn) throw new Error("Missing function: smsAppendScript_");
+    return fn.apply(p, arguments);
+  }
+  function smsInjectRestore_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.smsInjectRestore_) || (fb && fb.smsInjectRestore_);
+    if (!fn) throw new Error("Missing function: smsInjectRestore_");
+    return fn.apply(p, arguments);
+  }
+  function drop() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.drop) || (fb && fb.drop);
+    if (!fn) throw new Error("Missing function: drop");
+    return fn.apply(p, arguments);
+  }
+  function run() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.run) || (fb && fb.run);
+    if (!fn) throw new Error("Missing function: run");
+    return fn.apply(p, arguments);
+  }
+  function smsDashboardFor_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.smsDashboardFor_) || (fb && fb.smsDashboardFor_);
+    if (!fn) throw new Error("Missing function: smsDashboardFor_");
+    return fn.apply(p, arguments);
+  }
+  function smsRestoreSession() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.smsRestoreSession) || (fb && fb.smsRestoreSession);
+    if (!fn) throw new Error("Missing function: smsRestoreSession");
+    return fn.apply(p, arguments);
+  }
+  function smsParentData_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.smsParentData_) || (fb && fb.smsParentData_);
+    if (!fn) throw new Error("Missing function: smsParentData_");
+    return fn.apply(p, arguments);
+  }
+  function smsParentHtml_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.smsParentHtml_) || (fb && fb.smsParentHtml_);
+    if (!fn) throw new Error("Missing function: smsParentHtml_");
+    return fn.apply(p, arguments);
+  }
+  function tryBoot() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.tryBoot) || (fb && fb.tryBoot);
+    if (!fn) throw new Error("Missing function: tryBoot");
+    return fn.apply(p, arguments);
+  }
+  function checkLogin() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.checkLogin) || (fb && fb.checkLogin);
+    if (!fn) throw new Error("Missing function: checkLogin");
+    return fn.apply(p, arguments);
+  }
+  function acsSheet_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.acsSheet_) || (fb && fb.acsSheet_);
+    if (!fn) throw new Error("Missing function: acsSheet_");
+    return fn.apply(p, arguments);
+  }
+  function getAcademicSettings() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.getAcademicSettings) || (fb && fb.getAcademicSettings);
+    if (!fn) throw new Error("Missing function: getAcademicSettings");
+    return fn.apply(p, arguments);
+  }
+  function saveAcademicSettings() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.saveAcademicSettings) || (fb && fb.saveAcademicSettings);
+    if (!fn) throw new Error("Missing function: saveAcademicSettings");
+    return fn.apply(p, arguments);
+  }
+  function behIsClassTeacher_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.behIsClassTeacher_) || (fb && fb.behIsClassTeacher_);
+    if (!fn) throw new Error("Missing function: behIsClassTeacher_");
+    return fn.apply(p, arguments);
+  }
+  function behFindTeacher_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.behFindTeacher_) || (fb && fb.behFindTeacher_);
+    if (!fn) throw new Error("Missing function: behFindTeacher_");
+    return fn.apply(p, arguments);
+  }
+  function behResolveClassTeacher_() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.behResolveClassTeacher_) || (fb && fb.behResolveClassTeacher_);
+    if (!fn) throw new Error("Missing function: behResolveClassTeacher_");
+    return fn.apply(p, arguments);
+  }
+  function testSecondMaster() {
+    var p = __resolveCoreEngine__();
+    var fb = (p === __PrimaryEngine) ? __SecondaryEngine : __PrimaryEngine;
+    var fn = (p && p.testSecondMaster) || (fb && fb.testSecondMaster);
+    if (!fn) throw new Error("Missing function: testSecondMaster");
+    return fn.apply(p, arguments);
+  }
+
   /**
  * ============================================================================
  * DashboardAccess.gs — Unified Dashboard Access Control & Parent Management
@@ -17750,8 +19227,11 @@ function nativeRestorePayload_(username, role) {
   return { ok: true, role: d.role, html: HtmlService.createHtmlOutputFromFile(d.file).getContent() };
 }
 
-  const map = { doGet,attRosterRows_,attMonthRows_,attBuildClass_,addStudent,getMonthlyAttendance,getMonthlyAttendanceBatch,getDaysSavedBatch,getYearlyAttendanceSummary,legacyCheckLogin_v1_DISABLED,getParentPortalData,logout,setTeacherSession,getTeacherSession,getTodayPresentCount,clearTeacherSession,ensureUsersSheet,homeroomMap_,getTeacherList,getTeachers,addTeacher,updateTeacher,deleteTeacher,logActivity,getActivityLog,getCurrentStatus,getDeadlineData,setDeadlineRange,setStatus,getDeadline,setDeadline,resolveClassLevel,extractFormNumber,primaryClassSheetName_,primaryStudentSheetNames_,studentSheetForClass_,classMatchesExam,dateToInt,todayInt,sheetDateToLocal,getExamCategoriesForClass,getExamsForClass,getSubjectsForClassAndTeacher,getScoresSheet,ensureScoresSheetLegacy,ensureScoresSheet,getStudentCountForClass,getStudentsForClass,getStudentsForScoring,mergeScores,submitScoresByName,getExistingScores,submitOrUpdateScores,getScoreReport,getClassExamReport,getScoreTrackingDataLegacy_,openClassSheet,openAttendanceSheet,ensureAttendanceSheet,attAssertClass_,getAttendanceStudents,classLevelMatch,submitAttendance,logAttendanceSummary,getTODStudents,submitTOD,getTeacherProfile,fetchProfile,fetchReport,fetchExamTypes,getTrackingExamTypes,getTrackingReport,clean,lower,sameClass,addSubject,readSubjectsFromAssignment,getSubjectsByClass,getClassSheetId,getClasses,getClassExamTypes,getExamSubTypes,examScoreToGrade_,examGradeToPoint_,examPointToDivision_,examBest7PointSum_,examNormalizeDivisionKey_,examBest7SummaryFromSubjects_,getExamResults,fetchTopPanelData,getStudentListRaw,getStudentList,generateUniqueAdmNo,findDuplicateAdmNos,admDefaultPrefix_,admSeriesConfig_,admSeriesFormat_,admSeriesNextFor_,getAdmissionSeries,saveAdmissionSeries,previewNextAdmNo,admEnsureStudentCols_,admPremTakenBy_,saveStudent,deleteStudent,getAcademicClassesRaw,getAcademicClasses,saveAcademicClass,deleteAcademicClass,getAcademicSubjectsRaw,getAcademicSubjects,saveAcademicSubject,deleteAcademicSubject,getAcademicExamsRaw,isoLocal,getAcademicExams,getActiveExamsForTeacher,saveAcademicExam,checkAndDeactivatePastExams,deleteAcademicExam,publishExamResults,getTimetable,saveTimetable,getMessages,sendMessage,changeTeacherPassword,saveStaffRecord,getStaffRecords,deleteStaffRecord,getFinancialSummary,getAcademicStats,updateStudentStatus,updateClassStatus,updateSubjectStatus,getMonitorData,saveSystemConfig,saveSchoolConfig,saveAdminProfile,changeAdminPassword,checkParentLogin,getClassesAndExamTypes,getStudentsForParent,getStudentReport,readByAliases,getAllParentAssignments,addParentAssignment,deleteParentAssignment,getTeacherClasses,isSubjectValidForClass,getExamNamesForTracking,getScoreTrackingData,norm,formNo,classSame,subjectSame,detectCategory,resolveExamType,getTeacherFullName,migrateScoresToFormSheets,authorizeDriveAccess,saveTODReport,getMyTODDates,getMyTODReports,deleteTODReport,getTODReportByDate,getTODWeeklyReport,mapSheetName,getOrCreateMapSheet,saveStudentSubjectMapping,getStudentsAndMappingForSubject,getSubjectMappedCount,getSubjectMappingSummary,ensureAcademicYearsSheet,ensureAlumniSheet,progGetAcademicYears,progSetActiveYear,progCreateAcademicYear,progPromoteStudents,progGetAlumni,getClassTeachersWithAttendanceStatus,colIdx,addParent,ensureParentsSheet,getParentList,updateParent,deleteParent,getLoginPage,getIndexPage,getParentPortalHtml,legacyCheckLogin_v2_DISABLED,getSchoolAnnouncements,getAttendanceRecords,col,getAllExamResults,clearAllActivityLogs,legacyCheckLogin_v3_DISABLED,smsCheckLoginCore_,getDashboardKeyFromPosition,ensureDashboardAccessSheet_,getDashboardAccessPolicies,saveDashboardAccessPolicies,saveDashboardAccessState,logDashboardAccessEvent_,getDashboardAccessEvents,forceLogoutDashboard,canAccessDashboard,evalRichDashboardPolicy_,checkCurrentDashboardAccess,getAccessDeniedPage,logDashboardBlockedAttempt,behLevel_,ensureBehaviorSheet_,behNorm_,behClassKey_,behTeacherClasses_,add,behCanAccess_,getMyHomeroomClasses,behReadMap_,getBehaviorSheet,saveBehaviors,fetchReportBehaviors,smsNewToken_,smsEndSession,smsStoreScript_,smsClearScript_,smsAppendScript_,smsInjectRestore_,drop,run,smsDashboardFor_,smsRestoreSession,smsParentData_,smsParentHtml_,tryBoot,checkLogin,acsSheet_,getAcademicSettings,saveAcademicSettings,behIsClassTeacher_,behFindTeacher_,behResolveClassTeacher_,testSecondMaster,_now_,_dashNorm_,_userNorm_,_bool_,_isBlockingValue_,normalizeDashboardKey_,_dashboardAliasKeys_,_defaultDashboardPolicy_,_mergePolicy_,_logDashboardAccessEvent_,_readDashboardPolicyStores_,_normalisePolicyStore_,getDashboardPolicy,saveDashboardUserAccess,clearDashboardUserAccess,_denyDashboardAccess_,_dashboardFeaturesPermit_,checkDashboardWriteAccess,sendDashboardNotice,_escapeHtml_,ctpNorm_,ctpMakeUsername_,ctpMyClasses_,ctpClassAllowed_,ctpGetParentsPanel,ctpSuggestUsername,ctpUsernameTaken_,ctpSaveParent,ctpDeleteParent,ctpLoginLink_,ctpGetLoginLink,parentIdentity_,parentGetReportCard,parentAttendanceMark_,parentGetAttendance,rbacDefaultOff_,rbacKeyForPosition_,rbacFeatures_,rbacMyFeatures,rbacInject_,calc,apply,poll,rbacIsInactiveStaff_,rbacIsInactiveParent_,rbacAcademicConflict_,acadCheck_,acadStaffRole_,acadIsManagedStaff_,acadGetStaff,acadAddStaff,acadUpdateStaff,acadDeleteStaff,acadGetParents,acadAddParent,acadUpdateParent,acadDeleteParent,acadSetActiveRaw_,acadSetActive,setupAllSheets,mk,rbacAutoSetup_,acadProfileSession_,acadGetMyProfile,acadSaveMyPicture,acadSaveMyProfile,psClassSheetName_,psSchema_,psEnsureSheet_,psRunSetup_,psSetupAll,psAutoSetup_,psSchemaReport,onOpen,psShowReport,psNextNumber_,psAudit_,psNum_,psRound_,psFmtDate_,psPlain_,psToday_,psNow_,psId_,psNormClass_,psNormName_,psErr_,psMemoReset_,psTable_,forget,psNextNumbers_,psHash_,psSalt_,psRoleKey_,psFileForRole_,psAdminByUsername_,psUsernameTaken_,psBootCached_,psBootInject_,psTryAdminLogin_,psInactiveStaffBlock_,psResetSchoolManager,psSessionFromToken_,psCacheVer_,psCacheBump_,psCacheGet_,psCachePut_,psCacheKey_,psCall,psApi_,psAuditS_,psAllStudents_,psSettings_,psActiveYear_,psActiveTerm_,psBalances_,psTxn_,psPickAccount_,psInRange_,api_meta_,api_metaFresh_,api_changeMyPassword_,api_managerUpdateAccount_,api_managerSetAcademicYear_,psBackupFolder_,psCreateSystemBackup_,api_managerBackupsList_,api_managerBackupCreate_,api_managerBackupRestore_,api_classes_,api_students_,api_subjects_,api_exams_,psGradeFor_,api_results_,api_exam_types_,api_acad_settings_,api_exam_deadline_,api_full_results_,api_attendance_,api_overview_,api_adminsList_,api_adminsSave_,api_adminsDelete_,api_adminsReset_,api_staffList_,psRelinkClassTeacher_,api_staffSave_,api_staffDelete_,api_staffReset_,psLineStatus_,fin_totals_,fin_feesList_,fin_feesSave_,fin_feesDelete_,fin_invList_,fin_invGenerate_,fin_invAddLine_,fin_invDiscount_,fin_invCancel_,fin_studentSearch_,fin_studentAccount_,fin_pay_,fin_receipt_,fin_voidPayment_,fin_payments_,fin_debtors_,fin_fuList_,fin_fuSave_,fin_fuDelete_,fin_incomeList_,fin_incomeSave_,fin_incomeVoid_,fin_expenses_,fin_expenseSave_,fin_expensePay_,fin_expenseReverse_,fin_expenseDelete_,fin_catList_,fin_catSave_,fin_catDelete_,fin_settingsList_,fin_settingsSave_,fin_accountsList_,fin_accountsSave_,fin_txns_,fin_transfer_,fin_reconList_,fin_reconSave_,fin_dashboard_,fin_report_,fin_supList_,fin_supSave_,fin_supDelete_,fin_reqList_,fin_reqSave_,fin_reqStatus_,fin_reqReceive_,fin_stockItems_,fin_stockSaveItem_,fin_stockMove_,fin_stockMovements_,fin_auditList_,fin_auditChecks_,psSettingSet_,psBranding_,psBrand_,api_schoolSave_,api_termsList_,api_termsSave_,acsReadAll_,acadImportStudents,rbacSchool_,rbacTodSchool_,rbacBrand_,esc,acsAdmFormat_,acsAdmBuild_,lpInjectPanel_,lpSession_,lpSheet_,lpTz_,lpDateStr_,lpFormNumber_,lpClassKey_,lpSex_,lpStr_,lpNum_,lpClean_,cnt,lpFindRow_,lpBootstrap,lpGetSyllabus,lpStudentCounts,pick,lpSave,lpList,lpGet,lpDelete,lpPdf,featSchoolProfile_,getSchoolProfile,getPublicBranding,featNormClass_,featNormSex_,featNormDob_,importStudents,nextAdm,featMyUserRow_,getMyProfile,saveMyProfile,_hosAssert_,_hosYmd_,_hosRosterSheet_,getTODTeachersHOS,getTODRosterHOS,saveTODRosterHOS,deleteTODRosterHOS,getAllTODReportsHOS,getTODReportDetailHOS,_ttDefaults_,_ttSheet_,_ttSlotSheet_,_ttSetSheet_,_ttGetSet_,_ttPutSet_,_ttReadSlots_,_ttAssertAcademic_,_ttBlocked_,_ttTeachers_,getTTAdminData,saveTTSettings,saveTTSlot,_ttTouch_,clearTTClass,applyTimetable,getPublishedTimetable,_ttNorm_,_ttSubjectsForClass_,_ttTeachersFor_,getTTLoad,saveTTLoad,_ttContig_,parse,generateTimetable,gk,bk,reg,blockStart,freeTeacher,put,adj,_todYmd_,_todSheet_,_todRosterSheet_,_todSchoolInfo_,_todClassNames_,_todClassSheet_,_todRoster_,_todRowToObj_,_todAll_,_todMe_,_todMyList_,_todCleanRows_,getTODFormData,getTODSchoolInfo,saveTODDutyReport,listMyTODDutyReports,deleteTODDutyReport,api_todTeachers_,api_todRosterList_,api_todRosterSave_,api_todRosterDelete_,api_todReports_,api_todReport_,rbacNormAdm_,rbacCleanName_,rbacLiveStudent_,parentFromToken_,parentPortalData,apiRequest,ab_handlers_,ab_d_,ab_method_,ab_lock_,ab_checkLock_,ab_obj_,ab_school_,ab_students_,ab_feeStructures_,ab_payments_,ab_statements_,ab_overview_,ab_clean_,ab_page_,ab_report_,ab_recordPayment_,ab_saveFee_,ab_updateRecord_,ab_deleteRecord_,ab_saveIncome_,ab_saveExpense_,ab_expenseStatus_,ab_saveBank_,ab_cashbook_,ab_dailyClosing_,ab_savePurchase_,ab_saveSupplier_,ab_adjustStock_,ab_setLock_,nativeBlockedPayload_,nativeFindStaff_,nativeLoginPayload_,nativeRestorePayload_ };
-  if (typeof map[fnName] !== "function") throw new Error("Function not found: " + fnName);
-  const res = map[fnName].apply(null, args || []);
-  return res === undefined ? null : res;
+
+  const __fnMap = { doGet, attRosterRows_, attMonthRows_, attBuildClass_, addStudent, getMonthlyAttendance, getMonthlyAttendanceBatch, getDaysSavedBatch, getYearlyAttendanceSummary, legacyCheckLogin_v1_DISABLED, getParentPortalData, logout, setTeacherSession, getTeacherSession, getTodayPresentCount, clearTeacherSession, ensureUsersSheet, homeroomMap_, getTeacherList, getTeachers, addTeacher, updateTeacher, deleteTeacher, logActivity, getActivityLog, getCurrentStatus, getDeadlineData, setDeadlineRange, setStatus, getDeadline, setDeadline, resolveClassLevel, extractFormNumber, primaryClassSheetName_, primaryStudentSheetNames_, studentSheetForClass_, classMatchesExam, dateToInt, todayInt, sheetDateToLocal, getExamCategoriesForClass, getExamsForClass, getSubjectsForClassAndTeacher, getScoresSheet, ensureScoresSheetLegacy, ensureScoresSheet, getStudentCountForClass, getStudentsForClass, getStudentsForScoring, mergeScores, submitScoresByName, getExistingScores, submitOrUpdateScores, getScoreReport, getClassExamReport, getScoreTrackingDataLegacy_, openClassSheet, openAttendanceSheet, ensureAttendanceSheet, attAssertClass_, getAttendanceStudents, classLevelMatch, submitAttendance, logAttendanceSummary, getTODStudents, submitTOD, getTeacherProfile, fetchProfile, fetchReport, fetchExamTypes, getTrackingExamTypes, getTrackingReport, clean, lower, sameClass, addSubject, readSubjectsFromAssignment, getSubjectsByClass, getClassSheetId, getClasses, getClassExamTypes, getExamSubTypes, examScoreToGrade_, examGradeToPoint_, examPointToDivision_, examBest7PointSum_, examNormalizeDivisionKey_, examBest7SummaryFromSubjects_, getExamResults, fetchTopPanelData, getStudentListRaw, getStudentList, generateUniqueAdmNo, findDuplicateAdmNos, admDefaultPrefix_, admSeriesConfig_, admSeriesFormat_, admSeriesNextFor_, getAdmissionSeries, saveAdmissionSeries, previewNextAdmNo, admEnsureStudentCols_, admPremTakenBy_, saveStudent, deleteStudent, getAcademicClassesRaw, getAcademicClasses, saveAcademicClass, deleteAcademicClass, getAcademicSubjectsRaw, getAcademicSubjects, saveAcademicSubject, deleteAcademicSubject, getAcademicExamsRaw, isoLocal, getAcademicExams, getActiveExamsForTeacher, saveAcademicExam, checkAndDeactivatePastExams, deleteAcademicExam, publishExamResults, getTimetable, saveTimetable, getMessages, sendMessage, changeTeacherPassword, saveStaffRecord, getStaffRecords, deleteStaffRecord, getFinancialSummary, getAcademicStats, updateStudentStatus, updateClassStatus, updateSubjectStatus, getMonitorData, saveSystemConfig, saveSchoolConfig, saveAdminProfile, changeAdminPassword, checkParentLogin, getClassesAndExamTypes, getStudentsForParent, getStudentReport, readByAliases, getAllParentAssignments, addParentAssignment, deleteParentAssignment, getTeacherClasses, isSubjectValidForClass, getExamNamesForTracking, getScoreTrackingData, norm, formNo, classSame, subjectSame, detectCategory, resolveExamType, getTeacherFullName, migrateScoresToFormSheets, authorizeDriveAccess, saveTODReport, getMyTODDates, getMyTODReports, deleteTODReport, getTODReportByDate, getTODWeeklyReport, mapSheetName, getOrCreateMapSheet, saveStudentSubjectMapping, getStudentsAndMappingForSubject, getSubjectMappedCount, getSubjectMappingSummary, ensureAcademicYearsSheet, ensureAlumniSheet, progGetAcademicYears, progSetActiveYear, progCreateAcademicYear, progPromoteStudents, progGetAlumni, getClassTeachersWithAttendanceStatus, colIdx, addParent, ensureParentsSheet, getParentList, updateParent, deleteParent, getLoginPage, getIndexPage, getParentPortalHtml, legacyCheckLogin_v2_DISABLED, getSchoolAnnouncements, getAttendanceRecords, col, getAllExamResults, clearAllActivityLogs, legacyCheckLogin_v3_DISABLED, smsCheckLoginCore_, getDashboardKeyFromPosition, ensureDashboardAccessSheet_, getDashboardAccessPolicies, saveDashboardAccessPolicies, saveDashboardAccessState, logDashboardAccessEvent_, getDashboardAccessEvents, forceLogoutDashboard, canAccessDashboard, evalRichDashboardPolicy_, checkCurrentDashboardAccess, getAccessDeniedPage, logDashboardBlockedAttempt, behLevel_, ensureBehaviorSheet_, behNorm_, behClassKey_, behTeacherClasses_, add, behCanAccess_, getMyHomeroomClasses, behReadMap_, getBehaviorSheet, saveBehaviors, fetchReportBehaviors, smsNewToken_, smsEndSession, smsStoreScript_, smsClearScript_, smsAppendScript_, smsInjectRestore_, drop, run, smsDashboardFor_, smsRestoreSession, smsParentData_, smsParentHtml_, tryBoot, checkLogin, acsSheet_, getAcademicSettings, saveAcademicSettings, behIsClassTeacher_, behFindTeacher_, behResolveClassTeacher_, testSecondMaster, _now_, _dashNorm_, _userNorm_, _bool_, _isBlockingValue_, normalizeDashboardKey_, _dashboardAliasKeys_, _defaultDashboardPolicy_, _mergePolicy_, _logDashboardAccessEvent_, _readDashboardPolicyStores_, _normalisePolicyStore_, getDashboardPolicy, saveDashboardUserAccess, clearDashboardUserAccess, _denyDashboardAccess_, _dashboardFeaturesPermit_, checkDashboardWriteAccess, sendDashboardNotice, _escapeHtml_, ctpNorm_, ctpMakeUsername_, ctpMyClasses_, ctpClassAllowed_, ctpGetParentsPanel, ctpSuggestUsername, ctpUsernameTaken_, ctpSaveParent, ctpDeleteParent, ctpLoginLink_, ctpGetLoginLink, parentIdentity_, parentGetReportCard, parentAttendanceMark_, parentGetAttendance, rbacDefaultOff_, rbacKeyForPosition_, rbacFeatures_, rbacMyFeatures, rbacInject_, calc, apply, poll, rbacIsInactiveStaff_, rbacIsInactiveParent_, rbacAcademicConflict_, acadCheck_, acadStaffRole_, acadIsManagedStaff_, acadGetStaff, acadAddStaff, acadUpdateStaff, acadDeleteStaff, acadGetParents, acadAddParent, acadUpdateParent, acadDeleteParent, acadSetActiveRaw_, acadSetActive, setupAllSheets, mk, rbacAutoSetup_, acadProfileSession_, acadGetMyProfile, acadSaveMyPicture, acadSaveMyProfile, psClassSheetName_, psSchema_, psEnsureSheet_, psRunSetup_, psSetupAll, psAutoSetup_, psSchemaReport, onOpen, psShowReport, psNextNumber_, psAudit_, psNum_, psRound_, psFmtDate_, psPlain_, psToday_, psNow_, psId_, psNormClass_, psNormName_, psErr_, psMemoReset_, psTable_, forget, psNextNumbers_, psHash_, psSalt_, psRoleKey_, psFileForRole_, psAdminByUsername_, psUsernameTaken_, psBootCached_, psBootInject_, psTryAdminLogin_, psInactiveStaffBlock_, psResetSchoolManager, psSessionFromToken_, psCacheVer_, psCacheBump_, psCacheGet_, psCachePut_, psCacheKey_, psCall, psApi_, psAuditS_, psAllStudents_, psSettings_, psActiveYear_, psActiveTerm_, psBalances_, psTxn_, psPickAccount_, psInRange_, api_meta_, api_metaFresh_, api_changeMyPassword_, api_managerUpdateAccount_, api_managerSetAcademicYear_, psBackupFolder_, psCreateSystemBackup_, api_managerBackupsList_, api_managerBackupCreate_, api_managerBackupRestore_, api_classes_, api_students_, api_subjects_, api_exams_, psGradeFor_, api_results_, api_exam_types_, api_acad_settings_, api_exam_deadline_, api_full_results_, api_attendance_, api_overview_, api_adminsList_, api_adminsSave_, api_adminsDelete_, api_adminsReset_, api_staffList_, psRelinkClassTeacher_, api_staffSave_, api_staffDelete_, api_staffReset_, psLineStatus_, fin_totals_, fin_feesList_, fin_feesSave_, fin_feesDelete_, fin_invList_, fin_invGenerate_, fin_invAddLine_, fin_invDiscount_, fin_invCancel_, fin_studentSearch_, fin_studentAccount_, fin_pay_, fin_receipt_, fin_voidPayment_, fin_payments_, fin_debtors_, fin_fuList_, fin_fuSave_, fin_fuDelete_, fin_incomeList_, fin_incomeSave_, fin_incomeVoid_, fin_expenses_, fin_expenseSave_, fin_expensePay_, fin_expenseReverse_, fin_expenseDelete_, fin_catList_, fin_catSave_, fin_catDelete_, fin_settingsList_, fin_settingsSave_, fin_accountsList_, fin_accountsSave_, fin_txns_, fin_transfer_, fin_reconList_, fin_reconSave_, fin_dashboard_, fin_report_, fin_supList_, fin_supSave_, fin_supDelete_, fin_reqList_, fin_reqSave_, fin_reqStatus_, fin_reqReceive_, fin_stockItems_, fin_stockSaveItem_, fin_stockMove_, fin_stockMovements_, fin_auditList_, fin_auditChecks_, psSettingSet_, psBranding_, psBrand_, api_schoolSave_, api_termsList_, api_termsSave_, acsReadAll_, acadImportStudents, rbacSchool_, rbacTodSchool_, rbacBrand_, esc, acsAdmFormat_, acsAdmBuild_, lpInjectPanel_, lpSession_, lpSheet_, lpTz_, lpDateStr_, lpFormNumber_, lpClassKey_, lpSex_, lpStr_, lpNum_, lpClean_, cnt, lpFindRow_, lpBootstrap, lpGetSyllabus, lpStudentCounts, pick, lpSave, lpList, lpGet, lpDelete, lpPdf, featSchoolProfile_, getSchoolProfile, getPublicBranding, featNormClass_, featNormSex_, featNormDob_, importStudents, nextAdm, featMyUserRow_, getMyProfile, saveMyProfile, _hosAssert_, _hosYmd_, _hosRosterSheet_, getTODTeachersHOS, getTODRosterHOS, saveTODRosterHOS, deleteTODRosterHOS, getAllTODReportsHOS, getTODReportDetailHOS, _ttDefaults_, _ttSheet_, _ttSlotSheet_, _ttSetSheet_, _ttGetSet_, _ttPutSet_, _ttReadSlots_, _ttAssertAcademic_, _ttBlocked_, _ttTeachers_, getTTAdminData, saveTTSettings, saveTTSlot, _ttTouch_, clearTTClass, applyTimetable, getPublishedTimetable, _ttNorm_, _ttSubjectsForClass_, _ttTeachersFor_, getTTLoad, saveTTLoad, _ttContig_, parse, generateTimetable, gk, bk, reg, blockStart, freeTeacher, put, adj, _todYmd_, _todSheet_, _todRosterSheet_, _todSchoolInfo_, _todClassNames_, _todClassSheet_, _todRoster_, _todRowToObj_, _todAll_, _todMe_, _todMyList_, _todCleanRows_, getTODFormData, getTODSchoolInfo, saveTODDutyReport, listMyTODDutyReports, deleteTODDutyReport, api_todTeachers_, api_todRosterList_, api_todRosterSave_, api_todRosterDelete_, api_todReports_, api_todReport_, rbacNormAdm_, rbacCleanName_, rbacLiveStudent_, parentFromToken_, parentPortalData, apiRequest, ab_handlers_, ab_d_, ab_method_, ab_lock_, ab_checkLock_, ab_obj_, ab_school_, ab_students_, ab_feeStructures_, ab_payments_, ab_statements_, ab_overview_, ab_clean_, ab_page_, ab_report_, ab_recordPayment_, ab_saveFee_, ab_updateRecord_, ab_deleteRecord_, ab_saveIncome_, ab_saveExpense_, ab_expenseStatus_, ab_saveBank_, ab_cashbook_, ab_dailyClosing_, ab_savePurchase_, ab_saveSupplier_, ab_adjustStock_, ab_setLock_, nativeBlockedPayload_, nativeFindStaff_, nativeLoginPayload_, nativeRestorePayload_ };
+  if (typeof __fnMap[fnName] !== "function") {
+    throw new Error("Function not found: " + fnName);
+  }
+  const __fnRes = __fnMap[fnName].apply(null, args || []);
+  return __fnRes === undefined ? null : __fnRes;
 }
