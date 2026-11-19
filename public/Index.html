@@ -1188,7 +1188,7 @@ document.querySelectorAll('.sm-num, .hsb-num, .hero-stat-num').forEach(el=>numOb
 function openLogin(btn){
   document.querySelectorAll('.btn-nav,.hbtn-gold,.btn-cta').forEach(b=>b.disabled=true);
   if(btn){ btn._orig=btn.innerHTML; btn.innerHTML='<span class="sp"></span> Loading...'; }
-  if(typeof google!=='undefined'&&google.script){
+  if (window.google && window.google.script && window.google.script.run) {
     google.script.run
       .withSuccessHandler(html=>{
         if(html){document.open();document.write(html);document.close();}
@@ -1561,7 +1561,7 @@ function doModalLogin(){
   if(window._loginBtn) window._loginBtn.disabled = true;
   
   // Your existing Apps Script backend
-  if(typeof google !== 'undefined' && google.script){
+  if (window.google && window.google.script && window.google.script.run) {
     google.script.run
       .withSuccessHandler(function(result){
         resetModalBtn();
@@ -1628,13 +1628,7 @@ function doModalLogin(){
       })
       .checkLogin(username, password);
   } else {
-    // Demo mode if not in Apps Script
-    setTimeout(function(){
-      resetModalBtn();
-      showModalMsg('Demo mode: Login works when deployed to Google Apps Script.', 'ok');
-    }, 1200);
-  }
-}
+    resetModalBtn(); showModalMsg("Mfumo unamalizia kupakia, tafadhali jaribu tena au bonyeza Ctrl+Shift+R.", "err"); }
 
 // ESC key to close
 document.addEventListener('keydown', function(e){
