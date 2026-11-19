@@ -1,4 +1,4 @@
-﻿import { resolveTenant } from "./middleware/tenant.js";
+import { resolveTenant } from "./middleware/tenant.js";
 import { handleGasApiRequest } from "./api/gas-router.js";
 import { COMBINED_SCRIPT } from "./legacy_gs/index.js";
 
@@ -32,7 +32,6 @@ const PAGE_NAMES = [
   "LessonPlanPanel", "Staff",
   "SecIndex", "SecLogin", "SecParent", "SecAcademics", "SecClassTeacher"
 ];
-
 
 const pageCache = new Map();
 let pagesLoaded = false;
@@ -73,6 +72,7 @@ function injectSchoolContext(html, tenant) {
     subdomain: tenant.subdomain,
     plan: tenant.plan,
     educationLevel: tenant.educationLevel,
+    education_level: tenant.educationLevel,
     logoUrl: tenant.logoUrl,
   };
   const script = `<script>window.__SCHOOL__=${JSON.stringify(ctx)};</script><script src="/gas-compat.js"></script>`;
@@ -97,6 +97,9 @@ const RESERVED_SUBDOMAINS = new Set([
 
 const EDUCATION_LEVELS = ["Pre-Primary", "Primary", "O-Level", "A-Level", "Combined"];
 const PLANS = ["basic", "pro", "advanced"];
+const FINANCE_ROLES = new Set([
+  "superadmin", "schoolmanager", "headofschool", "headteacher", "accountant", "bursar"
+]);
 
 async function sha256Hex(text) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
@@ -107,6 +110,32 @@ function randomHex(bytes) {
   const arr = new Uint8Array(bytes);
   crypto.getRandomValues(arr);
   return Array.from(arr).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function extractSessionToken(request) {
+  const auth = String(request.headers.get("Authorization") || "");
+  if (auth.startsWith("Bearer ")) return auth.slice(7).trim();
+  const headerTok = String(request.headers.get("x-session-token") || "").trim();
+  if (headerTok) return headerTok;
+  const cookie = String(request.headers.get("Cookie") || "");
+  const m = cookie.match(/(?:^|;\s*)session_token=([^;]+)/);
+  return m ? decodeURIComponent(m[1]) : "";
+}
+
+async function resolveSessionUser(request, env, schoolId) {
+  const token = extractSessionToken(request);
+  if (!token) return null;
+  const tokenHash = await sha256Hex(token);
+  const row = await env.DB.prepare(
+    `SELECT username, role, expires_at FROM app_sessions
+     WHERE token_hash = ? AND school_id = ? LIMIT 1`
+  ).bind(tokenHash, schoolId).first();
+
+  if (!row) return null;
+  if (row.expires_at && new Date(row.expires_at).getTime() <= Date.now()) {
+    return null;
+  }
+  return { username: row.username, role: String(row.role || "").toLowerCase() };
 }
 
 async function handleRegisterSchool(request, env) {
@@ -210,6 +239,127 @@ async function handleRegisterSchool(request, env) {
   }, 201);
 }
 
+// ============================================================================
+// TENANT PAYMENTS & FEE STRUCTURES API
+// ============================================================================
+async function handleFinanceApi(request, env, url, tenant) {
+  const user = await resolveSessionUser(request, env, tenant.id);
+  if (!user) {
+    return json({ ok: false, error: "Huna ruhusa. Tafadhali ingia kwenye mfumo kwanza." }, 401);
+  }
+  if (!FINANCE_ROLES.has(user.role)) {
+    return json({ ok: false, error: "Huna mamlaka ya kufikia sehemu ya malipo." }, 403);
+  }
+
+  const path = url.pathname;
+
+  // 1. Orodhesha miundo ya ada (GET /api/fee-structures)
+  if (path === "/api/fee-structures" && request.method === "GET") {
+    const year = String(url.searchParams.get("academic_year") || "").trim();
+    const sql = year
+      ? "SELECT * FROM fee_structures WHERE school_id = ? AND academic_year = ? ORDER BY class_level, fee_name"
+      : "SELECT * FROM fee_structures WHERE school_id = ? ORDER BY academic_year DESC, class_level, fee_name";
+    const stmt = year ? env.DB.prepare(sql).bind(tenant.id, year) : env.DB.prepare(sql).bind(tenant.id);
+    const { results } = await stmt.all();
+    return json({ ok: true, fee_structures: results || [] });
+  }
+
+  // 2. Ongeza muundo wa ada (POST /api/fee-structures)
+  if (path === "/api/fee-structures" && request.method === "POST") {
+    const body = await request.json().catch(() => null);
+    if (!body) return json({ ok: false, error: "Muundo wa JSON si sahihi." }, 400);
+
+    const academicYear = String(body.academic_year || new Date().getFullYear()).trim();
+    const classLevel = String(body.class_level || "ALL").trim();
+    const feeName = String(body.fee_name || "").trim();
+    const amount = Number(body.amount);
+    const currency = String(body.currency || "TZS").trim().toUpperCase();
+    const term = String(body.term || "Annual").trim();
+    const isMandatory = body.is_mandatory === false || body.is_mandatory === 0 ? 0 : 1;
+
+    if (!feeName || !Number.isFinite(amount) || amount < 0) {
+      return json({ ok: false, error: "Jina la ada na kiasi sahihi vinahitajika." }, 400);
+    }
+
+    const id = "fee_" + crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+    await env.DB.prepare(
+      `INSERT INTO fee_structures (id, school_id, academic_year, class_level, fee_name, amount, currency, term, is_mandatory)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(id, tenant.id, academicYear, classLevel, feeName, amount, currency, term, isMandatory).run();
+
+    return json({ ok: true, id, message: "Muundo wa ada umehifadhiwa." }, 201);
+  }
+
+  // 3. Orodhesha malipo ya shule (GET /api/payments)
+  if (path === "/api/payments" && request.method === "GET") {
+    const studentId = String(url.searchParams.get("student_id") || "").trim();
+    const limit = Math.min(Number(url.searchParams.get("limit")) || 200, 1000);
+
+    if (studentId) {
+      const { results } = await env.DB.prepare(
+        "SELECT * FROM payments WHERE school_id = ? AND student_id = ? ORDER BY payment_date DESC LIMIT ?"
+      ).bind(tenant.id, studentId, limit).all();
+      return json({ ok: true, payments: results || [] });
+    }
+
+    const { results } = await env.DB.prepare(
+      "SELECT * FROM payments WHERE school_id = ? ORDER BY payment_date DESC LIMIT ?"
+    ).bind(tenant.id, limit).all();
+    return json({ ok: true, payments: results || [] });
+  }
+
+  // 4. Rekodi malipo mapya (POST /api/payments)
+  if (path === "/api/payments" && request.method === "POST") {
+    const body = await request.json().catch(() => null);
+    if (!body) return json({ ok: false, error: "Muundo wa JSON si sahihi." }, 400);
+
+    const studentId = String(body.student_id || "").trim();
+    const studentName = String(body.student_name || "").trim();
+    const classLevel = String(body.class_level || "").trim();
+    const academicYear = String(body.academic_year || new Date().getFullYear()).trim();
+    const feeStructureId = body.fee_structure_id ? String(body.fee_structure_id).trim() : null;
+    const feeCategory = String(body.fee_category || "Tuition").trim();
+    const amountPaid = Number(body.amount_paid);
+    const currency = String(body.currency || "TZS").trim().toUpperCase();
+    const paymentMethod = String(body.payment_method || "cash").trim().toLowerCase();
+    const referenceNo = String(body.reference_no || "").trim();
+    const notes = String(body.notes || "").trim();
+    const receiptNo = String(body.receipt_no || `RCP-${Date.now().toString(36).toUpperCase()}`).trim();
+
+    const allowedMethods = ["cash", "bank", "mobile_money", "control_number", "cheque", "other"];
+    if (!studentId || !Number.isFinite(amountPaid) || amountPaid <= 0) {
+      return json({ ok: false, error: "Namba ya mwanafunzi na kiasi cha malipo (> 0) vinahitajika." }, 400);
+    }
+    if (!allowedMethods.includes(paymentMethod)) {
+      return json({ ok: false, error: `Njia ya malipo si sahihi (${allowedMethods.join(", ")}).` }, 400);
+    }
+
+    const id = "pay_" + crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+    try {
+      await env.DB.prepare(
+        `INSERT INTO payments (
+          id, school_id, receipt_no, student_id, student_name, class_level,
+          academic_year, fee_structure_id, fee_category, amount_paid, currency,
+          payment_method, reference_no, status, recorded_by, notes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'completed', ?, ?)`
+      ).bind(
+        id, tenant.id, receiptNo, studentId, studentName, classLevel,
+        academicYear, feeStructureId, feeCategory, amountPaid, currency,
+        paymentMethod, referenceNo, user.username, notes
+      ).run();
+    } catch (e) {
+      if (String(e.message || "").includes("UNIQUE")) {
+        return json({ ok: false, error: `Namba ya risiti '${receiptNo}' tayari ipo.` }, 409);
+      }
+      return json({ ok: false, error: "Imeshindwa kuhifadhi malipo: " + e.message }, 500);
+    }
+
+    return json({ ok: true, id, receipt_no: receiptNo, message: "Malipo yamerekodiwa kikamilifu." }, 201);
+  }
+
+  return json({ ok: false, error: "Njia ya malipo haipo." }, 404);
+}
+
 const SECONDARY_LEVELS = ["O-LEVEL", "A-LEVEL", "SECONDARY", "COMBINED"];
 function isSecondaryLevel(level) {
   if (!level) return false;
@@ -244,6 +394,17 @@ async function handleSuperAdminApi(request, env, url) {
       "SELECT * FROM schools ORDER BY created_at DESC LIMIT ?"
     ).bind(limit).all();
     return json({ ok: true, schools: results || [] });
+  }
+
+  if (path === "/api/superadmin/payments" && request.method === "GET") {
+    const limit = Math.min(Number(url.searchParams.get("limit")) || 500, 1000);
+    const { results } = await env.DB.prepare(
+      `SELECT p.*, s.name AS school_name, s.subdomain
+       FROM payments p
+       JOIN schools s ON s.id = p.school_id
+       ORDER BY p.payment_date DESC LIMIT ?`
+    ).bind(limit).all();
+    return json({ ok: true, payments: results || [] });
   }
 
   const statusMatch = path.match(/^\/api\/superadmin\/schools\/([^/]+)\/status$/);
@@ -384,12 +545,27 @@ export default {
         if (!t.ok) return json({ ok: false, error: t.error }, t.status);
         return json({ ok: true, school: publicSchoolInfo(t.tenant) });
       }
+      if (path === "/api/payments" || path === "/api/fee-structures") {
+        const t = await resolveTenant(request, env);
+        if (!t.ok) return json({ ok: false, error: t.error }, t.status);
+        return await handleFinanceApi(request, env, url, t.tenant);
+      }
       if (path === "/api/gas") {
         if (request.method !== "POST") return json({ error: "Method not allowed." }, 405);
         const t = await resolveTenant(request, env);
         if (!t.ok) return json({ ok: false, error: t.error }, t.status);
+        const normalizedTenant = {
+          ...t.tenant,
+          education_level: t.tenant.educationLevel || t.tenant.education_level || "O-Level",
+        };
         await ensurePagesLoaded(env, url.origin);
-        return await handleGasApiRequest({ request, env, tenant: t.tenant, readPage, combinedScriptCode: COMBINED_SCRIPT });
+        return await handleGasApiRequest({
+          request,
+          env,
+          tenant: normalizedTenant,
+          readPage,
+          combinedScriptCode: COMBINED_SCRIPT,
+        });
       }
       return await serveFrontend(request, env, url);
     } catch (err) {
