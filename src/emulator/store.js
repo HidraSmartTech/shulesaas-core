@@ -9,7 +9,6 @@ export class ConflictError extends Error {
   }
 }
 
-// Helper to encode JS values to JSON strings for SQLite text storage
 function encodeCellValue(val) {
   if (val === undefined || val === null) return null;
   if (val instanceof Date) return { __type: "Date", iso: val.toISOString() };
@@ -53,7 +52,6 @@ function toRowArray(records, DateCtor) {
 
 export function createD1Store(db) {
   return {
-    // 0. Soma taarifa za shule husika (kwa ajili ya kubaini Primary vs Secondary)
     async getSchool(schoolId) {
       const stmt = db.prepare(
         "SELECT id, name, subdomain, education_level, plan, status FROM schools WHERE id = ?"
@@ -61,7 +59,17 @@ export function createD1Store(db) {
       return await stmt.bind(schoolId).first();
     },
 
-    // 1. Orodhesha masheet yote ya shule husika pamoja na matoleo (versions) yake
+    async loadFinanceData(schoolId) {
+      const [paysRes, feesRes] = await db.batch([
+        db.prepare("SELECT * FROM payments WHERE school_id = ? ORDER BY payment_date DESC LIMIT 1000").bind(schoolId),
+        db.prepare("SELECT * FROM fee_structures WHERE school_id = ? ORDER BY academic_year DESC, class_level").bind(schoolId),
+      ]);
+      return {
+        payments: (paysRes && paysRes.results) || [],
+        feeStructures: (feesRes && feesRes.results) || [],
+      };
+    },
+
     async listSheets(schoolId) {
       const stmt = db.prepare(
         "SELECT name, version FROM sheet_meta WHERE school_id = ?"
@@ -74,20 +82,17 @@ export function createD1Store(db) {
       return map;
     },
 
-    // 2. Pakia data za masheet mahususi kwa ajili ya shule moja
     async loadSheets(schoolId, names, DateCtor) {
       const out = new Map();
       if (!names || names.length === 0) return out;
 
       const placeholders = names.map(() => "?").join(",");
 
-      // Get metadata versions
       const metaStmt = db.prepare(
         `SELECT name, version FROM sheet_meta WHERE school_id = ? AND name IN (${placeholders})`
       );
       const { results: versions } = await metaStmt.bind(schoolId, ...names).all();
 
-      // Get row records
       const rowsStmt = db.prepare(
         `SELECT sheet, row_no, cells FROM sheet_rows WHERE school_id = ? AND sheet IN (${placeholders}) ORDER BY sheet, row_no`
       );
@@ -108,7 +113,6 @@ export function createD1Store(db) {
       return out;
     },
 
-    // 3. Pakia akaunti za shule husika
     async loadAccounts(schoolId) {
       const stmt = db.prepare(
         `SELECT seq, id, username, full_name, password_hash, password_salt, role, position, status, profile 
@@ -137,13 +141,10 @@ export function createD1Store(db) {
       };
     },
 
-    // 4. Hifadhi mabadiliko yote kwa mkupuo mmoja (Atomic Optimistic Concurrency via D1 batch)
     async commit(schoolId, payload) {
       const statements = [];
-      // Track guarded version-check statements to verify rows updated atomically
       const guards = [];
 
-      // Handle sheet changes
       for (const s of payload.sheets || []) {
         const nm = s.sheet;
 
@@ -178,7 +179,6 @@ export function createD1Store(db) {
             continue;
           }
 
-          // Atomic version increment: fails (changes = 0) if another writer updated version
           const idx = statements.length;
           statements.push(
             db.prepare(
@@ -187,7 +187,6 @@ export function createD1Store(db) {
           );
           guards.push({ index: idx, sheet: nm });
 
-          // Truncate extra rows if length shortened
           if (s.length !== undefined) {
             statements.push(
               db.prepare(
@@ -197,7 +196,6 @@ export function createD1Store(db) {
           }
         }
 
-        // Insert or Update cell rows
         if (s.set && s.set.length > 0) {
           for (const [rowNo, cells] of s.set) {
             const encodedCells = JSON.stringify(encodeRows([cells])[0]);
@@ -211,7 +209,6 @@ export function createD1Store(db) {
         }
       }
 
-      // Handle Accounts changes with atomic version check
       if (payload.accounts && payload.accounts.ops && payload.accounts.ops.length > 0) {
         const expectedAccVer = Number(payload.accounts.expected || 0);
         const idx = statements.length;
@@ -311,10 +308,72 @@ export function createD1Store(db) {
         }
       }
 
+      // Sync D1 Finance SQL operations queued from AccountantBridge.gs
+      for (const op of payload.d1Ops || []) {
+        if (op.type === "insert_payment") {
+          const payId = "pay_" + crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+          statements.push(
+            db.prepare(
+              `INSERT INTO payments (
+                id, school_id, receipt_no, student_id, student_name, class_level,
+                academic_year, fee_category, amount_paid, currency, payment_method,
+                reference_no, payment_date, status, recorded_by, notes
+              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'TZS', ?, ?, ?, 'completed', ?, ?)
+              ON CONFLICT(school_id, lower(trim(receipt_no))) DO NOTHING`
+            ).bind(
+              payId,
+              schoolId,
+              String(op.receipt_no || ""),
+              String(op.student_id || ""),
+              String(op.student_name || ""),
+              String(op.class_level || ""),
+              String(op.academic_year || ""),
+              String(op.fee_category || "Tuition"),
+              Number(op.amount_paid || 0),
+              String(op.payment_method || "cash"),
+              String(op.reference_no || ""),
+              String(op.payment_date || new Date().toISOString().slice(0, 10)),
+              String(op.recorded_by || ""),
+              String(op.notes || "")
+            )
+          );
+        } else if (op.type === "void_payment") {
+          statements.push(
+            db.prepare(
+              "UPDATE payments SET status = 'reversed', updated_at = CURRENT_TIMESTAMP WHERE school_id = ? AND lower(trim(receipt_no)) = lower(trim(?))"
+            ).bind(schoolId, String(op.receipt_no || ""))
+          );
+        } else if (op.type === "upsert_fee_structure") {
+          statements.push(
+            db.prepare(
+              `INSERT INTO fee_structures (id, school_id, academic_year, class_level, fee_name, amount, currency, term, is_mandatory)
+               VALUES (?, ?, ?, ?, ?, ?, 'TZS', ?, 1)
+               ON CONFLICT(id) DO UPDATE SET
+                 academic_year = excluded.academic_year,
+                 class_level = excluded.class_level,
+                 fee_name = excluded.fee_name,
+                 amount = excluded.amount,
+                 term = excluded.term,
+                 updated_at = CURRENT_TIMESTAMP`
+            ).bind(
+              String(op.id),
+              schoolId,
+              String(op.academic_year || ""),
+              String(op.class_level || "ALL"),
+              String(op.fee_name || "School Fees"),
+              Number(op.amount || 0),
+              String(op.term || "Annual")
+            )
+          );
+        } else if (op.type === "delete_fee_structure") {
+          statements.push(
+            db.prepare("DELETE FROM fee_structures WHERE school_id = ? AND id = ?").bind(schoolId, String(op.id || ""))
+          );
+        }
+      }
+
       if (statements.length === 0) return;
 
-      // D1 batch executes inside an implicit SQLite transaction.
-      // If any version guard affected 0 rows, abort immediately so D1 rolls back the entire batch.
       const results = await db.batch(statements);
       for (const g of guards) {
         const res = results[g.index];
