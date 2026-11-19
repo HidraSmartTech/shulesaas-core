@@ -1,8 +1,6 @@
 /**
  * ParentPortal.gs — real data for the Parent portal (no sample data)
- * The Parent page sends its session token; the server returns ONLY that parent's child:
- * the same Individual Report Card data the Academic account uses, real attendance, and the
- * Academic Settings (logos / names / signatures) so the card looks exactly like Academic's.
+ * Supports both Cloudflare D1 host sessions (__HOST__.session) and legacy script property tokens.
  */
 var rbacStudentCache_ = null;
 
@@ -31,18 +29,76 @@ function rbacLiveStudent_(admNo, storedName, storedClass) {
 }
 
 function parentFromToken_(token) {
-  token = String(token || '');
-  if (!/^[a-f0-9]{64}$/.test(token)) throw new Error('Session expired. Please log in again.');
-  var raw = PropertiesService.getScriptProperties().getProperty(SMS_SESSION_PREFIX + token);
-  if (!raw) throw new Error('Session expired. Please log in again.');
-  var s = JSON.parse(raw);
-  if (!s.exp || s.exp < Date.now() || s.role !== 'parent') throw new Error('Session expired. Please log in again.');
-  var pd = smsParentData_(s.username);
-  if (!pd) throw new Error('Session expired. Please log in again.');
-  if (rbacIsInactiveParent_(s.username)) throw new Error('This account has been deactivated. Contact the school office.');
-  var pa = canAccessDashboard('parents', s.username);
+  var username = '';
+
+  // 1. Cloudflare D1 authenticated host session
+  if (typeof __HOST__ !== 'undefined' && __HOST__ && __HOST__.session && __HOST__.session.username) {
+    if (__HOST__.session.role !== 'parent' && __HOST__.session.role !== 'student') {
+      throw new Error('Access denied. Parent account required.');
+    }
+    username = String(__HOST__.session.username || '').trim();
+  } else {
+    // 2. Legacy GAS token fallback
+    token = String(token || '');
+    if (!/^[a-f0-9]{64}$/.test(token)) throw new Error('Session expired. Please log in again.');
+    var raw = PropertiesService.getScriptProperties().getProperty(SMS_SESSION_PREFIX + token);
+    if (!raw) throw new Error('Session expired. Please log in again.');
+    var s = JSON.parse(raw);
+    if (!s.exp || s.exp < Date.now() || s.role !== 'parent') throw new Error('Session expired. Please log in again.');
+    username = s.username;
+  }
+
+  var pd = smsParentData_(username);
+  if (!pd) throw new Error('Parent profile not found for this student. Contact the school office.');
+  if (rbacIsInactiveParent_(username)) throw new Error('This account has been deactivated. Contact the school office.');
+  var pa = canAccessDashboard('parents', username);
   if (pa && pa.allowed === false) throw new Error(pa.reason || 'This portal is currently disabled by the administrator.');
-  return { username: s.username, data: pd };
+  return { username: username, data: pd };
+}
+
+function parentBuildFeeSummary_(admNo, className) {
+  var key = rbacNormAdm_(admNo);
+  var d1Pays = (typeof __HOST__ !== 'undefined' && __HOST__ && Array.isArray(__HOST__.d1Payments)) ? __HOST__.d1Payments : [];
+  var d1Fees = (typeof __HOST__ !== 'undefined' && __HOST__ && Array.isArray(__HOST__.d1FeeStructures)) ? __HOST__.d1FeeStructures : [];
+  var currentYear = String(new Date().getFullYear());
+
+  var matchingPays = d1Pays.filter(function (p) {
+    return rbacNormAdm_(p.student_id) === key && String(p.status || 'completed').toLowerCase() === 'completed';
+  });
+
+  var totalPaid = 0;
+  var history = matchingPays.map(function (p) {
+    var amt = Number(p.amount_paid || 0);
+    totalPaid += amt;
+    return {
+      receiptNo: p.receipt_no || '',
+      date: String(p.payment_date || '').slice(0, 10),
+      amount: amt,
+      currency: p.currency || 'TZS',
+      method: p.payment_method || 'cash',
+      category: p.fee_category || 'Tuition',
+      reference: p.reference_no || '',
+      academicYear: p.academic_year || currentYear
+    };
+  });
+
+  var normClass = String(className || '').replace(/\s+/g, '').toLowerCase();
+  var expectedFee = 0;
+  d1Fees.forEach(function (f) {
+    var fClass = String(f.class_level || '').replace(/\s+/g, '').toLowerCase();
+    var fYear = String(f.academic_year || currentYear);
+    if (fYear === currentYear && (fClass === 'all' || (normClass && fClass === normClass))) {
+      expectedFee += Number(f.amount || 0);
+    }
+  });
+
+  return {
+    academicYear: currentYear,
+    totalFee: Math.round(expectedFee * 100) / 100,
+    totalPaid: Math.round(totalPaid * 100) / 100,
+    balance: Math.max(0, Math.round((expectedFee - totalPaid) * 100) / 100),
+    payments: history
+  };
 }
 
 function parentPortalData(token) {
@@ -61,7 +117,7 @@ function parentPortalData(token) {
       if (!list.length) return;
       var me = list.filter(function (r) { return myKey && rbacNormAdm_(r.admNo) === myKey; })[0]
             || list.filter(function (r) { return behNorm_(r.name) === myName; })[0];
-      if (!me) return;                                     // this child has no results in this exam
+      if (!me) return;
       var beh = { map: {}, classTeacher: '' };
       try { beh = fetchReportBehaviors(className, exam) || beh; } catch (e) {}
       me.outOf = list.length;
@@ -80,11 +136,13 @@ function parentPortalData(token) {
     } catch (e) { attendance = []; }
   }
 
+  var fees = parentBuildFeeSummary_(pd.admNo, className);
   var a = acsReadAll_();
   return {
     student: { name: live.name, admNo: pd.admNo, className: className, sex: live.sex },
     reports: reports,
     attendance: attendance,
+    fees: fees,
     settings: { logoLeft: a.logoLeft || '', logoRight: a.logoRight || '', headName: a.headName || '', headSign: a.headSign || '',
                 academicName: a.academicName || '', academicSign: a.academicSign || '', schoolName: a.schoolName || '', schoolLogo: a.schoolLogo || '', schoolInfo: a.schoolInfo || {} },
     features: { report: feat['Report Card'] !== false, performance: feat['Performance'] !== false, attendance: wantAtt }
