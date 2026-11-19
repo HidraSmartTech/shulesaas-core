@@ -1,4 +1,4 @@
-﻿// API Router & Plan Feature Guard
+// API Router & Plan Feature Guard
 // Inashughulikia maombi ya POST /api/gas, inakagua Vifurushi (Basic, Pro, Advanced), Roles, na Session Tokens.
 
 import { createD1Store } from "../emulator/store.js";
@@ -59,31 +59,38 @@ const METHOD_MIN_PLANS = {
 };
 
 const METHOD_ROLES = {
-  getAcademicsData: ["academic", "headofschool", "schoolmanager"],
-  saveStudentScores: ["teacher", "classteacher", "academic", "headofschool"],
-  getClassTeacherData: ["classteacher", "headofschool", "schoolmanager"],
-  getHeadOfSchoolData: ["headofschool", "schoolmanager"],
+  getAcademicsData: ["academic", "academicmaster", "headofschool", "headteacher", "schoolmanager"],
+  saveStudentScores: ["teacher", "classteacher", "academic", "academicmaster", "headofschool", "headteacher"],
+  getClassTeacherData: ["classteacher", "headofschool", "headteacher", "schoolmanager"],
+  getHeadOfSchoolData: ["headofschool", "headteacher", "schoolmanager"],
   getSchoolManagerData: ["schoolmanager"],
-  getTimetableData: ["secondmaster", "academic", "headofschool", "teacher", "schoolmanager"],
-  saveTimetableData: ["secondmaster", "schoolmanager"],
-  getLessonPlans: ["teacher", "academic", "headofschool"],
+  getTimetableData: ["secondmaster", "academic", "academicmaster", "headofschool", "headteacher", "teacher", "schoolmanager"],
+  saveTimetableData: ["secondmaster", "academicmaster", "schoolmanager"],
+  getLessonPlans: ["teacher", "academic", "academicmaster", "headofschool", "headteacher"],
   saveLessonPlan: ["teacher"],
-  approveLessonPlan: ["academic", "headofschool"],
-  getSecondMasterData: ["secondmaster", "headofschool", "schoolmanager"],
-  saveDisciplineRecord: ["secondmaster", "headofschool"],
-  getTodReports: ["teacher", "secondmaster", "headofschool"],
-  saveTodReport: ["teacher", "secondmaster"],
-  getAccountantData: ["accountant", "schoolmanager", "headofschool"],
-  saveFeePayment: ["accountant"],
-  getFinancialSummary: ["accountant", "schoolmanager", "headofschool"],
-  sendSmsNotification: ["schoolmanager", "headofschool", "secondmaster", "academic"],
-  getParentPortalHtml: ["parent", "schoolmanager", "headofschool"],
+  approveLessonPlan: ["academic", "academicmaster", "headofschool", "headteacher"],
+  getSecondMasterData: ["secondmaster", "discipline", "headofschool", "headteacher", "schoolmanager"],
+  saveDisciplineRecord: ["secondmaster", "discipline", "headofschool", "headteacher"],
+  getTodReports: ["teacher", "secondmaster", "discipline", "headofschool", "headteacher"],
+  saveTodReport: ["teacher", "secondmaster", "discipline"],
+  getAccountantData: ["accountant", "bursar", "schoolmanager", "headofschool", "headteacher"],
+  saveFeePayment: ["accountant", "bursar"],
+  getFinancialSummary: ["accountant", "bursar", "schoolmanager", "headofschool", "headteacher"],
+  sendSmsNotification: ["schoolmanager", "headofschool", "headteacher", "secondmaster", "academic", "academicmaster"],
+  getParentPortalHtml: ["parent", "schoolmanager", "headofschool", "headteacher"],
   getParentStudentData: ["parent"],
   getParentFeeStatus: ["parent"],
   getParentReportCard: ["parent"],
-  getAdvancedAnalytics: ["schoolmanager", "headofschool", "academic"],
-  changeTeacherPassword: ["academic", "classteacher", "teacher", "staff", "accountant", "headofschool", "secondmaster", "schoolmanager"],
-  psCall: ["schoolmanager", "headofschool", "accountant", "academic", "classteacher", "teacher", "secondmaster"],
+  getAdvancedAnalytics: ["schoolmanager", "headofschool", "headteacher", "academic", "academicmaster"],
+  changeTeacherPassword: [
+    "academic", "academicmaster", "classteacher", "teacher", "staff",
+    "accountant", "bursar", "headofschool", "headteacher", "secondmaster",
+    "discipline", "librarian", "storekeeper", "patron", "matron", "schoolmanager"
+  ],
+  psCall: [
+    "schoolmanager", "headofschool", "headteacher", "accountant", "bursar",
+    "academic", "academicmaster", "classteacher", "teacher", "secondmaster", "discipline"
+  ],
 };
 
 function getDashboardPageName(role, educationLevel) {
@@ -93,25 +100,32 @@ function getDashboardPageName(role, educationLevel) {
   const ROLE_PAGES = {
     schoolmanager: "SchoolManager",
     headofschool: "HeadOfSchool",
+    headteacher: "HeadOfSchool",
     secondmaster: "DeputeHeadmaster",
+    discipline: "DeputeHeadmaster",
     academic: isSecondary ? "SecAcademics" : "Academics",
+    academicmaster: isSecondary ? "SecAcademics" : "Academics",
     classteacher: isSecondary ? "SecClassTeacher" : "ClassTeacher",
     teacher: isSecondary ? "SubjectTeacher" : "Teacher",
     accountant: "Accountant",
+    bursar: "Accountant",
     admin: "Admin",
     parent: isSecondary ? "SecParent" : "Parent",
+    student: isSecondary ? "SecParent" : "Parent",
   };
 
   return ROLE_PAGES[roleLower] || "SchoolManager";
 }
 
 function injectDashboardBootScript(html, tenant, rawToken) {
+  const level = tenant.educationLevel || tenant.education_level || "O-Level";
   const ctx = {
     id: tenant.id,
     name: tenant.name,
     subdomain: tenant.subdomain,
     plan: tenant.plan,
-    educationLevel: tenant.educationLevel,
+    educationLevel: level,
+    education_level: level,
     logoUrl: tenant.logoUrl,
   };
   const bootScript = `<script>
@@ -163,13 +177,17 @@ export async function handleGasApiRequest({ request, env, tenant, readPage, comb
 
   const store = createD1Store(env.DB);
   const appUrl = request.url;
+  const schoolContext = {
+    ...tenant,
+    education_level: tenant.educationLevel || tenant.education_level || "O-Level",
+  };
 
   if (method === "checkLogin") {
-    return await handleLogin(env, store, tenant, args, readPage, combinedScriptCode, appUrl);
+    return await handleLogin(env, store, schoolContext, args, readPage, combinedScriptCode, appUrl);
   }
 
   if (method === "smsRestoreSession") {
-    return await handleRestoreSession(env, store, tenant, token, readPage, combinedScriptCode, appUrl);
+    return await handleRestoreSession(env, store, schoolContext, token, readPage, combinedScriptCode, appUrl);
   }
 
   if (method === "smsEndSession" || method === "logout") {
@@ -186,7 +204,7 @@ export async function handleGasApiRequest({ request, env, tenant, readPage, comb
   }
 
   if (method === "getLoginPage" || method === "getIndexPage" || method === "getParentPortalHtml") {
-    const isSecondary = /o-?level|a-?level|secondary/i.test(String(tenant.educationLevel || ""));
+    const isSecondary = /o-?level|a-?level|secondary/i.test(String(schoolContext.education_level || ""));
     let fallbackPage = "Login";
     if (method === "getIndexPage") fallbackPage = isSecondary ? "SecIndex" : "Index";
     else if (method === "getParentPortalHtml") fallbackPage = isSecondary ? "SecParent" : "Parent";
@@ -196,6 +214,7 @@ export async function handleGasApiRequest({ request, env, tenant, readPage, comb
       const htmlResult = await runLegacy({
         store,
         schoolId: tenant.id,
+        school: schoolContext,
         fn: method,
         args: [],
         session: null,
@@ -254,6 +273,7 @@ export async function handleGasApiRequest({ request, env, tenant, readPage, comb
     const result = await runLegacy({
       store,
       schoolId: tenant.id,
+      school: schoolContext,
       fn: method,
       args,
       session,
@@ -335,7 +355,7 @@ async function handleLogin(env, store, tenant, args, readPage, combinedScriptCod
       "INSERT INTO app_sessions (token_hash, school_id, username, role, expires_at) VALUES (?, ?, ?, ?, ?)"
     ).bind(tokenHash, tenant.id, account.username, account.role, expiresAt).run();
 
-    const pageName = getDashboardPageName(account.role, tenant.educationLevel);
+    const pageName = getDashboardPageName(account.role, tenant.education_level);
     let dashboardHtml = "";
     try {
       dashboardHtml = injectDashboardBootScript(readPage(pageName), tenant, rawToken);
@@ -384,7 +404,7 @@ async function handleRestoreSession(env, store, tenant, token, readPage, combine
     return new Response(JSON.stringify({ result: { ok: false } }), { status: 200, headers: { "Content-Type": "application/json" } });
   }
 
-  const pageName = getDashboardPageName(account.role, tenant.educationLevel);
+  const pageName = getDashboardPageName(account.role, tenant.education_level);
   let dashboardHtml = "";
   try {
     dashboardHtml = injectDashboardBootScript(readPage(pageName), tenant, token);
